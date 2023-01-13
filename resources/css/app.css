@@ -1,0 +1,16 @@
+@tailwind base;
+
+html, body {
+    @apply font-roboto h-full;
+}
+
+button:focus, button:active {
+    @apply outline-none shadow-none;
+}
+
+@tailwind components;
+@tailwind utilities;
+
+[x-cloak] {
+    display: none !important;
+}

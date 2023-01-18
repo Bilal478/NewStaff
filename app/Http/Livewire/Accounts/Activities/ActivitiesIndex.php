@@ -78,6 +78,7 @@ class ActivitiesIndex extends Component
 
         return view('livewire.accounts.activities.index', [
             'activitiesGroup' => $this->activities(),
+            'WeeklyHours' => $this->calculateWeeklyHours(),
         ])->layout('layouts.app', ['title' => 'Activities']);
     }
 
@@ -168,4 +169,60 @@ class ActivitiesIndex extends Component
     {
         $this->dispatchBrowserEvent('open-delete-activity-modal');
     }
+
+    public function calculateWeeklyHours(){
+
+        $isOwner = Auth::guard('web')->user()->isOwnerOrManager();
+
+        $user = null;
+
+        if ($isOwner) {
+            if ($this->user_id == null) {
+                $this->user_id = auth()->id();
+            }
+            $user = User::where('id', $this->user_id)->first();
+        } else {
+            $user = Auth::guard('web')->user();
+        }
+
+        $week = Carbon::createFromFormat('M d, Y', $this->date)->format('W');
+        $year = Carbon::createFromFormat('M d, Y', $this->date)->format('Y');
+
+        $timestamp = mktime( 0, 0, 0, 1, 1,  $year ) + ( $week * 7 * 24 * 60 * 60 );
+        $timestamp_for_monday = $timestamp - 86400 * ( date( 'N', $timestamp ) - 1 );
+        $date_for_monday = date( 'Y-m-d', $timestamp_for_monday );
+
+        $currentWeekDates = [];
+        for($i=0;$i<7;$i++){
+            $currentWeekDates[$i] = date('Y-m-d',strtotime($date_for_monday.' + '.$i.' days' ));
+        }
+        
+       
+        if($user){
+       
+        $weekHours = [];
+        foreach($currentWeekDates as $index=>$currentWeekDate){
+            
+            $weekHours[$index] = CarbonInterval::seconds($user->activities()->thisPeriodOfTime($currentWeekDate, $currentWeekDate)->sum('seconds'))->cascade()->format('%H:%I:%S');
+         }
+         $sum = strtotime('00:00:00');
+
+         $totaltime = 0;
+         foreach( $weekHours as $element ) {
+            $timeinsec = strtotime($element) - $sum;
+            $totaltime = $totaltime + $timeinsec;
+        }
+        $h = intval($totaltime / 3600);
+        $totaltime = $totaltime - ($h * 3600);
+        $m = intval($totaltime / 60);
+        $s = $totaltime - ($m * 60);
+        
+        if("$h:$m" == "0:0"){
+            return ("00:00");
+            }
+        else
+            return ("$h:$m");
+        
+    }
+}
 }

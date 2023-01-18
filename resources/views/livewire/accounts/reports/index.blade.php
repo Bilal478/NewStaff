@@ -3,7 +3,7 @@
         Weekly Report
     </x-page.title>
 
-    <div class="sm:flex items-center justify-between pb-8">
+    <div class="sm:flex  pb-8">
         <div class="mb-4 md:mb-0">
             <div class="mx-2 flex items-center justify-center">
                 <button wire:click.prevent="prevWeek()" type="button"
@@ -19,8 +19,11 @@
                     <x-inputs.datepicker-week-without-label wire:model="week" faux-date="date" class="w-full sm:w-72"
                         name="date" type="text" :clear-button="false" />
                 </div>
-		@role(['owner', 'manager'])
-                <div class="w-full md:w-1/3 lg:w-1/4">
+		
+            </div>
+        </div>
+        @role(['owner', 'manager'])
+                <div class="w-full md:w-1/7 lg:w-1/4">
                         <div class="mx-2">
                                 <x-inputs.select-without-label wire:model="user_id" class="w-full" name="user_id">
                                         @foreach($user_list as $user)
@@ -32,9 +35,6 @@
                         </div>
 		</div>
 		@endrole
-            </div>
-        </div>
-
         @if ($users->count())
         <button wire:click="download" type="button"
             class="w-full sm:w-auto mt-4 sm:mt-0 h-10 text-sm flex items-center rounded-md bg-blue-600 text-white pl-4 pr-6 hover:bg-blue-500 focus:outline-none active:bg-blue-700 transition duration-150 ease-in-out">

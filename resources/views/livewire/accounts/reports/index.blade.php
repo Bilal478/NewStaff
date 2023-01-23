@@ -3,9 +3,9 @@
         Weekly Report
     </x-page.title>
 
-    <div class="sm:flex  pb-8">
-        <div class="mb-4 md:mb-0">
-            <div class="mx-2 flex items-center justify-center">
+    <div class="flex items-center flex-wrap pb-8 flex-col sm:flex-row">
+        <div>
+            <div class="mx-auto flex items-center justify-center">
                 <button wire:click.prevent="prevWeek()" type="button"
                     class="h-10 appearance-none bg-white block px-3 py-2 border border-gray-300 rounded-md text-gray-600 focus:outline-none hover:border-blue-500 hover:text-blue-600 transition duration-150 ease-in-out text-sm leading-5 mr-2">
                     <x-svgs.arrow-left class="h-4 w-4" />
@@ -16,16 +16,16 @@
                     <x-svgs.arrow-right class="h-4 w-4" />
                 </button>
                 <div class="flex-1">
-                    <x-inputs.datepicker-week-without-label wire:model="week" faux-date="date" class="w-full sm:w-72"
+                    <x-inputs.datepicker-week-without-label wire:model="week" faux-date="date" class="w-56 sm:w-60"
                         name="date" type="text" :clear-button="false" />
                 </div>
 		
             </div>
         </div>
         @role(['owner', 'manager'])
-                <div class="w-full md:w-1/7 lg:w-1/4">
-                        <div class="mx-2">
-                                <x-inputs.select-without-label wire:model="user_id" class="w-full" name="user_id">
+                <div class="mt-4  sm:mt-0 ">
+                        <div class="ml-2">
+                                <x-inputs.select-without-label wire:model="user_id" class="w-60" name="user_id">
                                         @foreach($user_list as $user)
                                                 <option value="{{ $user->id }}">
                                                         {{$user->full_name}}

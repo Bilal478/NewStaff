@@ -18,10 +18,11 @@ $account = Account::where('id', $account_id)
     <x-page.title svg="svgs.computer">
         Activities
     </x-page.title>
-<!-- filter -->
-    <div class="flex flex-wrap mx-2 pb-8">
-        <div class="mb-4 md:mb-0">
-            <div class="mx-2 flex items-center justify-center">
+    <div></div>
+
+    <div class="flex items-center flex-wrap pb-8 flex-col sm:flex-row">
+        <div>
+            <div class=" flex items-center justify-center mx-auto">
                 <button wire:click.prevent="subDay()" type="button" class="btnMostrar h-10 appearance-none bg-white block px-3 py-2 border border-gray-300 rounded-md text-gray-600 focus:outline-none hover:border-blue-500 hover:text-blue-600 transition duration-150 ease-in-out text-sm leading-5 mr-2">
                     <x-svgs.arrow-left class="h-4 w-4" />
                 </button>
@@ -35,9 +36,9 @@ $account = Account::where('id', $account_id)
         </div>
 
         @role(['owner', 'manager'])
-        <div class="md:w-1/3 max-lg:w-1/9">
-            <div class="mx-2">
-                <x-inputs.select-without-label2 wire:model="user_id"  name="user_id">
+        <div class="mt-4  sm:mt-0 ">
+            <div class="ml-2">
+                <x-inputs.select-without-label2 wire:model="user_id" class="w-48" name="user_id">
                     <?php //  <option value="{{ auth()->id() }}" selected > {{ auth()->user()->firstname }}  {{ auth()->user()->lastname }}</option>
                     ?>
 
@@ -58,9 +59,8 @@ $account = Account::where('id', $account_id)
                     </x-inputs.select-without-label>
             </div>
         </div>
-        <div class="md:w-1 mb-4 mx-8"></div>
-        <div class=" new-activity-button pb-0">
-            <button wire:click="$emit('activityCreate')" type="button" class="w-full sm:w-auto mt-4 sm:mt-0 h-10 text-sm flex items-center rounded-md bg-blue-600 text-white pl-4 pr-6 hover:bg-blue-500 focus:outline-none active:bg-blue-700 transition duration-150 ease-in-out">
+        <div class="new-activity-button pb-0 ml-4">
+            <button wire:click="$emit('activityCreate')" type="button" class="mt-4 mb-4 h-10 text-sm flex items-center rounded-md bg-blue-600 text-white pl-1 pr-3 hover:bg-blue-500 focus:outline-none active:bg-blue-700 transition duration-150 ease-in-out">
                 <x-svgs.plus class="w-5 h-5 mr-1" />
                 Add time
             </button>
@@ -70,56 +70,51 @@ $account = Account::where('id', $account_id)
 
     </div>
 
-<!-- activities -->
-    <div class="mx-4">
-    <div class="flex flex-row bg-white rounded-md border mx-4 mb-8">
-        <div class="  p-6">
-            <h4 class="text-sm  xl:tracking-widest uppercase mb-2">
-                Time
-            </h3>
-            <span class="text-lg text-gray-800">
-                {{ gmdate('H:i', $timeToday) }}
-            </span>
-            <br>
-            <span class="text-sm text-gray-800">
-                TOTAL WORKED
-            </span>
-        </div>
-        <div class="  p-6">
-            <h3 class="text-sm text-blue-500 xl:tracking-widest uppercase mb-2">
-                 
-            </h3>
-            <div class="flex items-center text-sm {{ $totalPreviuosTimeState=='more'? 'text-red-500' :'text-green-500'}}">
-                @if($totalPreviuosTimeState=='more')
-                <img style="margin-top:-2px;margin-right: 10px;" src="https://d2elkgkdx2cp5d.cloudfront.net/assets/global/arrow_red-7d7d05038fc89ddb147974ea866c4c303ba2bfccc049b6bf073d4709f0d026bb.svg">
-                @else
-                <img style="margin-top: -2px;margin-right: 10px;"  src="https://d2elkgkdx2cp5d.cloudfront.net/assets/global/arrow_green-bb4267018493d26d5ef23d41f52f674046a789343cd449b2dace465966c00883.svg">
-                @endif
-                <span class="text-lg">
-                    {{ gmdate('H:i', $totalPreviuosTime) }}
-                </span>
-            </div>
+    <div class="flex flex-wrap -mx-4">
+        <div class="w-full xl:w-1/1">
+            <div class="bg-white rounded-md border p-6 mx-4 mb-8">
+                <div class="w-full xl:w-1/2">
+                    <div class="w-full xl:w-1/2 flex flex-wrap">
+                        <div class="w-full xl:w-1/2">
+                            <h4 class="text-sm  xl:tracking-widest uppercase mb-2">
+                                Time
+                            </h3>
+                            <span class="text-lg text-gray-800">
+                                {{ gmdate('H:i', $timeToday) }}
+                            </span>
+                            <br>
+                            <span class="text-sm text-gray-800">
+                                TOTAL WORKED
+                            </span>
+                        </div>
+
+                        <div class="w-full xl:w-1/2">
+                            <h3 class="text-sm text-blue-500 xl:tracking-widest uppercase mb-2">
+                                 
+                            </h3>
+                            <div class="flex items-center text-sm {{ $totalPreviuosTimeState=='more'? 'text-red-500' :'text-green-500'}}">
+                                @if($totalPreviuosTimeState=='more')
+                                <img style="margin-top:-2px;margin-right: 10px;" src="https://d2elkgkdx2cp5d.cloudfront.net/assets/global/arrow_red-7d7d05038fc89ddb147974ea866c4c303ba2bfccc049b6bf073d4709f0d026bb.svg">
+                                @else
+                                <img style="margin-top: -2px;margin-right: 10px;"  src="https://d2elkgkdx2cp5d.cloudfront.net/assets/global/arrow_green-bb4267018493d26d5ef23d41f52f674046a789343cd449b2dace465966c00883.svg">
+                                @endif
+                                <span class="text-lg">
+                                    {{ gmdate('H:i', $totalPreviuosTime) }}
+                                </span>
+                            </div>
 
 
-            <span class="text-sm text-gray-800">
-                TO PREV DAY
-            </span>
-        </div>
-        <div class="flex flex-row">
-            <div class="left_border p-6">
-                <h4 class="text-sm  xl:tracking-widest uppercase mb-2">
-                    THIS WEEK TOTAL HOURS
-                </h3>
-                <span class="text-lg text-gray-800">
-                    {{ $WeeklyHours }}
-                </span>
-                <br>
-                <span class="text-sm text-gray-800">
-                    TOTAL WORKED
-                </span>
+                            <span class="text-sm text-gray-800">
+                                TO PREV DAY
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+
             </div>
         </div>
-    </div>
+
     </div>
 
 
@@ -232,7 +227,6 @@ $account = Account::where('id', $account_id)
     </div>
 
     <style>
-        
         .modal-contenido {
             background-color: white;
             border-radius: 8px;
@@ -263,7 +257,6 @@ $account = Account::where('id', $account_id)
             opacity: 1;
             pointer-events: auto;
         }
-      
     </style>
 
 
@@ -289,25 +282,10 @@ $account = Account::where('id', $account_id)
     @endpush
 </div>
 <style>
-
-.left_border{
-            border-left: 1px solid #e5e5e5 !important;
-        }
     .new-activity-button {
         display: flex !important;
         justify-content: flex-end !important;
     }
-    svg.w-5.h-5 {
-        display: none !important;
-}
- @media screen and (min-width: 768px) and (max-width: 1440px) {
-            .sm\:flex.new-activity-button.pb-0 {
-                margin-left: 10rem !important;
-            }
-            span.select2.select2-container.select2-container--default{
-            width: 90% !important;
-        }
-        }
 </style>
 {{-- <script>
      $(".btnMostrar").click(function(){

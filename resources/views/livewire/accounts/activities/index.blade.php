@@ -72,7 +72,7 @@ $account = Account::where('id', $account_id)
 
 <!-- activities -->
     <div class="mx-4">
-    <div class="flex flex-row bg-white rounded-md border mx-4 mb-8">
+    <div class="md:flex bg-white rounded-md border mx-4 mb-8">
         <div class="  p-6">
             <h4 class="text-sm  xl:tracking-widest uppercase mb-2">
                 Time
@@ -108,6 +108,34 @@ $account = Account::where('id', $account_id)
         <div class="flex flex-row">
             <div class="left_border p-6">
                 <h4 class="text-sm  xl:tracking-widest uppercase mb-2">
+                    Today Activity
+                </h3>
+                @if ($todayActivityPer >= 51)
+                <span class="text-lg text-green-500">
+                    {{$todayActivityPer}}%
+                </span>
+                @endif
+
+                @if ($todayActivityPer >= 21 and $todayActivityPer <= 50)
+                <span class="text-lg golden">
+                {{$todayActivityPer}}%
+                </span>
+                @endif
+
+                @if ($todayActivityPer<= 20)
+                <span class="text-lg text-red-500">
+                {{$todayActivityPer}}%
+                </span>
+                @endif
+                <br>
+                <span class="text-sm text-gray-800">
+                    Average
+                </span>
+            </div>
+        </div>
+        <div class="flex flex-row">
+            <div class="left_border p-6">
+                <h4 class="text-sm  xl:tracking-widest uppercase mb-2">
                     THIS WEEK TOTAL HOURS
                 </h3>
                 <span class="text-lg text-gray-800">
@@ -116,6 +144,34 @@ $account = Account::where('id', $account_id)
                 <br>
                 <span class="text-sm text-gray-800">
                     TOTAL WORKED
+                </span>
+            </div>
+        </div>
+        <div class="flex flex-row">
+            <div class="left_border p-6">
+                <h4 class="text-sm  xl:tracking-widest uppercase mb-2">
+                    Weekly Activity
+                </h3>
+                @if ($weekActivityPer >= 51)
+                <span class="text-lg text-green-500">
+                    {{$weekActivityPer}}%
+                </span>
+                @endif
+
+                @if ($weekActivityPer >= 21 and $weekActivityPer <= 50)
+                <span class="text-lg golden">
+                    {{$weekActivityPer}}%
+                </span>
+                @endif
+
+                @if ($weekActivityPer <= 20)
+                <span class="text-lg text-red-500">
+                    {{$weekActivityPer}}%
+                </span>
+                @endif
+                <br>
+                <span class="text-sm text-gray-800">
+                    Average
                 </span>
             </div>
         </div>
@@ -144,7 +200,13 @@ $account = Account::where('id', $account_id)
         return $activity->start_datetime->format('i') == '00';
         }))
         @php
-        ++$countActivity;
+        if($activities->first()->screenshots->count() == 2){
+            $countActivity = $countActivity+2;
+        }
+        else{
+            $countActivity = $countActivity+1; 
+        }
+        
         @endphp
         <x-activities.card :activity="$activity" :countActivity="$countActivity" />
         @else
@@ -154,7 +216,12 @@ $account = Account::where('id', $account_id)
         return $activity->start_datetime->format('i') == '10';
         }))
         @php
-        ++$countActivity;
+        if($activities->first()->screenshots->count() == 2 && $countActivity !=0){
+            $countActivity = $countActivity+2;
+        }
+        else{
+            $countActivity = $countActivity+1; 
+        }
         @endphp
         <x-activities.card :activity="$activity" :countActivity="$countActivity" />
         @else
@@ -165,7 +232,12 @@ $account = Account::where('id', $account_id)
         return $activity->start_datetime->format('i') == '20';
         }))
         @php
-        ++$countActivity;
+        if($activities->first()->screenshots->count() == 2 && $countActivity !=0){
+            $countActivity = $countActivity+2;
+        }
+        else{
+            $countActivity = $countActivity+1; 
+        }
         @endphp
         <x-activities.card :activity="$activity" :countActivity="$countActivity" />
         @else
@@ -176,7 +248,12 @@ $account = Account::where('id', $account_id)
         return $activity->start_datetime->format('i') == '30';
         }))
         @php
-        ++$countActivity;
+        if($activities->first()->screenshots->count() == 2 && $countActivity !=0){
+            $countActivity = $countActivity+2;
+        }
+        else{
+            $countActivity = $countActivity+1; 
+        }
         @endphp
         <x-activities.card :activity="$activity" :countActivity="$countActivity" />
         @else
@@ -186,7 +263,12 @@ $account = Account::where('id', $account_id)
         return $activity->start_datetime->format('i') == '40';
         }))
         @php
-        ++$countActivity;
+        if($activities->first()->screenshots->count() == 2 && $countActivity !=0){
+            $countActivity = $countActivity+2;
+        }
+        else{
+            $countActivity = $countActivity+1; 
+        }
         @endphp
         <x-activities.card :activity="$activity" :countActivity="$countActivity" />
         @else
@@ -196,13 +278,19 @@ $account = Account::where('id', $account_id)
         return $activity->start_datetime->format('i') == '50';
         }))
         @php
-        ++$countActivity;
+        if($activities->first()->screenshots->count() == 2 && $countActivity !=0){
+            $countActivity = $countActivity+2;
+        }
+        else{
+            $countActivity = $countActivity+1; 
+        }
         @endphp
         <x-activities.card :activity="$activity" :countActivity="$countActivity" :countActivity="$countActivity" />
         @else
         <x-activities.empty />
         @endif
     </div>
+    
     @endforeach
     @else
     <x-states.empty-data2 />
@@ -299,6 +387,9 @@ $account = Account::where('id', $account_id)
     }
     svg.w-5.h-5 {
         display: none !important;
+}
+.golden{
+    color: #f8c58d !important;
 }
  @media screen and (min-width: 768px) and (max-width: 1440px) {
             .sm\:flex.new-activity-button.pb-0 {

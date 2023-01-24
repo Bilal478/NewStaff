@@ -12,6 +12,8 @@ class ScreenshotsShowCarousel extends Component
     public $account_id;
     public $allActivity;
     public $showCarousel = false;
+    public $totalScreenshots = 0;
+    public $sliderCounter = 0;
 
     protected $listeners = [
         'screenshotsShow' => 'show',
@@ -19,16 +21,15 @@ class ScreenshotsShowCarousel extends Component
 
     public function show($user_id,$account_id,$date)
     {
-        // dd($user_id);
-        // // foreach ($this->allActivity as $key => $value) {
-            // //     dump($value->screenshots);
-            // // }
-
             $this->user_id = $user_id;
             $this->account_id = $account_id;
             $this->date = $date;
-            $this->allActivity = Activity::with('screenshots')->where('date',$date)->where('user_id',$user_id)->where('account_id',$account_id)->orderBy('start_datetime')->get();
-            //dd($this->allActivity);
+            $this->allActivity = Activity::withCount('screenshots')->where('date',$date)->where('user_id',$user_id)->where('account_id',$account_id)->oldest('start_datetime')->get();
+           
+            $this->totalScreenshots = 0;
+            foreach($this->allActivity as $index=>$activity){
+               $this->totalScreenshots =  $this->totalScreenshots  + $activity->screenshots_count;
+            }
 			
         $this->showCarousel = true;
     }

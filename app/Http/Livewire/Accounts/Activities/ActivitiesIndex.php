@@ -13,6 +13,7 @@ use Carbon\CarbonInterval;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use phpDocumentor\Reflection\Types\This;
 
 class ActivitiesIndex extends Component
 {
@@ -24,6 +25,8 @@ class ActivitiesIndex extends Component
     public $timeYesterday = 0;
     public $totalPreviuosTime = 0;
     public $totalPreviuosTimeState = '';
+    public $todayActivityPer = '';
+    public $weekActivityPer = '';
 
     protected $listeners = [
         'activityUpdate' => '$refresh',
@@ -89,6 +92,7 @@ class ActivitiesIndex extends Component
 
     public function activities()
     {
+        ($this->activitiesForUser());
         return Auth::guard('web')->user()->isOwnerOrManager()
             ? $this->activitiesForAccount()
             : $this->activitiesForUser();
@@ -111,10 +115,37 @@ class ActivitiesIndex extends Component
                     $activity->start_datetime->format('h:00 a') . ' - ' . $activity->start_datetime->addHour()->format('h:00 a') => $activity
                 ];
             });
+
+            
+    }
+
+    public function ActivitiesAverage()
+    {
+        
+        $todayActivitySum = User::where('id',$this->user_id)->first()
+        ->activities()
+        ->whereDate('date', $this->formatted_date)
+        ->oldest('start_datetime')
+        ->sum('total_activity_percentage');
+        
+        $todayNumberOfActivities = User::where('id',$this->user_id)->first()
+        ->activities()
+        ->whereDate('date', $this->formatted_date)
+        ->oldest('start_datetime')
+        ->count();
+        if($todayNumberOfActivities != 0){
+            $this->todayActivityPer = intval(round(($todayActivitySum/$todayNumberOfActivities),0));
+        }
+        else{
+            $this->todayActivityPer = 0;
+        }
+        
+        
     }
     public function activitiesForUser()
     {
-        return Auth::guard('web')->user()
+        $this->ActivitiesAverage();
+         return User::where('id',$this->user_id)->first()
             ->activities()
             ->whereDate('date', $this->formatted_date)
             ->oldest('start_datetime')
@@ -201,10 +232,30 @@ class ActivitiesIndex extends Component
         if($user){
        
         $weekHours = [];
+        $WeekActivityPercentage = [];
         foreach($currentWeekDates as $index=>$currentWeekDate){
+
+            $todayActivitySum = User::where('id',$this->user_id)->first()
+            ->activities()
+            ->whereDate('date', $currentWeekDate)
+            ->oldest('start_datetime')
+            ->sum('total_activity_percentage');
+
+            $todayNumberOfActivities = User::where('id',$this->user_id)->first()
+            ->activities()
+            ->whereDate('date', $currentWeekDate)
+            ->oldest('start_datetime')
+            ->count();
             
+            if($todayNumberOfActivities != 0 ){
+               
+                $WeekActivityPercentage[] = intval(round(($todayActivitySum/$todayNumberOfActivities),0));
+                
+            }
+
             $weekHours[$index] = CarbonInterval::seconds($user->activities()->thisPeriodOfTime($currentWeekDate, $currentWeekDate)->sum('seconds'))->cascade()->format('%H:%I:%S');
          }
+         $this->weekActivityPer = intval(round((array_sum($WeekActivityPercentage)/7),0));
          $sum = strtotime('00:00:00');
 
          $totaltime = 0;

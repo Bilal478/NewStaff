@@ -30,10 +30,11 @@
         </div>
 
         <div class="relative pt-6 pb-4">
-            <div class="absolute w-full flex justify-center top-0 -mt-3 z-10">
-                {{-- <button wire:click.stop="$emit('screenshotsShow', {{$activity->id}})" class="bg-white flex items-center justify-center h-6 rounded-full shadow-md text-blue-600 text-center text-xs w-24">
+            <div class="absolute w-full flex justify-center top-1 -mt-5 z-10">
+                <span class=" font_weight bg-white flex items-center justify-center h-6 rounded-full shadow-md text-blue-600 text-center text-xs w-24">{{$activity->screenshots->count()}} {{ $activity->screenshots->count() == 1 ? 'screen' : 'screens'}}</span>
+                <!-- <button wire:click.stop="$emit('screenshotsShow', {{$activity->id}})" class="bg-white flex items-center justify-center h-6 rounded-full shadow-md text-blue-600 text-center text-xs w-24">
                     {{ $activity->screenshots->count() }} {{ $activity->screenshots->count() == 1 ? 'screen' : 'screens'}}
-                </button> --}}
+                </button> -->
             </div>
 
 
@@ -134,3 +135,9 @@
         </div>
     </article>
 </div>
+<style>
+    .font_weight{
+        font-weight: 600 !important;
+        cursor: default !important;
+    }
+</style>

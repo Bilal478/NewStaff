@@ -65,22 +65,45 @@
         <div id="myModal" class="modal">
             <span class="close cursor" onclick="closeModal()">&times;</span>
             <div class="modal-content">
+                @php 
+                $a = 0
+                @endphp
                 @foreach ($this->allActivity as $item)
-                    <div class="mySlides">
-                        <div class="numbertext">{{ $loop->iteration }} / {{ $this->allActivity->count() }}</div>
+                    <div class="mySlides text-center">
+                        <div class="numbertext">{{ ++$a }} / {{ $totalScreenshots }}</div>
 
 
                         @if (count($item->screenshots) > 0)
-                            <img src="{{ $item->screenshots->first()->fullPath() }}" style="width:100%">
-
+                            <img src="{{ $item->screenshots[0]->fullPath() }}" style="width:100%">
+                            <span><small><b>(1/@php echo count($item->screenshots) @endphp)</b></small></span>
                             @if ($item->screenshots->first()->fullPath() == 'https://media.neostaff.app/screenshots/00/1234567890.png')
                                 <img class="img_placeholder" src="activity_placeholder.png">
+                                
                             @endif
                         @else
                             <img class="img_placeholder" src="activity_placeholder.png"
                                 style="width:100%;height: 70vh;">
                         @endif
                     </div>
+                    @if (count($item->screenshots) == 2)
+                    <div class="mySlides text-center">
+                        <div class="numbertext">{{ ++$a }} / {{ $totalScreenshots }}</div>
+
+
+                        @if (count($item->screenshots) > 0)
+                            <img src="{{ $item->screenshots[1]->fullPath() }}" style="width:100%">
+                            <span><small><b>(2/2)</b></small></span>
+
+                            @if ($item->screenshots->first()->fullPath() == 'https://media.neostaff.app/screenshots/00/1234567890.png')
+                                <img class="img_placeholder" src="activity_placeholder.png">
+                                
+                            @endif
+                        @else
+                            <img class="img_placeholder" src="activity_placeholder.png"
+                                style="width:100%;height: 70vh;">
+                        @endif
+                    </div>
+                @endif
                 @endforeach
                 <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
                 <a class="next" onclick="plusSlides(1)">&#10095;</a>
@@ -322,7 +345,7 @@
             color: #000000;
             font-size: 20px;
             font-weight: 900;
-            padding: 8px 12px;
+            padding: 8px 0px;
             position: absolute;
             top: 0;
         }

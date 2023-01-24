@@ -70,38 +70,35 @@ $account = Account::where('id', $account_id)
 
     </div>
 
-    <div class="flex flex-wrap -mx-4">
-        <div class="w-full xl:w-1/1">
-            <div class="bg-white rounded-md border p-6 mx-4 mb-8">
-                <div class="w-full xl:w-1/2">
-                    <div class="w-full xl:w-1/2 flex flex-wrap">
-                        <div class="w-full xl:w-1/2">
-                            <h4 class="text-sm  xl:tracking-widest uppercase mb-2">
-                                Time
-                            </h3>
-                            <span class="text-lg text-gray-800">
-                                {{ gmdate('H:i', $timeToday) }}
-                            </span>
-                            <br>
-                            <span class="text-sm text-gray-800">
-                                TOTAL WORKED
-                            </span>
-                        </div>
-
-                        <div class="w-full xl:w-1/2">
-                            <h3 class="text-sm text-blue-500 xl:tracking-widest uppercase mb-2">
-                                 
-                            </h3>
-                            <div class="flex items-center text-sm {{ $totalPreviuosTimeState=='more'? 'text-red-500' :'text-green-500'}}">
-                                @if($totalPreviuosTimeState=='more')
-                                <img style="margin-top:-2px;margin-right: 10px;" src="https://d2elkgkdx2cp5d.cloudfront.net/assets/global/arrow_red-7d7d05038fc89ddb147974ea866c4c303ba2bfccc049b6bf073d4709f0d026bb.svg">
-                                @else
-                                <img style="margin-top: -2px;margin-right: 10px;"  src="https://d2elkgkdx2cp5d.cloudfront.net/assets/global/arrow_green-bb4267018493d26d5ef23d41f52f674046a789343cd449b2dace465966c00883.svg">
-                                @endif
-                                <span class="text-lg">
-                                    {{ gmdate('H:i', $totalPreviuosTime) }}
-                                </span>
-                            </div>
+<!-- activities -->
+    <div class="mx-4">
+    <div class="md:flex bg-white rounded-md border mx-4 mb-8">
+        <div class="  p-6">
+            <h4 class="text-sm  xl:tracking-widest uppercase mb-2">
+                Time
+            </h3>
+            <span class="text-lg text-gray-800">
+                {{ gmdate('H:i', $timeToday) }}
+            </span>
+            <br>
+            <span class="text-sm text-gray-800">
+                TOTAL WORKED
+            </span>
+        </div>
+        <div class="  p-6">
+            <h3 class="text-sm text-blue-500 xl:tracking-widest uppercase mb-2">
+                 
+            </h3>
+            <div class="flex items-center text-sm {{ $totalPreviuosTimeState=='more'? 'text-red-500' :'text-green-500'}}">
+                @if($totalPreviuosTimeState=='more')
+                <img style="margin-top:-2px;margin-right: 10px;" src="https://d2elkgkdx2cp5d.cloudfront.net/assets/global/arrow_red-7d7d05038fc89ddb147974ea866c4c303ba2bfccc049b6bf073d4709f0d026bb.svg">
+                @else
+                <img style="margin-top: -2px;margin-right: 10px;"  src="https://d2elkgkdx2cp5d.cloudfront.net/assets/global/arrow_green-bb4267018493d26d5ef23d41f52f674046a789343cd449b2dace465966c00883.svg">
+                @endif
+                <span class="text-lg">
+                    {{ gmdate('H:i', $totalPreviuosTime) }}
+                </span>
+            </div>
 
 
             <span class="text-sm text-gray-800">
@@ -382,6 +379,7 @@ $account = Account::where('id', $account_id)
         display: flex !important;
         justify-content: flex-end !important;
     }
+<<<<<<< HEAD
     svg.w-5.h-5 {
         display: none !important;
 }
@@ -396,6 +394,8 @@ $account = Account::where('id', $account_id)
             width: 90% !important;
         }
         }
+=======
+>>>>>>> waqas_dev
 </style>
 {{-- <script>
      $(".btnMostrar").click(function(){

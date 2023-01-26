@@ -60,7 +60,7 @@ $account = Account::where('id', $account_id)
             </div>
         </div>
         <div class="new-activity-button pb-0 ml-4">
-            <button wire:click="$emit('activityCreate')" type="button" class="mt-4 mb-4 h-10 text-sm flex items-center rounded-md bg-blue-600 text-white pl-1 pr-3 hover:bg-blue-500 focus:outline-none active:bg-blue-700 transition duration-150 ease-in-out">
+            <button wire:click="$emit('activityCreate')" type="button" class="mt-4 mb-4 h-10 text-sm flex items-center rounded-md bg-blue-600 text-white pl-3 pr-3 hover:bg-blue-500 focus:outline-none active:bg-blue-700 transition duration-150 ease-in-out">
                 <x-svgs.plus class="w-5 h-5 mr-1" />
                 Add time
             </button>
@@ -379,7 +379,6 @@ $account = Account::where('id', $account_id)
         display: flex !important;
         justify-content: flex-end !important;
     }
-<<<<<<< HEAD
     svg.w-5.h-5 {
         display: none !important;
 }
@@ -394,8 +393,6 @@ $account = Account::where('id', $account_id)
             width: 90% !important;
         }
         }
-=======
->>>>>>> waqas_dev
 </style>
 {{-- <script>
      $(".btnMostrar").click(function(){

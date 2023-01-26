@@ -75,7 +75,7 @@
 
                         @if (count($item->screenshots) > 0)
                             <img src="{{ $item->screenshots[0]->fullPath() }}" style="width:100%">
-                            <span><small><b>(1/@php echo count($item->screenshots) @endphp)</b></small></span>
+                            <span><small><b>{{$item->project->title}} at {{ $item->screenshots[0]->created_at->format('D,M j,Y h:i a')}} ({{$item->total_activity_percentage}}% active)-Screenshot 1 of @php echo count($item->screenshots) @endphp</b></small></span>
                             @if ($item->screenshots->first()->fullPath() == 'https://media.neostaff.app/screenshots/00/1234567890.png')
                                 <img class="img_placeholder" src="activity_placeholder.png">
                                 
@@ -92,7 +92,7 @@
 
                         @if (count($item->screenshots) > 0)
                             <img src="{{ $item->screenshots[1]->fullPath() }}" style="width:100%">
-                            <span><small><b>(2/2)</b></small></span>
+                            <span><small><b>{{$item->project->title}} at {{ $item->screenshots[1]->created_at->format('D,M j,Y h:i a')}} ({{$item->total_activity_percentage}}% active)-Screenshot 2 of 2</b></small></span>
 
                             @if ($item->screenshots->first()->fullPath() == 'https://media.neostaff.app/screenshots/00/1234567890.png')
                                 <img class="img_placeholder" src="activity_placeholder.png">

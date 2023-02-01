@@ -3,7 +3,7 @@
 		<form wire:submit.prevent="create_activity"  autocomplete="off">	 
 			
 			<h4 class="font-montserrat text-center font-semibold text-lg text-gray-700 mb-6">
-				{{$task['title']}}
+				{{isset($task['title'])?$task['title']:''}}
 			</h4>
 			
 			<h5 class="font-montserrat font-semibold text-lg text-gray-700 mb-6">

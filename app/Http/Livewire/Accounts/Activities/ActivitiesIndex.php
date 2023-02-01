@@ -66,7 +66,7 @@ class ActivitiesIndex extends Component
                 Session::put('user_id', $this->user_id);
             }
             $user_login = auth()->id();
-            $this->users = User::where('id', '!=', $user_login)->get(['id', 'firstname', 'lastname']);
+            $this->users = User::where('id', '!=', $user_login)->orderBy('firstname')->get(['id', 'firstname', 'lastname']);
 
             $this->login = User::where('id', $user_login)->get();
         }

@@ -4,11 +4,10 @@ use App\Models\Account;
 use App\Models\User;
 
 $account_user = DB::table('account_user')
-    ->select('account_id')
     ->where('user_id', auth()->user()->id)
-    ->get();
+    ->first();
 
-$account_id = $account_user[0]->account_id;
+$account_id = $account_user->account_id;
 
 $account = Account::where('id', $account_id)
     ->select('name')
@@ -35,7 +34,7 @@ $account = Account::where('id', $account_id)
             </div>
         </div>
 
-        @role(['owner', 'manager'])
+        @if($account_user->allow_edit_time == 1)
         <div class="mt-4  sm:mt-0 ">
             <div class="ml-2">
                 <x-inputs.select-without-label2 wire:model="user_id" class="w-48" name="user_id">
@@ -66,7 +65,7 @@ $account = Account::where('id', $account_id)
             </button>
         </div>
 
-        @endrole
+        @endif
 
     </div>
 

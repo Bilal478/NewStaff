@@ -9,6 +9,12 @@
         <div class="w-44 px-3">
             Date
         </div>
+        <div class="w-44 px-3">
+            Edit Time
+        </div>
+        <div class="w-44 px-3">
+            Delete Screenshot
+        </div>
         <div class="w-20 px-3">
             Actions
         </div>

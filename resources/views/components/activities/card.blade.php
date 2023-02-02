@@ -1,6 +1,11 @@
-@props(['activity', 'countActivity'])
+@props(['activity', 'countActivity','allow_delete_screenshoot'])
 @if (isset($countActivity))
 @endif
+@php 
+$account_user = DB::table('account_user')
+    ->where('user_id', auth()->user()->id)
+    ->first();
+@endphp
 <div class="w-full sm:w-1/2 md:w-1/3 xl:w-1/6">
     <article class="bg-white mx-4 mb-8 rounded-md border shadow-sm hover:shadow-md article">
         <div class="relative group rounded-t-md overflow-hidden bg-black">
@@ -46,7 +51,7 @@
                 <br>
                 <div class="flex mb-4 w-3/5" style="float: right;
                 margin-top: -36px;">
-                    @role(['owner', 'manager'])
+                    @if($account_user->allow_delete_screenshot == 1)
                         <button type="button"
                             wire:click="$emit('trackEdit','{{ $activity->id }}','{{ $activity->date }}','{{ $activity->start_datetime->format('H:i:s') }}','{{ $activity->end_datetime->format('H:i:s') }}')">
                             <span class="text-xs text-blue-500">
@@ -91,7 +96,7 @@
 
                             </span>
                         </button>
-                    @endrole
+                    @endif
                 </div>
                 {{-- </form> --}}
 

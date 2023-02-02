@@ -57,7 +57,7 @@ class User extends Authenticatable
 
     public function accountsWithRole()
     {
-        return $this->belongsToMany(Account::class)->withPivot('role');
+        return $this->belongsToMany(Account::class)->withPivot(['id','role','allow_edit_time','allow_delete_screenshot']);
     }
 
     public function projects()

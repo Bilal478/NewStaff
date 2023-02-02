@@ -43,6 +43,42 @@ class MembersIndex extends Component
         'page' => ['except' => 1],
     ];
 
+    public function editTimePermssion($id,$permission){
+        
+        ($permission == 1)?$permission = 0: $permission=1;
+
+        DB::table('account_user')
+            ->where('id', $id)
+            ->update(['allow_edit_time' => $permission]);
+    }
+
+    public function editScreenshotPermssion($id,$permission){
+        
+        ($permission == 1)?$permission = 0: $permission=1;
+        
+        DB::table('account_user')
+            ->where('id', $id)
+            ->update(['allow_delete_screenshot' => $permission]);
+    }
+
+    public function editTimePermssionInvite($id,$permission){
+        
+        ($permission == 1)?$permission = 0: $permission=1;
+
+        DB::table('account_invitations')
+            ->where('id', $id)
+            ->update(['allow_edit_time' => $permission]);
+    }
+
+    public function editScreenshotPermssionInvite($id,$permission){
+        
+        ($permission == 1)?$permission = 0: $permission=1;
+        
+        DB::table('account_invitations')
+            ->where('id', $id)
+            ->update(['allow_delete_screenshot' => $permission]);
+    }
+
     public function updatingSearch()
     {
         $this->resetPage();

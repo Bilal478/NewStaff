@@ -5,8 +5,11 @@
 	<?php
 		$text='';
 		if(!empty($_GET)){
-			if($_GET['buy_more_seats']==1){
-				$text='Seat';
+			if(isset($_GET['buy_more_seats'])){
+                IF($_GET['buy_more_seats']==1){
+                    $text='Seat';
+                }
+				
 			}
 			else{
 				$text = 'Seats';
@@ -14,7 +17,7 @@
 	?>
 			<div class="alert" id="alert">
 				<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
-					You have purchased <?php echo $_GET['buy_more_seats']; echo ' '.$text; ?> more.
+					You have purchased <?php echo isset($_GET['buy_more_seats'])? ( $_GET['buy_more_seats']):0; echo ' '.$text; ?> more.
 			</div>
 			<br>
 			<script>

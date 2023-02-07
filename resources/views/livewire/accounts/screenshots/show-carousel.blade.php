@@ -137,6 +137,9 @@
             Array.from(document.querySelectorAll('.article')).forEach(function(el) { 
 				el.style.display = "block"; 
 			});
+            Array.from(document.querySelectorAll('.number_of_screeshot')).forEach(function(el) { 
+				el.style.display = "flex"; 
+			});
         }
 
         var slideIndex = 1;
@@ -153,13 +156,16 @@
 
             showSlides(slideIndex = n);
                
-            Array.from(document.querySelectorAll('.activity-img')).forEach(function(el) { 
-				el.classList.remove('group-hover:opacity-100');
-			});
+            // Array.from(document.querySelectorAll('.activity-img')).forEach(function(el) { 
+			// 	el.classList.remove('group-hover:opacity-100');
+			// });
 
-            Array.from(document.querySelectorAll('.article')).forEach(function(el) { 
+            // Array.from(document.querySelectorAll('.article')).forEach(function(el) { 
+			// 	el.style.display = "none"; 
+			// });
+            Array.from(document.querySelectorAll('.number_of_screeshot')).forEach(function(el) { 
 				el.style.display = "none"; 
-			});     
+			});        
             
         }
 

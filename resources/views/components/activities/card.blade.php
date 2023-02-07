@@ -15,7 +15,7 @@ $account_user = DB::table('account_user')
                 <button
                     wire:click.stop="$emit('screenshotsShow', {{ $activity->user_id }},{{ $activity->account_id }},'{{ $activity->date }}')"
                     onclick="currentSlide({{ $countActivity }})" type="button"
-                    class="bg-white font-montserrat font-semibold px-3 py-1 rounded-sm text-gray-700 text-xs">
+                    class="number_of_screeshot bg-white font-montserrat font-semibold px-3 py-1 rounded-sm text-gray-700 text-xs">
                     View screens
                 </button>
             </div>
@@ -35,7 +35,7 @@ $account_user = DB::table('account_user')
         </div>
 
         <div class="relative pt-6 pb-4">
-            <div class="absolute w-full flex justify-center top-1 -mt-5 z-10">
+            <div class=" number_of_screeshot absolute w-full flex justify-center top-1 -mt-5 z-10">
                 <span class=" font_weight bg-white flex items-center justify-center h-6 rounded-full shadow-md text-blue-600 text-center text-xs w-24">{{$activity->screenshots->count()}} {{ $activity->screenshots->count() == 1 ? 'screen' : 'screens'}}</span>
                 <!-- <button wire:click.stop="$emit('screenshotsShow', {{$activity->id}})" class="bg-white flex items-center justify-center h-6 rounded-full shadow-md text-blue-600 text-center text-xs w-24">
                     {{ $activity->screenshots->count() }} {{ $activity->screenshots->count() == 1 ? 'screen' : 'screens'}}
@@ -51,7 +51,7 @@ $account_user = DB::table('account_user')
                 <br>
                 <div class="flex mb-4 w-3/5" style="float: right;
                 margin-top: -36px;">
-                    @if($account_user->allow_delete_screenshot == 1)
+                  
                         <button type="button"
                             wire:click="$emit('trackEdit','{{ $activity->id }}','{{ $activity->date }}','{{ $activity->start_datetime->format('H:i:s') }}','{{ $activity->end_datetime->format('H:i:s') }}')">
                             <span class="text-xs text-blue-500">
@@ -63,17 +63,19 @@ $account_user = DB::table('account_user')
                                 </svg>
                             </span>
                         </button>
-                        <button type="button" wire:click="$emit('deleteActivityShow',{{ $activity->id }})">
+                       
+                        @if($account_user->allow_edit_time == 1)
+                        <button type="button" class="mr-1" wire:click="$emit('deleteActivityShow',{{ $activity->id }})">
                             <span class="text-xs text-red-500">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                                    </path>
-                                </svg>
+                            <svg class="svg-icon" style="font-size: 1rem;" viewBox="0 0 20 20">
+							<path d="M17.114,3.923h-4.589V2.427c0-0.252-0.207-0.459-0.46-0.459H7.935c-0.252,0-0.459,0.207-0.459,0.459v1.496h-4.59c-0.252,0-0.459,0.205-0.459,0.459c0,0.252,0.207,0.459,0.459,0.459h1.51v12.732c0,0.252,0.207,0.459,0.459,0.459h10.29c0.254,0,0.459-0.207,0.459-0.459V4.841h1.511c0.252,0,0.459-0.207,0.459-0.459C17.573,4.127,17.366,3.923,17.114,3.923M8.394,2.886h3.214v0.918H8.394V2.886z M14.686,17.114H5.314V4.841h9.372V17.114z M12.525,7.306v7.344c0,0.252-0.207,0.459-0.46,0.459s-0.458-0.207-0.458-0.459V7.306c0-0.254,0.205-0.459,0.458-0.459S12.525,7.051,12.525,7.306M8.394,7.306v7.344c0,0.252-0.207,0.459-0.459,0.459s-0.459-0.207-0.459-0.459V7.306c0-0.254,0.207-0.459,0.459-0.459S8.394,7.051,8.394,7.306"></path>
+						</svg>
                             </span>
                         </button>
-                        <button type="button" wire:click="$emit('deleteImageActivityShow',{{ $activity->id }})">
+                        @endif
+                        @if($account_user->allow_delete_screenshot == 1)
+                        @if(count($activity->screenshots) != 0)
+                        <button type="button" wire:click="$emit('deleteImageActivityShow',{{ $activity->id }},{{ $activity->screenshots }} )">
                             <span class="text-xs text-blue-500">
                                 <svg version="1.0" xmlns="http://www.w3.org/2000/svg" style="color: rgb(226, 111, 3)"
                                     width="12.000000pt" height="12.000000pt" viewBox="0 0 20.000000 20.000000"
@@ -96,6 +98,7 @@ $account_user = DB::table('account_user')
 
                             </span>
                         </button>
+                        @endif
                     @endif
                 </div>
                 {{-- </form> --}}
@@ -141,6 +144,25 @@ $account_user = DB::table('account_user')
     </article>
 </div>
 <style>
+    /* -----
+SVG Icons - svgicons.sparkk.fr
+----- */
+
+.svg-icon {
+  width: 1em;
+  height: 1em;
+}
+
+.svg-icon path,
+.svg-icon polygon,
+.svg-icon rect {
+  fill: red;
+}
+
+.svg-icon circle {
+  stroke: #4691f6;
+  stroke-width: 1;
+}
     .font_weight{
         font-weight: 600 !important;
         cursor: default !important;

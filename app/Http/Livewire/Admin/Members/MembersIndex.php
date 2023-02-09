@@ -49,6 +49,12 @@ class MembersIndex extends Component
         $admin->forceDelete();
     }
 
+    public function updateAdmin(Admin $admin)
+    {
+        $this->emit('adminData', $admin);
+        $this->dispatchBrowserEvent('open-update-modal');
+    }
+
     public function adminInviteDelete(AdminInvitation $adminInvitation)
     {
         $adminInvitation->delete();

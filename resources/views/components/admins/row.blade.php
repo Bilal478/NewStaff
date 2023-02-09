@@ -13,6 +13,7 @@
         </div>
         <div class="w-20 px-3 flex justify-end">
             <x-dropdowns.context-menu>
+                <x-dropdowns.context-menu-item wire:click.stop="updateAdmin({{$user->id}})" name="Edit" svg="svgs.edit"/>
                 <x-dropdowns.context-menu-item wire:click.stop="adminDelete({{$user->id}})" name="Remove" svg="svgs.x-circle"/>
             </x-dropdowns.context-menu>
         </div>

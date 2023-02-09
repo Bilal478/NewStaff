@@ -127,7 +127,7 @@ class ReportsIndex extends Component
     public function getUsersReport()
     {
         return Activity::join('users', 'activities.user_id', '=', 'users.id')
-            ->groupBy('user_id', 'date')
+            ->groupBy('user_id', 'date','firstname','lastname')
             ->selectRaw('sum(seconds) as seconds, avg(total_activity_percentage) as productivity, date, firstname, lastname, user_id')
             ->whereBetween('date', [$this->startDate(true), $this->endDate(true)])
             ->when($this->user_id, function($query) {

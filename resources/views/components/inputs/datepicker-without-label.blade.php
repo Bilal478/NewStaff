@@ -11,6 +11,7 @@
             x-data
             x-ref="datepicker"
             x-init="new Litepicker({
+                maxDate: new Date(),
                 element: $refs.datepicker,
                 format: 'MMM DD, YYYY',
                 setup: (picker) => {

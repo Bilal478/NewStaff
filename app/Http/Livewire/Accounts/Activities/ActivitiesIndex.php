@@ -122,6 +122,10 @@ class ActivitiesIndex extends Component
     public function ActivitiesAverage()
     {
         
+        if($this->user_id == null){
+            $this->user_id = auth()->id();
+        }
+       
         $todayActivitySum = User::where('id',$this->user_id)->first()
         ->activities()
         ->whereDate('date', $this->formatted_date)

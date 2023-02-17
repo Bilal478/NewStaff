@@ -15,6 +15,9 @@
                     <x-navigation.sidebar-item route="admin.members" img="svgs.users">
                         Members
                     </x-navigation.sidebar-item>
+                    <x-navigation.sidebar-item route="admin.settings" img="svgs.settings">
+                        Settings
+                    </x-navigation.sidebar-item>
                 </ul>
             </div>
         </div>

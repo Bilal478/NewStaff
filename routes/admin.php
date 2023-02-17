@@ -10,7 +10,7 @@ use App\Http\Livewire\Auth\Admin\Invitation;
 use App\Http\Livewire\Auth\Passwords\Confirm;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Livewire\Admin\Members\MembersIndex;
-
+use App\Http\Livewire\Admin\Settings\SettingsIndex;
 Route::middleware('guest:admin')->group(function () {
     Route::get('login', Login::class)->name('login');
 });
@@ -26,5 +26,6 @@ Route::middleware('auth:admin')->group(function () {
 
     Route::get('dashboard', Dashboard::class)->name('dashboard');
     Route::get('members', MembersIndex::class)->name('members');
+    Route::get('settings', SettingsIndex::class)->name('settings');
     Route::get('profile/edit', UserEdit::class)->name('profile.edit');
 });

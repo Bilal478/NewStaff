@@ -19,6 +19,10 @@ Route::prefix('v1')->group(function () {
         Route::get('user/change_state_punch_code', 'v1\UserController@change_state_punch_code');
         Route::get('company/members', 'v1\CompanyController@members');
 
+        Route::get('user/logs/{user_id?}', 'v1\Auth\LoginUserLogsController@index');
+        Route::post('user/logs', 'v1\Auth\LoginUserLogsController@store');
+        Route::post('user/logs/delete/{id}', 'v1\Auth\LoginUserLogsController@delete');
+
         Route::get('accounts/{account}/projects/getbypro', 'v1\Accounts\ProjectsController@getbypro');
       
         Route::middleware('api.account')->group(function () {

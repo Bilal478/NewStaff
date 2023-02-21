@@ -49,6 +49,19 @@ class MembersIndex extends Component
         $admin->forceDelete();
     }
 
+
+    public function adminDisable(Admin $admin)
+    {
+        $admin->is_disabled = 1;
+        $admin->save();
+        $this->toast('Permission Updated.');
+    }
+    public function adminEnable(Admin $admin)
+    {
+        $admin->is_disabled = 0;
+        $admin->save();
+        $this->toast('Permission Updated.');
+    }
     public function updateAdmin(Admin $admin)
     {
         $this->emit('adminData', $admin);

@@ -54,6 +54,7 @@ use App\Http\Livewire\SelectPlan;
 Route::view('/download', 'download')->name('download');
 
 Route::get('/downloads/windows/', [download::class, 'index'])->name('download.index');
+Route::get('/downloads/mac/', [download::class, 'macFile'])->name('download.macFile');
 
 Route::middleware('guest:web')->group(function () {
     Route::get('login', Login::class)->name('login');

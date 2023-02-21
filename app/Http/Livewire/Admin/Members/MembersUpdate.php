@@ -19,6 +19,8 @@ class MembersUpdate extends Component
     public $firstname = '';
     public $lastname = '';
     public $adminId = '';
+    public $password = '';
+    public $password_confirmation = '';
    
     protected $listeners = [
         'updateAdmin' => 'show',
@@ -48,11 +50,22 @@ class MembersUpdate extends Component
             'firstname' => ['required', 'string', 'max:100'],
             'lastname' => ['required', 'string', 'max:100'],
             'email' => ['required', 'email', 'max:100'],
+            'password' => 'min:6',
+            'password_confirmation' => 'required_with:password|same:password|min:6'
         ]);
         
-        Admin::where('id',$this->adminId)->update(['firstname' => $this->firstname,
-        'lastname' => $this->lastname,
-        'email' => $this->email]);
+        $admin = Admin::where('id',$this->adminId)->first();
+        $admin->firstname =  $this->firstname;
+        $admin->lastname =  $this->lastname;
+        $admin->email =  $this->email;
+
+        if($this->password){
+            $admin->password =  Hash::make($this->password);
+        }
+        
+        $admin->update();
+
+    
         
         $this->dispatchBrowserEvent('close-update-modal');
         $this->toast('Admin Updated.');

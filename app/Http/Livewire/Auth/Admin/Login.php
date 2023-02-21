@@ -27,6 +27,11 @@ class Login extends Component
             return;
         }
 
+        if (! Auth::guard('admin')->attempt(['email' => $this->email, 'password' => $this->password,'is_disabled'=>0])) {
+            $this->addError('email', 'Your account is disabled.');
+
+            return;
+        }
         return redirect()
             ->intended(route(RouteServiceProvider::ADMIN_HOME));
     }

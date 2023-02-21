@@ -15,6 +15,11 @@
             <x-dropdowns.context-menu>
                 <x-dropdowns.context-menu-item wire:click.stop="updateAdmin({{$user->id}})" name="Edit" svg="svgs.edit"/>
                 <x-dropdowns.context-menu-item wire:click.stop="adminDelete({{$user->id}})" name="Remove" svg="svgs.x-circle"/>
+                @if($user->is_disabled == 0)
+                <x-dropdowns.context-menu-item wire:click.stop="adminDisable({{$user->id}})" name="Disable" svg="svgs.settings"/>
+                @else
+                <x-dropdowns.context-menu-item wire:click.stop="adminEnable({{$user->id}})" name="Enable" svg="svgs.settings"/>
+                @endif
             </x-dropdowns.context-menu>
         </div>
     </div>

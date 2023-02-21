@@ -379,7 +379,7 @@ $account = Account::where('id', $account_id)
         justify-content: flex-end !important;
     }
     svg.w-5.h-5 {
-        display: none !important;
+        /* display: none !important; */
 }
 .golden{
     color: #f8c58d !important;

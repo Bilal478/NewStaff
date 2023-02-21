@@ -6,7 +6,12 @@
         <x-inputs.text wire:model="firstname" label="First Name" name="firstname" type="text" placeholder="First Name" required />
         <x-inputs.text wire:model="lastname" label="Last Name" name="lastname" type="text" placeholder="Last Name" required />
         <x-inputs.text wire:model="email" label="Email Address" name="email" type="email" placeholder="johndoe@example.com" required />
-        
+        <hr>
+        <h6 class="font-montserrat font-semibold my-2 opacity-50">
+            Change Password
+        </h6>
+        <x-inputs.text wire:model="password" label="Password" name="password" type="text" placeholder="Password" />
+        <x-inputs.text wire:model="password_confirmation" label="Confirm Password" name="password_confirmation" type="text" placeholder="Confirm Password" />
 
         <div class="flex justify-end mt-2">
             <x-buttons.blue-inline type="submit">

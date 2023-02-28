@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\v1\Accounts;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProjectResource;
 use App\Models\Account;
+use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -16,14 +17,14 @@ class ProjectsController extends Controller
        //$projects = $request->user()->projects()->where('account_id', $account->id)->get();
 		
        // return api_response(ProjectResource::collection($projects), 200);	
-	
-			$projects = DB::table('projects')
-				->where('projects.account_id', '=', $account->id)
-				->join('tasks', 'projects.id', '=', 'tasks.project_id')
-				->where('tasks.user_id', '=', $request->user()->id)
-				->select('projects.*')
-			->get();
-			
+        
+       $projects = DB::table('projects')
+       ->where('projects.account_id', '=', $account->id)
+       ->join('project_user', 'projects.id', '=', 'project_user.project_id')
+       ->where('project_user.user_id', '=', $request->user()->id)
+       ->select('projects.*')
+       ->get();
+       
 			
 		return api_response(ProjectResource::collection($projects),200);
     }

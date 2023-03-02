@@ -93,12 +93,6 @@ class Dashboard extends Component
         $account->tasks->each->delete();
         $account->activities->each->delete();
         $account->delete();
-        foreach($account->screenshots as $screenshot){
-            
-            if(File::isFile("C:/wamp64/www/neostaff/storage/app/screenshots/".$screenshot->path)){
-                    (unlink("C:/wamp64/www/neostaff/storage/app/screenshots/".$screenshot->path));
-                }   
-        }
         
         $this->toast('Account Deleted.');
         $this->reset();

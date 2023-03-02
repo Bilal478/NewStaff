@@ -114,6 +114,7 @@
         <div class="text-center w-32 px-3 flex justify-end">
         <x-dropdowns.context-menu>
             <x-dropdowns.context-menu-item wire:click.stop="$emit('accountEdit', {{$account->id}})"  name="Edit" svg="svgs.edit"/>
+            <x-dropdowns.context-menu-item wire:click.stop="delete_company({{$account->id}})"  name="Delete" svg="svgs.x-circle"/>
         </x-dropdowns.context-menu>
         </div>
     </div>

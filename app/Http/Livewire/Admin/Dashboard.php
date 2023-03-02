@@ -6,9 +6,10 @@ use App\Models\Account;
 use Illuminate\Support\Facades\File;
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Http\Livewire\Traits\Notifications;
 class Dashboard extends Component
 {
-    use WithPagination;
+    use WithPagination, Notifications;
     public $search = '';
     public $accountStorage = [];
     protected $listeners = [
@@ -32,7 +33,7 @@ class Dashboard extends Component
 
     public function getAccounts()
     {
-        
+
         $accounts = Account::query()->where('name', 'like', '%' . $this->search . '%')->orwhere(function($query){
             return $query->whereHas('users',function($query){
                  $query->where('firstname','like','%'.$this->search.'%');
@@ -50,7 +51,7 @@ class Dashboard extends Component
                     foreach($item->users as $user){
                        
                         $folder_path = storage_path().'\app\screenshots\\'.$user->id;
-                
+                        // dd($folder_path);
                         if(File::isDirectory($folder_path)){
                             $userStorage = $userStorage + $this->folderSize($folder_path);
                         }
@@ -82,5 +83,26 @@ class Dashboard extends Component
                 }
             }
         return $total_size;
+    }
+
+    public function delete_company($id)
+    {
+
+        $account = Account::with(['users', 'projects', 'tasks', 'activities','screenshots'])->where('id',$id)->first();
+        $account->projects->each->delete();
+        $account->tasks->each->delete();
+        $account->activities->each->delete();
+        $account->delete();
+        foreach($account->screenshots as $screenshot){
+            
+            if(File::isFile("C:/wamp64/www/neostaff/storage/app/screenshots/".$screenshot->path)){
+                    (unlink("C:/wamp64/www/neostaff/storage/app/screenshots/".$screenshot->path));
+                }   
+        }
+        
+        $this->toast('Account Deleted.');
+        $this->reset();
+        $this->emit('accountsRefresh');
+        
     }
 }

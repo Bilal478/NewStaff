@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\File;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Http\Livewire\Traits\Notifications;
+use Illuminate\Support\Facades\DB;
 class Dashboard extends Component
 {
     use WithPagination, Notifications;
@@ -88,12 +89,11 @@ class Dashboard extends Component
     public function delete_company($id)
     {
 
-        $account = Account::with(['users', 'projects', 'tasks', 'activities','screenshots'])->where('id',$id)->first();
-        $account->projects->each->delete();
-        $account->tasks->each->delete();
-        $account->activities->each->delete();
+        $account = Account::where('id',$id)->first();
+        $account->deleted_by = auth()->user()->id;
+        $account->update();
         $account->delete();
-        
+    
         $this->toast('Account Deleted.');
         $this->reset();
         $this->emit('accountsRefresh');

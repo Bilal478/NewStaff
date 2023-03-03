@@ -17,6 +17,11 @@ class SetAccountInSession
     {
         if ($event->guard == 'web') {
             $account = $event->user->accountsWithRole()->first();
+            if(!$account){
+                Auth::guard('web')->logout();
+                session()->put('account_not_found', true);
+                return redirect(route('login'));
+            }
 
             session()->put('account_id', $account->id);
             session()->put('account_role', $account->pivot->role);

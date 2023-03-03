@@ -15,6 +15,12 @@
                 create a new account
             </a>
         </p>
+        @if(session()->get('account_not_found'))
+        <p class="mt-2 text-sm text-center text-red-600 leading-5 max-w">
+           You can't access the dashboard.
+        </p>
+        @endif
+        {{session()->forget('account_not_found')}}
     </div>
 
     <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">

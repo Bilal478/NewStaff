@@ -9,6 +9,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
+use Illuminate\Support\Facades\Request;
 
 class Register extends Component
 {
@@ -17,6 +18,7 @@ class Register extends Component
     public $lastName = '';
     public $email = '';
     public $password = '';
+    public $captcha = '';
 
     public function register()
     {
@@ -26,6 +28,7 @@ class Register extends Component
             'lastName' => ['required', 'max:50'],
             'email' => ['required', 'email', 'unique:users'],
             'password' => ['required', 'min:8'],
+            'captcha' => ['required', 'captcha'],
         ]);
 
         $account = Account::create([
@@ -48,6 +51,17 @@ class Register extends Component
 		return redirect()->intended('billing_information?plan=Monthly');
 
         //return redirect()->intended(route(RouteServiceProvider::HOME));
+    }
+    public function capthcaFormValidate(Request $request)
+    {
+        $request->validate([
+            'captcha' => 'required | captcha',
+        ],
+    );
+    }
+    public function reloadCaptcha()
+    {
+        return response()->json(['captcha'=> captcha_img()]);
     }
 
     public function render()

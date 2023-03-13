@@ -38,7 +38,6 @@ class VerifyAccount
         if (session()->get('account_role') != $role) {
             session()->put('account_role', $role);
         }
-
         return $next($request);
     }
 }

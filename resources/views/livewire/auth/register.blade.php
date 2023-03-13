@@ -17,6 +17,7 @@
             </a>
         </p>
     </div>
+    
 
     <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-2xl">
         <div class="px-4 py-8 bg-white shadow sm:rounded-lg sm:px-10">
@@ -80,6 +81,28 @@
                         />
                     </div>
                 </div>
+                <div class="form-group mt-4 mb-4">
+                    <div class="captcha">
+                    <span>{!! captcha_img() !!}</span>
+                    <button type="button" class="btn btn-danger" class="reload" id="reload">
+                    ↻
+                    </button>
+                    </div>
+                </div>
+                <div class="form-group mb-4">
+                    <input id="captcha" type="text" class="form-control" wire:model.lazy="captcha" placeholder="Enter Captcha" name="captcha" required>
+                    @error('captcha')
+                      <div class="alert alert-danger mt-1 mb-1">Invalid Captcha</div>
+                    @enderror
+                    {{-- <x-inputs.text
+                    class="md:pl-5"
+                    wire:model.lazy="captcha"
+                    label="Captcha"
+                    name="captcha"
+                    type="text"
+                    required
+                /> --}}
+                </div>
 
                 <x-buttons.blue-full
                     text="Create a new account"
@@ -89,6 +112,16 @@
         </div>
     </div>
 </div>
-<style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 
-</style>
+<script type="text/javascript">
+$('#reload').click(function () {
+$.ajax({
+type: 'GET',
+url: 'reload-captcha',
+success: function (data) {
+$(".captcha span").html(data.captcha);
+}
+});
+});
+</script>

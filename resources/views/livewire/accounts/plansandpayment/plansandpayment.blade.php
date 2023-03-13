@@ -10,8 +10,8 @@ $account = Account::find(session()->get('account_id'));
 	$owner_id_query = DB::table('account_user')
 		->where('account_id', $account->id)
 		->first();
-	
 	$subs = DB::select('SELECT * FROM account_user WHERE account_id="'.$owner_id_query->account_id.'"');	
+	
 	
 	$count_subs = count($subs);
 	
@@ -179,7 +179,7 @@ if($temp >0){//or 1
 				?>
 				
 				<div class="form-group pt-6">
-					<label for="">Seats</label>
+					<label for="">Users</label>
 					<input onchange="Calculate(<?php echo $price; ?>)" type="number" min="<?php echo $count_subs ?>" name="selectseats" id="selectseats" class="form-control placeholder-gray-300 w-full" value="1" placeholder="# seats">
 				</div>
 				
@@ -222,7 +222,7 @@ if($temp >0){//or 1
 				{{method_field('POST')}}
                     <input type="hidden" name="" value="">                
 				</form>
-				
+				<span class="text-gray-700"><a href="{{ url()->previous() }}">back</a></span>
 			</div>
 		</div>
 	</div>
@@ -336,8 +336,8 @@ body{
   content: "";
   height: 18px;
   width: 18px;
-  left: 4px;
-  bottom: 4px;
+  left: 9px;
+  bottom: 3px;
   background-color: #fff;
   -webkit-transition: .4s;
   transition: .4s;
@@ -469,8 +469,8 @@ document.addEventListener('DOMContentLoaded', function () {
 		location.reload();
 		console.log('Annual');
     } else {
-      // do that
-		//document.getElementById("checkbox").checked = false;
+      // do that 
+		// document.getElementById("checkbox").checked = false;
 		document.getElementById('Monthly-price').style.fontWeight='bold';
 		document.getElementById('Annual-price').style.fontWeight='normal';
 		history.pushState(null, "", "https://media.neostaff.app/billing_information?plan=Monthly");

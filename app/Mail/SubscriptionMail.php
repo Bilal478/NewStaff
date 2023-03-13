@@ -18,7 +18,7 @@ class SubscriptionMail extends Mailable
      *
      * @var Demo
      */
-    public $subject="NeoStaff";
+    public $subject="Welcome to NeoStaff";
  
     /**
      * Create a new message instance.

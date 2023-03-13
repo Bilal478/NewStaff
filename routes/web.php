@@ -62,6 +62,9 @@ Route::middleware('guest:web')->group(function () {
     Route::get('/', Home::class)->name('home');
 
 	Route::get('register', Register::class)->name('register');
+    Route::get('reload-captcha', [Register::class, 'reloadCaptcha']);
+    Route::post('captcha-validation', [Register::class, 'capthcaFormValidate']);
+
 });
 
 Route::group(['namespace' => 'Subscriptions'], function() {

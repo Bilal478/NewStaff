@@ -85,4 +85,4 @@ elseif($user_subscriptions[0]->name =='Monthly'){
 		</tfooter>
 	</table>
 </body>
-</html>           
+</html>

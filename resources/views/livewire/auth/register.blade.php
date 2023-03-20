@@ -79,8 +79,11 @@
 							required
                         />
                     </div>
+                    <div class="w-full mb-3">
+                    <input type="checkbox" id="policy" name="policy" value="policy" required>
+                    <label for="vehicle1"><small> I agree to the <b><a  class="text-blue-600" target="_blank" href="/terms-and-conditions">Terms</a>, Privacy Policy</b> and <b>DPA</b><b class="text-red-600">*</b> </small></label>
+                    </div>
                 </div>
-
                 <x-buttons.blue-full
                     text="Create a new account"
                     type="submit"

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Accounts\ScreenshotController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Auth\Logout2Controller;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\download;
 use App\Http\Controllers\WelcomeController;
@@ -56,6 +57,8 @@ Route::view('/download', 'download')->name('download');
 Route::get('/downloads/windows/', [download::class, 'index'])->name('download.index');
 Route::get('/downloads/mac/', [download::class, 'macFile'])->name('download.macFile');
 
+Route::get('/terms-and-conditions', [download::class, 'TermsAndConditions']);
+
 Route::middleware('guest:web')->group(function () {
     Route::get('login', Login::class)->name('login');
 
@@ -83,6 +86,7 @@ Route::middleware(['auth:web', 'account.verify'])->group(function () {
     Route::get('email/verify', Verify::class)->middleware('throttle:6,1')->name('verification.notice');
     Route::get('password/confirm', Confirm::class)->name('password.confirm');
     Route::post('logout', LogoutController::class)->name('logout');
+    Route::post('logout2', Logout2Controller::class)->name('logout2');
 	
 	
 	Route::get('/billing_information', [PlansandPayment::class, 'index'])->name('billing_information');

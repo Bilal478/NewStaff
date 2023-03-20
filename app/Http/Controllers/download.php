@@ -27,4 +27,8 @@ class download extends Controller
 		
     	return response()->download($filePath, $fileName, $headers);
     }
+
+    public function TermsAndConditions(){
+      return view('livewire.accounts.terms.terms-and-conditions');
+    }
 }

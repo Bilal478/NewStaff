@@ -179,7 +179,7 @@ if($temp >0){//or 1
 				?>
 				
 				<div class="form-group pt-6">
-					<label for="">Seats</label>
+					<label for="">Users</label>
 					<input onchange="Calculate(<?php echo $price; ?>)" type="number" min="<?php echo $count_subs ?>" name="selectseats" id="selectseats" class="form-control placeholder-gray-300 w-full" value="1" placeholder="# seats">
 				</div>
 				
@@ -188,7 +188,7 @@ if($temp >0){//or 1
 				}else{ ?>
 				
 				<div class="form-group pt-6">
-					<label for="">Seats</label>
+					<label for="">Users</label>
 					<input onchange="Calculate(<?php  echo $price; ?>)"  min="<?php echo $count_subs ?>" type="number" name="selectseats" id="selectseats" class="form-control placeholder-gray-300 w-full" value="<?php echo $count_subs ?>" placeholder="# seats">
 				</div>
 				<?php }
@@ -209,6 +209,17 @@ if($temp >0){//or 1
 					id="card-button" data-secret="{{ $intent->client_secret }}">PAY NOW</button>  
 					
 				</form>
+
+				<button  class="text-center w-full  mt-2 sm:mt-0 h-10  rounded-md bg-blue-600 
+					text-white pl-4 pr-6 hover:bg-blue-500 focus:outline-none active:bg-blue-700 transition duration-150 ease-in-out"	
+					onclick="event.preventDefault(); document.getElementById('logout2-form').submit();">BACK</button>
+				
+                <form id="logout2-form" action="{{route('logout2')}}" method="POST" style="display: none;">
+				@csrf
+				{{method_field('POST')}}
+                    <input type="hidden" name="" value="">                
+				</form>
+
 				
 				<a href="https://media.neostaff.app/logout" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="px-3 py-1 rounded-md leading-6 flex items-center hover:bg-gray-100 hover:text-blue-600">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">

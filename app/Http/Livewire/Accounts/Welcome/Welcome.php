@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 class Welcome extends Component{
 	
 	public function welcome(){
-		
+		session()->forget('account');
 		return view('livewire.accounts.welcome.welcome');
 	}
 }

@@ -58,6 +58,7 @@ Route::get('/downloads/windows/', [download::class, 'index'])->name('download.in
 Route::get('/downloads/mac/', [download::class, 'macFile'])->name('download.macFile');
 
 Route::get('/terms-and-conditions', [download::class, 'TermsAndConditions']);
+Route::get('/hipaa', [download::class, 'hipaa']);
 
 Route::middleware('guest:web')->group(function () {
     Route::get('login', Login::class)->name('login');

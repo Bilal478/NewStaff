@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <div>
     <div class="sm:mx-auto sm:w-full sm:max-w-md">
         <div class="flex justify-center">
@@ -89,6 +90,10 @@
                     type="submit"
                 />
             </form>
+            <div class="w-full mt-3">
+                <i class="fa fa-lock"></i>
+                <label for="vehicle1"><small>Subject to HIPAA?Sign our <b><a  class="text-blue-600" target="_blank" href="/hipaa">BBA</a></b></small></label>
+                </div>
         </div>
     </div>
 </div>

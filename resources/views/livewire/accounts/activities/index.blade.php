@@ -312,7 +312,9 @@ $account = Account::where('id', $account_id)
                 </ul>
             </div>
             <h1 class="py-4"><b>Your Organizations</b></h1>
-            <h1 class="pb-2"><b><?php echo $account[0]->name . ' team members'; ?> </b></h1>
+            <h1 class="pb-2"><b><?php if (isset($account[0])) {
+                echo $account[0]->name . ' team members';
+            }  ?> </b></h1>
             <h4 class="text-gray-400 py-4"><i class="fas fa-info-circle"></i> Time can also be added manually on the
                 timesheets page.</h4>
         </div>

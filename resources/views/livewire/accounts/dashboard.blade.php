@@ -1,8 +1,14 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <div>
     <div class="pb-12">
-        <h1 class="font-montserrat text-xl font-semibold text-gray-700">
+        <h1 class="font-montserrat text-xl font-semibold text-gray-700 float-left mr-20">
             Dashboard
         </h1>
+        
+        <button type="button" class="mt-4 mb-4 h-10 text-sm flex items-center rounded-md bg-blue-600 text-white pl-3 pr-3 hover:bg-blue-500 focus:outline-none active:bg-blue-700 transition duration-150 ease-in-out">
+           <a href="#miModal"> Track Time</a>
+        </button>
+    
     </div>
     <div class="mb-6 border-b w-full xl:w-1/4" >
         <h1 class="text-blue-500  text-xl" style="font-size: 30px">{{date('F d')}}</h1>
@@ -100,3 +106,61 @@
     </div>
 
 </div>
+<div id="miModal" class="modal">
+    <div class="modal-contenido">
+        <a href="#">X</a>
+        <div class="py-4 pl-4">
+            <h4 class="text-gray-600">
+                <i class="fa fa-exclamation-circle"></i> Your team has not tracked any time.
+            </h4>
+        </div>
+
+        <h1 class="py-4"><b>Getting Started</b></h1>
+        <div class="list">
+            <ul>
+                <ol>1. Each team member needs to open their invite email and click the accept link.</li>
+                    <ol>2. Next they must download the <a class="text-blue-600" href="https://neostaff.app/download">NeoStaff App.</a></li>
+                        <ol>3. Finally they have to install the app and use it to track time to a project.</li>
+            </ul>
+        </div>
+        <h1 class="py-4"><b>Your Organizations</b></h1>
+        <h1 class="pb-2"><b><?php if (isset($account[0])) {
+            echo $account[0]->name . ' team members';
+        }  ?> </b></h1>
+        <h4 class="text-gray-400 py-4"><i class="fas fa-info-circle"></i> Time can also be added manually on the
+            timesheets page.</h4>
+    </div>
+</div>
+
+<style>
+    .modal-contenido {
+        background-color: white;
+        border-radius: 8px;
+        width: 650px;
+        height: 400px;
+        padding: 10px 20px;
+        margin: 100px 100px 350px 350px;
+        position: relative;
+    }
+
+    .list {
+        margin-left: 30px;
+    }
+
+    .modal {
+        background-color: rgba(0, 0, 0, 0.5);
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 1s;
+    }
+
+    #miModal:target {
+        opacity: 1;
+        pointer-events: auto;
+    }
+</style>

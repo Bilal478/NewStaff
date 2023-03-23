@@ -31,4 +31,7 @@ class download extends Controller
     public function TermsAndConditions(){
       return view('livewire.accounts.terms.terms-and-conditions');
     }
+    public function hipaa(){
+      return view('livewire.accounts.hipaa.hipaa-compliance');
+    }
 }

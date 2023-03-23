@@ -12,12 +12,14 @@ $account_user = DB::table('account_user')
             <div
                 class="activity-img flex items-center justify-center absolute inset-0 z-10 opacity-0 transition duration-500 ease-linear group-hover:opacity-100">
                 {{-- @dd($loop->iteration) --}}
+                @if ($activity->screenshots->first()->path != '00/1234567890.png')
                 <button
                     wire:click.stop="$emit('screenshotsShow', {{ $activity->user_id }},{{ $activity->account_id }},'{{ $activity->date }}')"
                     onclick="currentSlide({{ $countActivity }})" type="button"
                     class="number_of_screeshot bg-white font-montserrat font-semibold px-3 py-1 rounded-sm text-gray-700 text-xs">
                     View screens
                 </button>
+                @endif
             </div>
             {{-- @dump($activity) --}}
             <div
@@ -27,8 +29,8 @@ $account_user = DB::table('account_user')
                         <img style="" src="{{ $activity->screenshots->first()->fullPath() }}" alt="">
                     @endif
                 @endif
-                @if (!$activity->screenshots)
-                    <img class="img_placeholder" src="activity_placeholder.png">
+                @if ($activity->screenshots->first()->path === '00/1234567890.png')
+                    <img class="img_placeholder" src="2.png">
                 @endif
             </div>
 
@@ -36,8 +38,12 @@ $account_user = DB::table('account_user')
 
         <div class="relative pt-6 pb-4">
             <div class=" number_of_screeshot absolute w-full flex justify-center top-1 -mt-5 z-10">
-                <span class=" font_weight bg-white flex items-center justify-center h-6 rounded-full shadow-md text-blue-600 text-center text-xs w-24">{{$activity->screenshots->count()}} {{ $activity->screenshots->count() == 1 ? 'screen' : 'screens'}}</span>
-                <!-- <button wire:click.stop="$emit('screenshotsShow', {{$activity->id}})" class="bg-white flex items-center justify-center h-6 rounded-full shadow-md text-blue-600 text-center text-xs w-24">
+            @if ($activity->screenshots->first()->path != '00/1234567890.png')    
+            <span class=" font_weight bg-white flex items-center justify-center h-6 rounded-full shadow-md text-blue-600 text-center text-xs w-24">{{$activity->screenshots->count()}} {{ $activity->screenshots->count() == 1 ? 'screen' : 'screens'}}</span>
+            @else
+            <span class=" font_weight bg-white flex items-center justify-center h-6 rounded-full shadow-md text-blue-600 text-center text-xs w-24">0 screen</span>
+            @endif    
+            <!-- <button wire:click.stop="$emit('screenshotsShow', {{$activity->id}})" class="bg-white flex items-center justify-center h-6 rounded-full shadow-md text-blue-600 text-center text-xs w-24">
                     {{ $activity->screenshots->count() }} {{ $activity->screenshots->count() == 1 ? 'screen' : 'screens'}}
                 </button> -->
             </div>

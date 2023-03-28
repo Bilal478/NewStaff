@@ -40,6 +40,7 @@ class ActivitiesController extends Controller
     public function storeScreenshots(StoreTaskActivityRequest $request, Account $account, Activity $activity): void
     {
         collect($request->screenshots)->each(function ($screenshot) use ($request, $account, $activity) {
+            // dd($request->screenshots);
             $activity->screenshots()->create([
                 'path' => Screenshot::saveFile($request->user(), $screenshot),
                 'account_id' => $account->id,

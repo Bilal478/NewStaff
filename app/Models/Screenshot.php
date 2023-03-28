@@ -8,6 +8,7 @@ use App\Traits\BelongsToAccount;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Intervention\Image\Facades\Image;
 
 class Screenshot extends Model
 {
@@ -34,8 +35,26 @@ class Screenshot extends Model
 
     public static function saveFile(User $user, $imageFile): string
     {
+        // dd($imageFile);
+        list($width, $height, $type, $attr) = getimagesize($imageFile);
+
+        $im = new Imagick();
+$im->pingImage($imageFile);
+$im->readImage($imageFile);
+$im->resizeImage($width,$height,Imagick::FILTER_CATROM , 1,TRUE ); 
+$im->setImageFormat( "webp" );
+$im->setOption('webp:method', '6'); 
+// $im->writeImage($dest); 
+      
+        // $image = Image::make($imageFile);
+        
+        // $image->resize($width, $height, function ($constraint) {
+        //     $constraint->aspectRatio();
+        //     $constraint->upsize();
+        // });
+        
         return Storage::disk(self::STORAGE_DISK)
-            ->putFileAs($user->id, $imageFile, static::fileName());
+            ->putFileAs($user->id, $im, static::fileName());
     }
 
     public static function fileName(string $extension = '.png'): string

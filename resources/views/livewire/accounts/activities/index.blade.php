@@ -16,7 +16,11 @@ $account = Account::where('id', $account_id)
 <div>
     <x-page.title svg="svgs.computer">
         Activities
+        <button type="button" class="ml-20 h-10 text-sm flex items-center rounded-md bg-blue-600 text-white pl-3 pr-3 hover:bg-blue-500 focus:outline-none active:bg-blue-700 transition duration-150 ease-in-out">
+            <a href="#miModal"> Track Time</a>
+         </button>
     </x-page.title>
+    
     <div></div>
 
     <div class="flex items-center flex-wrap pb-8 flex-col sm:flex-row">

@@ -1,13 +1,26 @@
 <div class="hsds-contents__content">
+  <div class="pt-4 img-logo pb-4" id="logo_div">
+    <img src="{{ url(asset('images/logo/neostaff-logo.png')) }}" alt="NeoStaff" height="60px" width="180px">
+</div>
   <div class="hsds-long-form-text">
   <h1>HIPAA compliance</h1>
   <hr class="hsds-long-form-text__hr--xl">
   <div class="richtext-container">
     <h5 class="hsds-row__p">Hubstaff is HIPAA Compliant</h5>
-    <p>Hubstaff maintains compliance with the Health Insurance Portability and Accountability Act of 1996 (42 U.S.C. §§ 1320d et. seq.), as amended by the Health Information Technology for Economic and Clinical Health Act of 2009 (42 U.S.C. §§ 17921 et. seq.) and all regulations as may be promulgated under both laws and amended from time to time (“HIPAA”).</p>
+    <p align="justify">Hubstaff maintains compliance with the Health Insurance Portability and Accountability Act of 1996 (42 U.S.C. §§ 1320d et. seq.), as amended by the Health Information Technology for Economic and Clinical Health Act of 2009 (42 U.S.C. §§ 17921 et. seq.) and all regulations as may be promulgated under both laws and amended from time to time (“HIPAA”).</p>
     <h5>Business Associate Agreement</h5>
-    <p>Hubstaff’s Business Associate Agreement (BAA) is provided to help meet HIPAA legal compliance requirements. Our BAA forms an Addendum to our <a href="https://hubstaff.com/terms" target="" linktype="url">Terms of Service</a> and Agreement (as defined in our Terms of Service), and replaces any previously applicable BAA between you and Hubstaff.</p><p>To complete our BAA, please contact support to sign it.</p><p><a href="mailto:support@hubstaff.com" target="" linktype="url">Contact Support</a></p></div></div></div>
+    <p align="justify">Hubstaff’s Business Associate Agreement (BAA) is provided to help meet HIPAA legal compliance requirements. Our BAA forms an Addendum to our <a href="/terms-and-conditions " target="" linktype="url">Terms of Service</a> and Agreement (as defined in our Terms of Service), and replaces any previously applicable BAA between you and Hubstaff.</p><p>To complete our BAA, please contact support to sign it.</p><p><a href="mailto:support@neostaff.app" target="" linktype="url">Contact Support</a></p></div></div></div>
 <style>
+ #logo_div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
   .hsds-contents__content{
     padding: 20px;
   }

@@ -65,6 +65,10 @@
                     </span>
                 </div>
             </form>
+            <div class="w-full mt-3">
+                <i class="fa fa-lock"></i>
+                <label for="vehicle1"><small>Subject to HIPAA? Sign our <b><a  class="text-blue-600" target="_blank" href="/hipaa">BBA</a></b></small></label>
+                </div>
         </div>
     </div>
 </div>

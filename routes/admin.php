@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Livewire\Admin\Dashboard;
+use App\Http\Livewire\Admin\DeletedCompanies;
 use App\Http\Livewire\Auth\Admin\Login;
 use App\Http\Livewire\Admin\User\UserEdit;
 use App\Http\Livewire\Auth\Passwords\Email;
@@ -26,6 +27,7 @@ Route::middleware('auth:admin')->group(function () {
     Route::post('logout', LogoutController::class)->name('logout');
 
     Route::get('dashboard', Dashboard::class)->name('dashboard');
+    Route::get('deletedcompanies', DeletedCompanies::class)->name('deletedcompanies');
     Route::get('members', MembersIndex::class)->name('members');
     Route::get('settings', SettingsIndex::class)->name('settings');
     Route::get('profile/edit', UserEdit::class)->name('profile.edit');

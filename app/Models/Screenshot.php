@@ -8,6 +8,7 @@ use App\Traits\BelongsToAccount;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Intervention\Image\Facades\Image;
 
 class Screenshot extends Model
 {
@@ -34,6 +35,13 @@ class Screenshot extends Model
 
     public static function saveFile(User $user, $imageFile): string
     {
+        // $image = Image::make($imageFile);
+        // $name = now()->timestamp . str_pad(now()->milli, 3, '0', STR_PAD_LEFT).'.webp';
+        // $path = storage_path('app/screenshots/'.$user->id.'/'.$name);
+        // $image->encode('webp')->save($path);
+        // return $user->id.'/'.$name;
+        
+        // Old Code
         return Storage::disk(self::STORAGE_DISK)
             ->putFileAs($user->id, $imageFile, static::fileName());
     }

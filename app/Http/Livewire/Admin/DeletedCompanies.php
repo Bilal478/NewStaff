@@ -13,6 +13,7 @@ class DeletedCompanies extends Component
     use WithPagination, Notifications;
     public $search = '';
     public $accountStorage = [];
+    public $accountId;
     protected $listeners = [
         'accountEdit' => 'accountEdit',
         'accountsRefresh' => '$refresh',
@@ -77,19 +78,28 @@ class DeletedCompanies extends Component
             }
         return $total_size;
     }
-    public function permanent_delete_company($id)
+
+    public function confirmDelete($id)
+{
+    $this->accountId = $id;
+}
+    public function permanent_delete_company()
     {
-        $account = Account::onlyTrashed()->with([ 'projects', 'tasks', 'activities','screenshots'])->where('id',$id)->first();
-        // dd($account->projects);
-        $account->projects->each->delete();
-        $account->tasks->each->delete();
-        $account->activities->each->delete();
-        $account->forceDelete();
+
+        $account = Account::onlyTrashed()->with([ 'projects', 'tasks', 'activities','screenshots'])->where('id',$this->accountId)->first();
+        
+        $account->projects->each->forceDelete();
+        $account->tasks->each->forceDelete();
+        $account->activities->each->forceDelete();
+        
         foreach($account->screenshots as $screenshot){
-            if(File::isFile("C:/wamp64/www/neostaff/storage/app/screenshots/".$screenshot->path)){
-                    (unlink("C:/wamp64/www/neostaff/storage/app/screenshots/".$screenshot->path));
-                }   
-        }    
+            if(File::isFile(storage_path("app/screenshots/".$screenshot->path))){
+                    (unlink(storage_path("app/screenshots/").$screenshot->path));
+                }
+                $screenshot->forceDelete();   
+        }
+        $account->forceDelete();    
+
         $this->toast('Account Deleted Permanently.');
         $this->reset();
         $this->emit('accountsRefresh');

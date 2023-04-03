@@ -113,7 +113,7 @@
        
         <div class="text-center w-32 px-3 flex justify-end">
         <x-dropdowns.context-menu>
-            <a href="#miModal"><x-dropdowns.context-menu-item  name="Delete" svg="svgs.x-circle"/></a>
+            <a href="#miModal"><x-dropdowns.context-menu-item wire:click="confirmDelete({{ $account->id }})" name="Delete" svg="svgs.x-circle"/></a>
         </x-dropdowns.context-menu>
         </div>
     </div>
@@ -121,12 +121,12 @@
 </div>
 @endforeach
 </div>
-<div id="miModal" class="modal">
+<div id="miModal" class="modal pt-7">
     <div class="modal-contenido">
         <p class="mb-5 mt-5 ml-5">Are you sure to delete the account permanently?</p>
         <a href="#"><button type="button"  class="sm_button float-left ml-96 h-10 text-sm flex items-center rounded-md bg-blue-600 text-white pl-3 pr-3 hover:bg-blue-500 focus:outline-none active:bg-blue-700 transition duration-150 ease-in-out">No
          </button></a>
-         <a href="#"><button type="button" id="cancel_button" wire:click.stop="permanent_delete_company({{$account->id}})" class="sm_button float-left ml-5 h-10 text-sm flex items-center rounded-md bg-blue-600 text-white pl-3 pr-3 hover:bg-blue-500 focus:outline-none active:bg-blue-700 transition duration-150 ease-in-out">Yes, Delete
+         <a href="#"><button type="button" id="cancel_button" wire:click.stop="permanent_delete_company()" class="sm_button float-left ml-5 h-10 text-sm flex items-center rounded-md bg-red-600 text-white pl-3 pr-3 hover:bg-red-500 focus:outline-none active:bg-blue-700 transition duration-150 ease-in-out">Yes, Delete
         </button></a>
     </div>
 </div>

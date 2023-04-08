@@ -21,6 +21,9 @@
                     <x-navigation.sidebar-item route="admin.getsetupversion" img="svgs.download">
                         Desktop Applocation
                     </x-navigation.sidebar-item>
+                    <x-navigation.sidebar-item route="admin.deletedcompanies" img="svgs.x-circle">
+                        Deleted Accounts
+                    </x-navigation.sidebar-item>
                 </ul>
             </div>
         </div>

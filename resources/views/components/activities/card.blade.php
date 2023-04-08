@@ -5,6 +5,7 @@
 $account_user = DB::table('account_user')
     ->where('user_id', auth()->user()->id)
     ->first();
+    
 @endphp
 <div class="w-full sm:w-1/2 md:w-1/3 xl:w-1/6">
     <article class="bg-white mx-4 mb-8 rounded-md border shadow-sm hover:shadow-md article">
@@ -12,13 +13,15 @@ $account_user = DB::table('account_user')
             <div
                 class="activity-img flex items-center justify-center absolute inset-0 z-10 opacity-0 transition duration-500 ease-linear group-hover:opacity-100">
                 {{-- @dd($loop->iteration) --}}
-                @if ($activity->screenshots->first()->path != '00/1234567890.png')
-                <button
-                    wire:click.stop="$emit('screenshotsShow', {{ $activity->user_id }},{{ $activity->account_id }},'{{ $activity->date }}')"
-                    onclick="currentSlide({{ $countActivity }})" type="button"
-                    class="number_of_screeshot bg-white font-montserrat font-semibold px-3 py-1 rounded-sm text-gray-700 text-xs">
-                    View screens
-                </button>
+                @if($activity->screenshots->first() != NULL)
+                    @if ($activity->screenshots->first()->path != '00/1234567890.png')
+                    <button
+                        wire:click.stop="$emit('screenshotsShow', {{ $activity->user_id }},{{ $activity->account_id }},'{{ $activity->date }}')"
+                        onclick="currentSlide({{ $countActivity }})" type="button"
+                        class="number_of_screeshot bg-white font-montserrat font-semibold px-3 py-1 rounded-sm text-gray-700 text-xs">
+                        View screens
+                    </button>
+                    @endif
                 @endif
             </div>
             {{-- @dump($activity) --}}
@@ -29,21 +32,26 @@ $account_user = DB::table('account_user')
                         <img style="" src="{{ $activity->screenshots->first()->fullPath() }}" alt="">
                     @endif
                 @endif
-                @if ($activity->screenshots->first()->path === '00/1234567890.png')
-                    <img class="img_placeholder" src="2.png">
+                @if($activity->screenshots->first() != NULL)
+                    @if ($activity->screenshots->first()->path === '00/1234567890.png')
+                        <img class="img_placeholder" src="2.png">
+                    @endif
                 @endif
             </div>
 
         </div>
 
         <div class="relative pt-6 pb-4">
-            <div class=" number_of_screeshot absolute w-full flex justify-center top-1 -mt-5 z-10">
-            @if ($activity->screenshots->first()->path != '00/1234567890.png')    
-            <span class=" font_weight bg-white flex items-center justify-center h-6 rounded-full shadow-md text-blue-600 text-center text-xs w-24">{{$activity->screenshots->count()}} {{ $activity->screenshots->count() == 1 ? 'screen' : 'screens'}}</span>
+            <div class="number_of_screeshot absolute w-full flex justify-center top-1 -mt-5 z-10">
+            @if($activity->screenshots->first() != NULL)
+                @if ($activity->screenshots->first()->path != '00/1234567890.png')    
+                <span style="margin-top: -35px;" class=" font_weight bg-white flex items-center justify-center h-6 rounded-full shadow-md text-blue-600 text-center text-xs w-24">{{$activity->screenshots->count()}} {{ $activity->screenshots->count() == 1 ? 'screen' : 'screens'}}</span>
+                @endif
             @else
-            <span class=" font_weight bg-white flex items-center justify-center h-6 rounded-full shadow-md text-blue-600 text-center text-xs w-24">0 screen</span>
-            @endif    
-            <!-- <button wire:click.stop="$emit('screenshotsShow', {{$activity->id}})" class="bg-white flex items-center justify-center h-6 rounded-full shadow-md text-blue-600 text-center text-xs w-24">
+            <span style="margin-top: -35px;" class=" font_weight bg-white flex items-center justify-center h-6 rounded-full shadow-md text-blue-600 text-center text-xs w-24">0 screen</span>
+            @endif   
+          
+                <!-- <button wire:click.stop="$emit('screenshotsShow', {{$activity->id}})" class="bg-white flex items-center justify-center h-6 rounded-full shadow-md text-blue-600 text-center text-xs w-24">
                     {{ $activity->screenshots->count() }} {{ $activity->screenshots->count() == 1 ? 'screen' : 'screens'}}
                 </button> -->
             </div>
@@ -55,10 +63,10 @@ $account_user = DB::table('account_user')
                         {{ $activity->end_datetime->format('g:i: a') }}</span>
                 </div>
                 <br>
-                <div class="flex mb-4 w-3/5" style="float: right;
-                margin-top: -36px;">
-                  
-                        <button type="button"
+                <div class="flex mb-4 w-3/5" style="
+                margin-top: -36px; justify-content: center;">
+                    
+                        <!-- <button type="button"
                             wire:click="$emit('trackEdit','{{ $activity->id }}','{{ $activity->date }}','{{ $activity->start_datetime->format('H:i:s') }}','{{ $activity->end_datetime->format('H:i:s') }}')">
                             <span class="text-xs text-blue-500">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
@@ -68,8 +76,7 @@ $account_user = DB::table('account_user')
                                     </path>
                                 </svg>
                             </span>
-                        </button>
-                       
+                        </button> -->
                         @if($account_user->allow_edit_time == 1)
                         <button type="button" class="mr-1" wire:click="$emit('deleteActivityShow',{{ $activity->id }})">
                             <span class="text-xs text-red-500">
@@ -81,7 +88,7 @@ $account_user = DB::table('account_user')
                         @endif
                         @if($account_user->allow_delete_screenshot == 1)
                         @if(count($activity->screenshots) != 0)
-                        <button type="button" wire:click="$emit('deleteImageActivityShow',{{ $activity->id }},{{ $activity->screenshots }} )">
+                        <button type="button" wire:click="$emit('deleteImageActivityShow',{{ $activity->id }},{{ $activity->screenshots }})">
                             <span class="text-xs text-blue-500">
                                 <svg version="1.0" xmlns="http://www.w3.org/2000/svg" style="color: rgb(226, 111, 3)"
                                     width="12.000000pt" height="12.000000pt" viewBox="0 0 20.000000 20.000000"
@@ -150,7 +157,7 @@ $account_user = DB::table('account_user')
     </article>
 </div>
 <style>
-    /* -----
+        /* -----
 SVG Icons - svgicons.sparkk.fr
 ----- */
 

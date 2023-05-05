@@ -19,7 +19,7 @@
                         Settings
                     </x-navigation.sidebar-item>
                     <x-navigation.sidebar-item route="admin.getsetupversion" img="svgs.download">
-                        Desktop Applocation
+                        Desktop Application
                     </x-navigation.sidebar-item>
                     <x-navigation.sidebar-item route="admin.deletedcompanies" img="svgs.x-circle">
                         Deleted Accounts

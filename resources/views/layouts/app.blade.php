@@ -19,6 +19,7 @@ $account = Account::find(session()->get('account_id'));
 	$owner_id_query = DB::table('account_user')
 		->where('account_id', $account->id)
 		->where('role', 'owner')
+		->orWhere('role', 'member')
 		->first();
 	
 	//echo $owner_id_query->user_id;

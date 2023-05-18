@@ -114,7 +114,7 @@
                 </x-navigation.sidebar-item>
                 @php
                 }
-                if(in_array('memberships', $permissions)){
+                if(in_array('billing', $permissions)){
                 @endphp
                 <x-navigation.sidebar-item route="accounts.billing" img="svgs.folder">
                     Memberships

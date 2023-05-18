@@ -48,7 +48,7 @@
             {{-- <input wire:model="permissions" type="checkbox" name="permissions[]" value="teams" {{ in_array('teams', $permissions) ? 'checked' : '' }}> Teams --}}
             <input wire:model="permissions" type="checkbox" name="permissions[]" value="members" {{ in_array('members', $permissions) ? 'checked' : '' }}> Members
             <input wire:model="permissions" type="checkbox" name="permissions[]" value="settings" {{ in_array('settings', $permissions) ? 'checked' : '' }}> Settings 
-            <input wire:model="permissions" type="checkbox" name="permissions[]" value="memberships" {{ in_array('memberships', $permissions) ? 'checked' : '' }}>  Memberships 
+            <input wire:model="permissions" type="checkbox" name="permissions[]" value="billing" {{ in_array('billing', $permissions) ? 'checked' : '' }}>  Memberships 
             
             @endif
             

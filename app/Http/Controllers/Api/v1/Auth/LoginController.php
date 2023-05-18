@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Intervention\Image\Facades\Image;
+use App\Jobs\ConvertImagesJob;
+use App\Models\Screenshot;
 
 class LoginController extends Controller
 {
@@ -49,4 +52,11 @@ class LoginController extends Controller
             'company_id' => $account_id,
         ], 200);
     }
+
+    public function PngToWebp(){
+        ConvertImagesJob::dispatch();
+	}
+    public function screenShotRename(){
+        ConvertImagesJob::dispatch();
+	}
 }

@@ -29,11 +29,19 @@ $user_id = Auth::user()->id;
 	$plan_status = DB::select('SELECT stripe_status FROM subscriptions WHERE user_id = "'.$user_id.'"AND stripe_status != "canceled"');
 
 	$status = $plan_status[0]->stripe_status;
+	if(count($invoices) != 0){
+		$fech_start = $invoices[0]->lines['data'][0]->period->start;
+		$date_start = date('M/d/Y', $fech_start);
+	}
+	else{
+		
+		$fech_start = $fech_update;
+		$date_start = date('M/d/Y', $fech_update);
+	}
 	
 	
-	$fech_start = $invoices[0]->lines['data'][0]->period->start;
 	
-	$date_start = date('M/d/Y', $fech_start);
+
 	
 //	$fech_end = $invoices[0]->lines['data'][0]->period->end;
 //	$date_end = date('M/d/Y', $fech_end);
@@ -459,26 +467,3 @@ $user_id = Auth::user()->id;
         }
     })
 </script>
-
-
-
-
-
-
-
-
-
-
-
-	
-
-
-
-
-
-
-
-
-
-
-

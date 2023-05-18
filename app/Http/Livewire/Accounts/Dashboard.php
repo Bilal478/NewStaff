@@ -36,9 +36,14 @@ class Dashboard extends Component
 
     public function dashboardForAccount()
     {
+        
+        $totalSeconds = Auth::guard('web')->user()->activities()->thisWeek()->sum('seconds');
+        $totalHours = floor($totalSeconds / 3600);
+        $remainingSeconds = $totalSeconds % 3600;
         //dd(CarbonInterval::seconds(Activity::thisWeek()->sum('seconds'))->cascade()->format('%H:%I:%S'));
      //   dd(CarbonInterval::seconds(Auth::guard('web')->user()->activities()->thisWeek()->sum('seconds'))->cascade()->format('%H:%I:%S'));
-        $this->timeCount = CarbonInterval::seconds(Activity::thisWeek()->sum('seconds'))->cascade()->format('%H:%I:%S');
+        // $this->timeCount = CarbonInterval::seconds(Activity::thisWeek()->sum('seconds'))->cascade()->format('%H:%I:%S');
+        $this->timeCount = sprintf("%02d:%02d:00", $totalHours, floor($remainingSeconds / 60));
         $this->projectsCount = Activity::thisWeek()->select('project_id')->distinct()->get()->count();
         $this->tasksCount = Activity::thisWeek()->select('task_id')->distinct()->get()->count();
         $this->activitiesCount = Activity::thisWeek()->get()->count();
@@ -49,7 +54,11 @@ class Dashboard extends Component
     public function dashboardForUser()
     {
    
-        $this->timeCount = CarbonInterval::seconds(Auth::guard('web')->user()->activities()->thisWeek()->sum('seconds'))->cascade()->format('%H:%I:%S');
+        $totalSeconds = Auth::guard('web')->user()->activities()->thisWeek()->sum('seconds');
+        $totalHours = floor($totalSeconds / 3600);
+        $remainingSeconds = $totalSeconds % 3600;
+        $this->timeCount = sprintf("%02d:%02d:00", $totalHours, floor($remainingSeconds / 60));
+        // $this->timeCount = CarbonInterval::seconds(Auth::guard('web')->user()->activities()->thisWeek()->sum('seconds'))->cascade()->format('%H:%I:%S');
         $this->projectsCount = Auth::guard('web')->user()->activities()->thisWeek()->select('project_id')->distinct()->get()->count();
         $this->tasksCount = Auth::guard('web')->user()->activities()->thisWeek()->select('task_id')->distinct()->get()->count();
         $this->activitiesCount = Auth::guard('web')->user()->activities()->thisWeek()->get()->count();

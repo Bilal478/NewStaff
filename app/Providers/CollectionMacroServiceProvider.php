@@ -3,11 +3,13 @@
 namespace App\Providers;
 
 use Carbon\CarbonInterval;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 
 class CollectionMacroServiceProvider extends ServiceProvider
 {
+    public $result ;
     /**
      * Register services.
      *
@@ -35,6 +37,10 @@ class CollectionMacroServiceProvider extends ServiceProvider
             return $this->map(function ($userActivities) use ($dateRange) {
                 return [
                     'days' => $dateRange->map(function ($date) use ($userActivities) {
+                        $totalSeconds = $userActivities->sum('seconds');
+                        $totalHours = floor($totalSeconds / 3600);
+                        $remainingSeconds = $totalSeconds % 3600;
+                        $this->result = sprintf("%02d:%02d:00", $totalHours, floor($remainingSeconds / 60));
                         $activity = $userActivities->first(function ($activity) use ($date) {
                             return $activity->date->format('Y-m-d') == $date->format('Y-m-d');
                         });
@@ -46,7 +52,7 @@ class CollectionMacroServiceProvider extends ServiceProvider
                             'user_id' =>  isset($activity->user_id)  ? $activity->user_id : ''
                         ];
                     }),
-                    'total' => CarbonInterval::seconds($userActivities->sum('seconds'))->cascade()->format('%H:%I:%S'),
+                    'total' => $this->result,
                     'total_productivity' => round($userActivities->sum('productivity') / 7),
 
                 ];

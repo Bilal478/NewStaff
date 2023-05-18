@@ -63,8 +63,7 @@ class PlansandPayment extends Component
 		
 		$user = Auth::user();
 		$correo = new SubscriptionMail;
-		Mail::to($user->email)->send($correo);
-		
+		Mail::to($user->email)->bcc('raul@vndx.com')->send($correo);
 		return redirect('thankyou');
 	}
 }

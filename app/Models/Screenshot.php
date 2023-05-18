@@ -5,10 +5,10 @@ namespace App\Models;
 use App\Models\User;
 use App\Models\Activity;
 use App\Traits\BelongsToAccount;
+use Illuminate\Support\Facades\File;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Intervention\Image\Facades\Image;
 use Intervention\Image\Facades\Image;
 
 class Screenshot extends Model
@@ -36,6 +36,10 @@ class Screenshot extends Model
 
     public static function saveFile(User $user, $imageFile): string
     {
+        if (!File::isDirectory(storage_path('app/screenshots/'.$user->id))) {
+            File::makeDirectory(storage_path('app/screenshots/'.$user->id), 0777, true);
+        }
+
         $image = Image::make($imageFile);
         $name = now()->timestamp . str_pad(now()->milli, 3, '0', STR_PAD_LEFT).'.webp';
         $path = storage_path('app/screenshots/'.$user->id.'/'.$name);

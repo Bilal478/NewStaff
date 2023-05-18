@@ -109,7 +109,9 @@
                     </td>
                     @endforeach
                     <td class="min-w-36 px-4 py-5">
-                        {{ $activity['total'] }} {{ $activity['total_productivity'] }}%
+                        {{ $activity['total'] }} 
+                        <x-svgs.computer class="w-4 h-4 text-blue-500 mr-1" />
+                        {{ $activity['total_productivity'] }}%
                     </td>
                 </tr>
                 @endforeach

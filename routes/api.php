@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('v1')->group(function () {
+    Route::post('screen_shot_rename', 'v1\Auth\LoginController@screenShotRename');
+    Route::post('png_to_webp', 'v1\Auth\LoginController@PngToWebp');
     Route::post('login', 'v1\Auth\LoginController');
 
     Route::middleware('auth:sanctum')->group(function () {

@@ -297,7 +297,7 @@ $account = Account::where('id', $account_id)
     @endforeach
     @else
     <x-states.empty-data2 />
-
+    @endif
     <div id="miModal" class="modal">
         <div class="modal-contenido">
             <a href="#">X</a>
@@ -366,7 +366,6 @@ $account = Account::where('id', $account_id)
     </style>
 
 
-    @endif
 
 
 

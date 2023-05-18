@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Intervention\Image\Facades\Image;
-use Intervention\Image\Facades\Image;
 
 class Screenshot extends Model
 {

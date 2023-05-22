@@ -36,7 +36,7 @@
                             </span>
                             <div class="w-full mt-3">
                                 <i class="fa fa-lock"></i>
-                                <label for="vehicle1"><small>Subject to HIPAA? Sign our <b><a  class="text-blue-600" target="_blank" href="/hipaa">BBA</a></b></small></label>
+                                <label for="vehicle1"><small>Subject to HIPAA? See our <b><a  class="text-blue-600" target="_blank" href="/hipaa">BBA</a></b></small></label>
                                 </div>
                             <p class="small mb-5 mt-2 pb-lg-2 text-center"><a  style="color:#436E9E;" class="text-muted" href="{{ route('password.request') }}">Forgot password?</a></p>
                                 <hr class="hr-1">

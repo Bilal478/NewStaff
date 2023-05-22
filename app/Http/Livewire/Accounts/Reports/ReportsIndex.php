@@ -58,6 +58,14 @@ class ReportsIndex extends Component
 	// $this->user_list = User::orderBy('firstname')->get(['id', 'firstname', 'lastname']);
 	#this->user_id = $this->users->first()->id;
             $user_login = auth()->id();
+            $role=DB::select('SELECT role FROM account_user where user_id='.$user_login );
+            foreach($role as $val){
+                $user_role=$val->role;
+            }
+            if($user_role=='owner'){
+            $this->user_list =User::orderBy('firstname')->get(['id', 'firstname', 'lastname']);  
+            }
+            else{
             $user_departments=DB::select('SELECT department_id FROM department_user where user_id='.$user_login );
             foreach($user_departments as $val){
                 $departments_ids[]=$val->department_id;
@@ -71,7 +79,8 @@ class ReportsIndex extends Component
                 }
             }
 
-    $this->user_list = User::wherein('id', $unique_users)->orderBy('firstname')->get(['id', 'firstname', 'lastname']);
+            $this->user_list = User::wherein('id', $unique_users)->orderBy('firstname')->get(['id', 'firstname', 'lastname']);
+        }
 
     }
 

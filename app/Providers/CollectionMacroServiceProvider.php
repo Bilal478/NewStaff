@@ -35,6 +35,7 @@ class CollectionMacroServiceProvider extends ServiceProvider
 
         Collection::macro('mapActivitiesStatsByDates', function ($dateRange) {
             return $this->map(function ($userActivities) use ($dateRange) {
+               
                 return [
                     'days' => $dateRange->map(function ($date) use ($userActivities) {
                         $totalSeconds = $userActivities->sum('seconds');
@@ -53,7 +54,7 @@ class CollectionMacroServiceProvider extends ServiceProvider
                         ];
                     }),
                     'total' => $this->result,
-                    'total_productivity' => round($userActivities->sum('productivity') / 7),
+                    'total_productivity' => round($userActivities->sum('productivity') / count($userActivities)),
 
                 ];
             });

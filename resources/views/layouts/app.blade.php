@@ -13,16 +13,9 @@ if(count($user_subscriptions) == '0' && session()->get('account_role') == 'owner
 }
  
 $account = Account::find(session()->get('account_id'));
-
-	//print_r($account->id);
-	
 	$owner_id_query = DB::table('account_user')
 		->where('account_id', $account->id)
-		->where('role', 'owner')
-		->first();
-	
-	//echo $owner_id_query->user_id;
-	
+		->first();	
 	$count_subs = DB::table('subscriptions')
 		->where('user_id', $owner_id_query->user_id)
 		->where('stripe_status', '!=', 'canceled')

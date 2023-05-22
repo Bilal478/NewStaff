@@ -297,7 +297,7 @@ $account = Account::where('id', $account_id)
     @endforeach
     @else
     <x-states.empty-data2 />
-
+    @endif
     <div id="miModal" class="modal">
         <div class="modal-contenido">
             <a href="#">X</a>
@@ -309,11 +309,19 @@ $account = Account::where('id', $account_id)
 
             <h1 class="py-4"><b>Getting Started</b></h1>
             <div class="list">
-                <ul>
-                    <ol>1. Each team member needs to open their invite email and click the accept link.</li>
-                        <ol>2. Next they must download the <a class="text-blue-600" href="https://neostaff.app/download">NeoStaff App.</a></li>
-                            <ol>3. Finally they have to install the app and use it to track time to a project.</li>
-                </ul>
+                <ol >
+                    <li>1. Each team member needs to open their invite email and click the accept link.</li>
+                    <li>
+                            <li>2. You use Windows, you can download the time tracker desktop app from here:
+                                &nbsp;&nbsp;&nbsp;&nbsp;<a href="//media.neostaff.app/downloads/windows" style="color: blue">https://media.neostaff.app/downloads/windows</a></li><br>
+    
+            
+                               <li>&nbsp;&nbsp;&nbsp;&nbsp;If you use MAC, you can download the time tracker desktop app from here:
+                                &nbsp;&nbsp;&nbsp;&nbsp;<a href="https://media.neostaff.app/downloads/mac" style="color: blue">https://media.neostaff.app/downloads/mac</a></li>
+                            
+                    </li>
+                    <li>3. Finally they have to install the app and use it to track time to a project.</li>
+                </ol>
             </div>
             <h1 class="py-4"><b>Your Organizations</b></h1>
             <h1 class="pb-2"><b><?php if (isset($account[0])) {
@@ -329,7 +337,7 @@ $account = Account::where('id', $account_id)
             background-color: white;
             border-radius: 8px;
             width: 650px;
-            height: 400px;
+            height: 480px;
             padding: 10px 20px;
             margin: 0 auto;
             position: relative;
@@ -358,7 +366,6 @@ $account = Account::where('id', $account_id)
     </style>
 
 
-    @endif
 
 
 

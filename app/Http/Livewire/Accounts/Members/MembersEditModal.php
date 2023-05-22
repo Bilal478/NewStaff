@@ -10,6 +10,7 @@ use App\Rules\AtLeastOneOwner;
 use Illuminate\Validation\Rule;
 use App\Http\Livewire\Traits\Notifications;
 use App\Models\Department;
+use App\Models\Subscription;
 use Illuminate\Support\Facades\DB;
 
 class MembersEditModal extends Component
@@ -21,11 +22,14 @@ class MembersEditModal extends Component
     public $firstname = '';
     public $lastname = '';
     public $email = '';
+    public $permissions = [];
     public $team = '';
     public $department = '';
     public $team_id = [];
     public $department_id = [];
     public $punchin_pin_code='';
+    public $is_owner;
+    public $show_permission;
 
     protected $listeners = [
         'memberEdit' => 'edit',
@@ -35,10 +39,19 @@ class MembersEditModal extends Component
     public function edit(User $user)
     {     
         $this->userId = $user->id;
+        $check_owner=Subscription::where('user_id',$this->userId)->first();
+        
+        if($check_owner){
+            $this->is_owner=true;
+        }
+        else{
+            $this->is_owner=false;
+        }
         $this->firstname = $user->firstname;
         $this->lastname = $user->lastname;
         $this->email = $user->email;
         $this->role = $this->currentRole;
+        $this->handlePermissions();
         $this->punchin_pin_code = $user->punchin_pin_code;
         // dd(auth()->user());
         // $this->team_id = $user->teams;
@@ -51,7 +64,27 @@ class MembersEditModal extends Component
         foreach ($user->departments as $key => $value) {
            $this->department_id[] =  $value->pivot->department_id;
         }
+        if($user->permissions!=NULL){
+            $permissions=explode(',',$user->permissions);
+            foreach ($permissions as $value) {
+                $this->permissions[] =  $value;
+             }
+        }
+        else{
+            $this->permissions=[];
+        }
+        
         $this->dispatchBrowserEvent('open-member-edit-modal');
+    }
+
+    public function handlePermissions(){
+        
+        if($this->role != 'owner'){
+            $this->show_permission = true;
+        }
+        else{
+            $this->show_permission = false;
+        }
     }
 
     public function save()
@@ -87,6 +120,8 @@ class MembersEditModal extends Component
        }else{
         $user = User::find($this->userId);
         $user->punchin_pin_code = $this->punchin_pin_code;
+        $string_of_permissions=implode(',',$this->permissions);
+        $user->permissions=$string_of_permissions;
         $user->save();
         $user->teams()->sync($this->team_id);
         $user->departments()->sync($this->department_id);

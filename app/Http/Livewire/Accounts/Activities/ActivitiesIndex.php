@@ -14,6 +14,7 @@ use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use phpDocumentor\Reflection\Types\This;
+use Illuminate\Support\Facades\DB;
 
 class ActivitiesIndex extends Component
 {
@@ -66,9 +67,23 @@ class ActivitiesIndex extends Component
                 Session::put('user_id', $this->user_id);
             }
             $user_login = auth()->id();
-            $this->users = User::where('id', '!=', $user_login)->orderBy('firstname')->get(['id', 'firstname', 'lastname']);
+            // $this->users = User::where('id', '!=', $user_login)->orderBy('firstname')->get(['id', 'firstname', 'lastname']);
+            $user_departments=DB::select('SELECT department_id FROM department_user where user_id='.$user_login );
+            foreach($user_departments as $val){
+                $departments_ids[]=$val->department_id;
+            }
+            $departments_user=DB::table('department_user')->whereIn('department_id', $departments_ids)->get();
+            $unique_users = [];
+            foreach($departments_user as $val){
+                
+                if(!in_array($val->user_id,$unique_users)){
+                    $unique_users[] = $val->user_id;
+                }
+            }
 
-            $this->login = User::where('id', $user_login)->get();
+            $this->users = User::wherein('id', $unique_users)->orderBy('firstname')->get(['id', 'firstname', 'lastname']);
+
+            // $this->login = User::where('id', $user_login)->get();
         }
         if ($this->date) {
             Session::put('date', $this->date);

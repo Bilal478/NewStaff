@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
 use PDF;
+use Illuminate\Support\Facades\DB;
 
 class ReportsIndex extends Component
 {
@@ -54,8 +55,24 @@ class ReportsIndex extends Component
     {
         $this->date = Carbon::today()->format('M d, Y');
         $this->week = $this->getWeekFormatted();
-	$this->user_list = User::orderBy('firstname')->get(['id', 'firstname', 'lastname']);
+	// $this->user_list = User::orderBy('firstname')->get(['id', 'firstname', 'lastname']);
 	#this->user_id = $this->users->first()->id;
+            $user_login = auth()->id();
+            $user_departments=DB::select('SELECT department_id FROM department_user where user_id='.$user_login );
+            foreach($user_departments as $val){
+                $departments_ids[]=$val->department_id;
+            }
+            $departments_user=DB::table('department_user')->whereIn('department_id', $departments_ids)->get();
+            $unique_users = [];
+            foreach($departments_user as $val){
+                
+                if(!in_array($val->user_id,$unique_users)){
+                    $unique_users[] = $val->user_id;
+                }
+            }
+
+    $this->user_list = User::wherein('id', $unique_users)->orderBy('firstname')->get(['id', 'firstname', 'lastname']);
+
     }
 
     public function prevWeek()

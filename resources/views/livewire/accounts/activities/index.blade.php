@@ -45,11 +45,11 @@ $account = Account::where('id', $account_id)
                     <?php //  <option value="{{ auth()->id() }}" selected > {{ auth()->user()->firstname }}  {{ auth()->user()->lastname }}</option>
                     ?>
 
-                    @foreach ($login as $log)
+                    {{-- @foreach ($login as $log)
                     <option value="{{ $log->id }}">
                         {{ $log->full_name }}
                     </option>
-                    @endforeach
+                    @endforeach --}}
                     @foreach ($users as $user)
                     <option value="{{ $user->id }}">
                         {{ $user->full_name }}

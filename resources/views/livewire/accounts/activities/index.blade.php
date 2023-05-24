@@ -16,8 +16,8 @@ $account = Account::where('id', $account_id)
 <div>
     <x-page.title svg="svgs.computer">
         Activities
-        <button type="button" class="ml-20 h-10 text-sm flex items-center rounded-md bg-blue-600 text-white pl-3 pr-3 hover:bg-blue-500 focus:outline-none active:bg-blue-700 transition duration-150 ease-in-out">
-            <a href="#miModal"> Track Time</a>
+        <button type="button" wire:click="$emit('showPopUp')" class="ml-20 h-10 text-sm flex items-center rounded-md bg-blue-600 text-white pl-3 pr-3 hover:bg-blue-500 focus:outline-none active:bg-blue-700 transition duration-150 ease-in-out">
+             Track Time
          </button>
     </x-page.title>
     
@@ -298,7 +298,7 @@ $account = Account::where('id', $account_id)
     @else
     <x-states.empty-data2 />
     @endif
-    <div id="miModal" class="modal">
+    {{-- <div id="miModal" class="modal">
         <div class="modal-contenido">
             <a href="#">X</a>
             <div class="py-4 pl-4">
@@ -363,12 +363,14 @@ $account = Account::where('id', $account_id)
             opacity: 1;
             pointer-events: auto;
         }
-    </style>
+    </style> --}}
 
 
 
 
-
+    @push('modals')
+    @livewire('track-time-pop-up-modal')
+    @endpush
     @push('modals')
     @livewire('accounts.tasks.tasks-form')
     @endpush

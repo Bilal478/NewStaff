@@ -6,6 +6,6 @@
     </div>
 
     <h4 class="text-gray-400 text-center">
-    <i class="far fa-clock"></i> Your team has not tracked any time. <a href="#miModal"  class="text-blue-600">Get Started</a>
+<i class="far fa-clock"></i> Your team has not tracked any time. <button type="button" wire:click="$emit('showPopUp')" class="text-blue-600">Get Started</button>
     </h4>
 </div>

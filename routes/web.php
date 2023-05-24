@@ -106,26 +106,23 @@ Route::middleware(['auth:web', 'account.verify'])->group(function () {
     Route::get('accounts/create', AccountCreate::class)->name('accounts.create');
     Route::get('reports', ReportsIndex::class)->name('accounts.reports');
 	
+    Route::get('departments/{department}', DepartmentsShow::class)->name('accounts.departments.show');
+    Route::get('teams/{team}', TeamsShow::class)->name('accounts.teams.show');
+    Route::get('companies/{company}', CompaniesShow::class)->name('accounts.companies.show');
+    Route::get('cancelsubscription',[BillingInfo::class, 'cancel2'])->name('accounts.cancel2');
+    Route::post('deleteseats',[BillingInfo::class, 'deleteseats'])->name('accounts.deleteseats');
+    Route::post('/members', [MembersIndex::class, 'payandcontinue']);
+	Route::post('/billing', [BillingInfo::class, 'payandcontinue']);
 
     Route::middleware('account.owner')->group(function () {
 		
         //Route::view('report/preview', 'pdf.report', ['data' => App\Models\User::all()]);
         Route::get('teams', TeamsIndex::class)->name('accounts.teams');
         Route::get('departments', DepartmentsIndex::class)->name('accounts.departments');
-        Route::get('departments/{department}', DepartmentsShow::class)->name('accounts.departments.show');
         Route::get('companies', CompaniesIndex::class)->name('accounts.companies');
-        Route::get('companies/{company}', CompaniesShow::class)->name('accounts.companies.show');
-        Route::get('teams/{team}', TeamsShow::class)->name('accounts.teams.show');
         Route::get('members', MembersIndex::class)->name('accounts.members');
         Route::get('settings', AccountEdit::class)->name('accounts.settings');
 		Route::get('billing', BillingInfo::class)->name('accounts.billing');
-		Route::get('cancelsubscription',[BillingInfo::class, 'cancel2'])->name('accounts.cancel2');
-		
-		Route::post('deleteseats',[BillingInfo::class, 'deleteseats'])->name('accounts.deleteseats');
-		
-		Route::post('/members', [MembersIndex::class, 'payandcontinue']);
-		Route::post('/billing', [BillingInfo::class, 'payandcontinue']);
-		
     });
 });
 

@@ -55,6 +55,7 @@ class ActivitiesIndex extends Component
 
     public function render()
     {
+        $departments_ids=[];
         if ($this->user_id) {
             Session::put('user_id', $this->user_id);
         } else {

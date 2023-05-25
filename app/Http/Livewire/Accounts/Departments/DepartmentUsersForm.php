@@ -20,6 +20,8 @@ class DepartmentUsersForm extends Component
     {
         $this->department->addMemeber($this->userId);
         $this->reset(['userId']);
+        return redirect()->to('/departments/'.$this->departmentId);
+        
     }
 
     public function remove($userId)
@@ -35,6 +37,7 @@ class DepartmentUsersForm extends Component
         return view('livewire.accounts.departments.users-form', [
             'usersIn' => User::inDepartment($this->departmentId)->orderBy('firstname')->get(),
             'usersOut' => User::notInDepartment($this->departmentId)->orderBy('firstname')->get(),
+            'departmentId' => $this->departmentId,
         ]);
     }
 }

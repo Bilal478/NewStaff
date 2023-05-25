@@ -27,13 +27,13 @@ class ProjectsForm extends Component
 
     public function create(Project $project)
     {
-        if (request()->user()->cannot('create', Project::class)) {
-            return $this->toast(
-                'Unauthorize Action',
-                'You don\'t have permission to create a project.',
-                'error'
-            );
-        }
+        // if (request()->user()->cannot('create', Project::class)) {
+        //     return $this->toast(
+        //         'Unauthorize Action',
+        //         'You don\'t have permission to create a project.',
+        //         'error'
+        //     );
+        // }
 
         $this->isEditing = false;
         $this->project = $project;

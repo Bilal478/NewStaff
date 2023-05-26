@@ -58,7 +58,7 @@ class ProjectsIndex extends Component
 
     public function projects()
     {
-        return Auth::guard('web')->user()->isOwnerOrManager()
+        return Auth::guard('web')->user()->isOwner()
             ? $this->projectsForAccount()
             : $this->projectsForUser();
     }

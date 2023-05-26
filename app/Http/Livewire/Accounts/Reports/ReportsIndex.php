@@ -23,6 +23,7 @@ class ReportsIndex extends Component
     public $date;
     public $week;
     public $search = '';
+    public $login = '';
     public $user_list = '';
     public $user_id = '';
     public $show = '';
@@ -81,6 +82,7 @@ class ReportsIndex extends Component
             }
 
             $this->user_list = User::wherein('id', $unique_users)->orderBy('firstname')->get(['id', 'firstname', 'lastname']);
+            $this->login = User::where('id', $user_login)->get();
         }
 
     }

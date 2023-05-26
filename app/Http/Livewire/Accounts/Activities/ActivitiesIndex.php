@@ -88,10 +88,10 @@ class ActivitiesIndex extends Component
                     $unique_users[] = $val->user_id;
                 }
             }
-
+            //  dd($unique_users,$user_login);
             $this->users = User::wherein('id', $unique_users)->orderBy('firstname')->get(['id', 'firstname', 'lastname']);
         }
-            // $this->login = User::where('id', $user_login)->get();
+            $this->login = User::where('id', $user_login)->get();
         }
         if ($this->date) {
             Session::put('date', $this->date);

@@ -26,11 +26,22 @@
                 <div class="mt-4  sm:mt-0 ">
                         <div class="ml-2">
                                 <x-inputs.select-without-label wire:model="user_id" class="w-60" name="user_id">
-                                        @foreach($user_list as $user)
-                                                <option value="{{ $user->id }}">
-                                                        {{$user->full_name}}
-                                                </option>
-                                        @endforeach
+                                    @if ($user_list->count())
+                                    @foreach ($user_list as $user)
+                                    <option value="{{ $user->id }}">
+                                        {{ $user->full_name }}
+                                        {{-- @if ($loop->iteration == 5)
+                                            @break
+                                        @endif --}}
+                                    </option>
+                                    @endforeach 
+                                    @else
+                                    @foreach ($login as $log)
+                                    <option value="{{ $log->id }}">
+                                        {{ $log->full_name }}
+                                    </option>
+                                    @endforeach
+                                    @endif
                                 </x-inputs.select-without-label>
                         </div>
 		</div>

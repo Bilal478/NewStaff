@@ -86,7 +86,7 @@ class TasksIndex extends Component
 
     public function tasks()
     {
-        return Auth::guard('web')->user()->isOwnerOrManager()
+        return Auth::guard('web')->user()->isOwner()
             ? $this->tasksForAccount()
             : $this->tasksForUser();
     }

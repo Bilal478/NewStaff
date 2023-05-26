@@ -44,12 +44,7 @@ $account = Account::where('id', $account_id)
                 <x-inputs.select-without-label2 wire:model="user_id" class="w-48" name="user_id">
                     <?php //  <option value="{{ auth()->id() }}" selected > {{ auth()->user()->firstname }}  {{ auth()->user()->lastname }}</option>
                     ?>
-
-                    {{-- @foreach ($login as $log)
-                    <option value="{{ $log->id }}">
-                        {{ $log->full_name }}
-                    </option>
-                    @endforeach --}}
+                    @if ($users->count())
                     @foreach ($users as $user)
                     <option value="{{ $user->id }}">
                         {{ $user->full_name }}
@@ -57,7 +52,14 @@ $account = Account::where('id', $account_id)
                             @break
                         @endif --}}
                     </option>
+                    @endforeach 
+                    @else
+                    @foreach ($login as $log)
+                    <option value="{{ $log->id }}">
+                        {{ $log->full_name }}
+                    </option>
                     @endforeach
+                    @endif
 
                     </x-inputs.select-without-label>
             </div>

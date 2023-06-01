@@ -1,5 +1,8 @@
 @props(['project', 'users', 'usersCount', 'tasksCount'])
-
+<?php
+use App\Models\Department;
+    $category = $project->category ?? Department::where('id',$project->department_id)->pluck('title')->first();
+?>
 <div class="w-full md:w-1/2 lg:w-1/3 xl:w-1/4">
     <article
         wire:click="projectShow({{$project->id}})"
@@ -7,7 +10,7 @@
     >
         <div class="w-full">
             <div class="mb-4 flex items-center justify-between">
-                <span class="px-2 py-1 text-xs bg-purple-100 text-purple-500 rounded">{{ $project->category }}</span>
+                <span class="px-2 py-1 text-xs bg-purple-100 text-purple-500 rounded">{{ $category }}</span>
                 @role(['owner', 'manager'])
                     <x-dropdowns.context-menu class="-mr-2">
                         <x-dropdowns.context-menu-item wire:click.stop="$emit('projectEdit', {{$project->id}})" name="Edit" svg="svgs.edit"/>

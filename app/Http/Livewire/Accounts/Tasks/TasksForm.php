@@ -17,6 +17,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 use DateTime;
+use Illuminate\Support\Facades\Auth;
 
 class TasksForm extends Component
 {
@@ -75,7 +76,14 @@ class TasksForm extends Component
 
     public function mount($project = null, $team = null, $department = null)
     {
-        $this->projects = Project::orderBy('title')->get(['id', 'title']);
+        if(Auth::guard('web')->user()->isOwner()){
+            $this->projects = Project::orderBy('title')->get(['id', 'title']);
+        }
+        else{
+            $this->projects = Auth::guard('web')->user()
+            ->projects()->orderBy('title')->get();
+            
+        }
         $this->teams = Team::orderBy('title')->get(['id', 'title']);
         $this->departments = Department::orderBy('title')->get(['id', 'title']);
 

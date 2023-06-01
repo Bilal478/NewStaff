@@ -18,14 +18,24 @@ $account = Account::find(session()->get('account_id'));
 
 	
 	$quantity_seats = DB::select('SELECT quantity FROM subscriptions WHERE user_id = "'.$user.'"AND stripe_status != "canceled"');
-		
-	$seats=  $quantity_seats[0]->quantity;		
+ 	
+	if($quantity_seats){
+		$seats= $quantity_seats[0]->quantity;		
+	}else{
+		$seats=0;
+	}
+	
 
 	$result=$seats-$count_subs;
 	
 	$plan = DB::select('SELECT name FROM subscriptions WHERE user_id = "'.$user.'"AND stripe_status != "canceled"');
 	
-	$plan_name = $plan[0]->name;
+	if($plan){
+		$plan_name = $plan[0]->name;
+	}else{
+		$plan_name = 'test';
+	}
+	
 ?>
 
 <?php

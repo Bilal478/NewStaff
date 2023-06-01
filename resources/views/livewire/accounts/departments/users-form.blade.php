@@ -57,6 +57,7 @@
     <div class="h-96 overflow-y-scroll">
         @foreach ($usersIn as $user)
             <x-members.compact
+                :departmentId="$departmentId"
                 :user="$user"
                 :key="$user->id"
                 wire:click="remove({{$user->id}})"

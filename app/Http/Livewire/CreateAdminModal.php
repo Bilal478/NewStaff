@@ -24,7 +24,7 @@ class CreateAdminModal extends Component
     
     public function create()
     {
-       
+       if(count($this->manager_id)){
        $user['user_id'] = $this->manager_id;
        $user['department_id'] = $this->departmentId;
        $currentDepartment = Department::where('id',$this->departmentId)->first();
@@ -43,6 +43,9 @@ class CreateAdminModal extends Component
         $this->dispatchBrowserEvent('close-create-admin-modal');
         $this->toast('Admin Assigned', "Admin has been assigned.");
         $this->emit('refreshDepartments');
+       }}
+       else{
+        $this->toast('Attention', 'Please select at least one manager.','error');
        }
     }
     public function show($id)

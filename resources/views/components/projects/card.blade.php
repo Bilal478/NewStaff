@@ -1,7 +1,14 @@
 @props(['project', 'users', 'usersCount', 'tasksCount'])
 <?php
 use App\Models\Department;
-    $category = $project->category ?? Department::where('id',$project->department_id)->pluck('title')->first();
+
+if($project->department_id){
+    $category =Department::where('id',$project->department_id)->pluck('title')->first();
+}
+else{
+    $category = $project->category;
+}
+    
 ?>
 <div class="w-full md:w-1/2 lg:w-1/3 xl:w-1/4">
     <article

@@ -6,7 +6,10 @@
         </h5>
 
         @if (! $inProject)
-            <x-inputs.select wire:model.lazy="project_id" label="Project" name="project_id" type="text" required>        
+
+        <div class="border-b mb-6">
+            <x-inputs.select wire:model="project_id" label="Project" name="project_id" required>
+                <option value="">Select a project</option>
                 @foreach ($projects as $project)
                 <option value="{{ $project->id }}">
                     {{ $project->title }}

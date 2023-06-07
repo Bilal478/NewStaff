@@ -1,3 +1,6 @@
+<?php 
+$user_login = auth()->id();
+?>
 <div>
     <x-page.title svg="svgs.report">
         Weekly Report
@@ -25,24 +28,15 @@
         @role(['owner', 'manager'])
                 <div class="mt-4  sm:mt-0 ">
                         <div class="ml-2">
-                                <x-inputs.select-without-label wire:model="user_id" class="w-60" name="user_id">
-                                    @if ($user_list->count())
-                                    @foreach ($user_list as $user)
-                                    <option value="{{ $user->id }}">
+                        <x-inputs.select-without-label wire:model="user_id" class="w-60" name="user_id">
+                                @forelse ($user_list->count() ? $user_list : $login as $user)
+                                    <option value="{{ $user->id }}" {{ $user->id == $user_login ? 'selected' : '' }}>
                                         {{ $user->full_name }}
-                                        {{-- @if ($loop->iteration == 5)
-                                            @break
-                                        @endif --}}
                                     </option>
-                                    @endforeach 
-                                    @else
-                                    @foreach ($login as $log)
-                                    <option value="{{ $log->id }}">
-                                        {{ $log->full_name }}
-                                    </option>
-                                    @endforeach
-                                    @endif
-                                </x-inputs.select-without-label>
+                                @empty
+                                    <option disabled>No users found.</option>
+                                @endforelse
+                            </x-inputs.select-without-label>
                         </div>
 		</div>
 		@endrole
@@ -61,7 +55,7 @@
             <tbody>
                 <tr class="text-left uppercase text-xs text-gray-700 font-medium border-b-2">
                     <th class="min-w-52 sticky left-0 top-auto bg-white z-10 px-4 py-4">
-                        Member
+                        Projects
                         <div class="border-r-2 bg-red-500 absolute right-0 inset-y-0"></div>
                     </th>
                     @foreach ($dates as $date)
@@ -77,6 +71,7 @@
                 <tr class="text-sm text-gray-600 hover:bg-gray-50 {{ $loop->last ? '' : 'border-b' }}">
                     <td class="min-w-52 sticky left-0 top-auto bg-white z-10 px-4 py-5">
                         {{ $userName }}
+                        <p><span class="taskTitle">{{$activity['task_title']}}</span></p>
                         <div class="border-r-2 bg-red-500 absolute right-0 inset-y-0"></div>
                     </td>
 
@@ -153,7 +148,13 @@
     .activityTimeShow::-webkit-scrollbar-thumb {
         background: #eee
     }
-
+    .taskTitle {
+    
+    font-weight: 600;
+    font-size: 11px;
+    color: gray;
+    margin-top: 10px;
+}
     ​
 </style>
 @endpush

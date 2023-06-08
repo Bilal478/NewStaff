@@ -154,7 +154,10 @@ class ReportsIndex extends Component
     }
 
     public function getUsersReport()
-    { 
+    {
+        if(!$this->user_id){
+            $this->user_id = Auth::user()->id;
+        } 
         return Activity::join('users', 'activities.user_id', '=', 'users.id')
         ->join('projects', 'activities.project_id', '=', 'projects.id')
         ->join('tasks', 'activities.task_id', '=', 'tasks.id')

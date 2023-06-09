@@ -16,6 +16,7 @@ use App\Http\Livewire\Accounts\Account\AccountEdit;
 use App\Http\Livewire\Accounts\Activities\ActivitiesIndex;
 use App\Http\Livewire\Accounts\Companies\CompaniesIndex;
 use App\Http\Livewire\Accounts\Companies\CompaniesShow;
+use App\Http\Livewire\Accounts\DailyReport\DailyReport;
 use App\Http\Livewire\Accounts\Welcome\Welcome;
 use App\Http\Livewire\Accounts\Dashboard;
 use App\Http\Livewire\Accounts\Departments\DepartmentsIndex;
@@ -45,7 +46,7 @@ use App\Mail\SubscriptionMail;
 use Illuminate\Support\Facades\Mail;
 
 use App\Http\Livewire\Accounts\PlansandPayment\PlansandPayment;
-
+use App\Http\Livewire\Accounts\Timesheets\Timesheets;
 use App\Http\Livewire\SelectPlan;
 
 //Route::view('/', 'welcome')->name('home');
@@ -101,6 +102,8 @@ Route::middleware(['auth:web', 'account.verify'])->group(function () {
     Route::get('projects/{project}', ProjectsShow::class)->name('accounts.projects.show');
     Route::get('tasks', TasksIndex::class)->name('accounts.tasks');
     Route::get('activities', ActivitiesIndex::class)->name('accounts.activities');
+    Route::get('timesheets', Timesheets::class)->name('accounts.timesheets');
+    Route::get('dailyreport', DailyReport::class)->name('accounts.dailyreport');
     Route::get('screenshots/{user}/{filename}', ScreenshotController::class)->name('accounts.screenshots');
     Route::get('profile/edit', UserEdit::class)->name('profile.edit');
     Route::get('accounts/create', AccountCreate::class)->name('accounts.create');

@@ -144,7 +144,7 @@ class ReportsIndex extends Component
 
         return response()->download(storage_path() . '/' . $this->week . '.pdf')->deleteFileAfterSend(true);
     }
-
+   
     public function render()
     {		
 			return view('livewire.accounts.reports.index', [
@@ -155,54 +155,56 @@ class ReportsIndex extends Component
 
     public function getUsersReport()
     { 
-                    $departments_ids=[];
-                    $user_login = auth()->id();
-                    $role=DB::select('SELECT role FROM account_user where user_id='.$user_login );
-                    foreach($role as $val){
-                        $user_role=$val->role;
-                    }
-                    $user_departments=DB::select('SELECT department_id FROM department_user where user_id='.$user_login );
-                    foreach($user_departments as $val){
-                        $departments_ids[]=$val->department_id;
-                    }
-                    $departments_user=DB::table('department_user')->whereIn('department_id', $departments_ids)->get();
-                    $unique_users = [];
-                    foreach($departments_user as $val){
-                        
-                        if(!in_array($val->user_id,$unique_users)){
-                            $unique_users[] = $val->user_id;
-                        }
-                    }
-        if($user_role=='owner'){
-        return Activity::join('users', 'activities.user_id', '=', 'users.id')
-            ->groupBy('user_id', 'date','firstname','lastname')
-            ->selectRaw('sum(seconds) as seconds, avg(total_activity_percentage) as productivity, date, firstname, lastname, user_id')
-            ->whereBetween('date', [$this->startDate(true), $this->endDate(true)])
-            ->when($this->user_id, function($query) {
-		return $query->where('activities.user_id', $this->user_id);
-	    })
-            ->when(Auth::guard('web')->user()->isNotOwnerOrManager(), function ($query) {
-                return $query->where('activities.user_id', Auth::user()->id);
-            })
-            ->get()
-            ->groupByUserName()
-            ->mapActivitiesStatsByDates($this->getWeekDates());
+        $departments_ids=[];
+        $user_login = auth()->id();
+        $role=DB::select('SELECT role FROM account_user where user_id='.$user_login );
+        foreach($role as $val){
+            $user_role=$val->role;
         }
-        else{
-        return Activity::join('users', 'activities.user_id', '=', 'users.id')
-            ->groupBy('user_id', 'date','firstname','lastname')
-            ->selectRaw('sum(seconds) as seconds, avg(total_activity_percentage) as productivity, date, firstname, lastname, user_id')
-            ->wherein('activities.user_id',$unique_users)
-            ->whereBetween('date', [$this->startDate(true), $this->endDate(true)])
-            ->when($this->user_id, function($query) {
-		return $query->where('activities.user_id', $this->user_id);
-	    })
-            ->when(Auth::guard('web')->user()->isNotOwnerOrManager(), function ($query) {
-                return $query->where('activities.user_id', Auth::user()->id);
-            })
-            ->get()
-            ->groupByUserName()
-            ->mapActivitiesStatsByDates($this->getWeekDates());
+        $user_departments=DB::select('SELECT department_id FROM department_user where user_id='.$user_login );
+        foreach($user_departments as $val){
+            $departments_ids[]=$val->department_id;
         }
+        $departments_user=DB::table('department_user')->whereIn('department_id', $departments_ids)->get();
+        $unique_users = [];
+        foreach($departments_user as $val){
+
+            if(!in_array($val->user_id,$unique_users)){
+                $unique_users[] = $val->user_id;
+            }
+        }
+if($user_role=='owner'){
+        return Activity::join('users', 'activities.user_id', '=', 'users.id')
+        ->groupBy('user_id', 'date','firstname','lastname')
+        ->selectRaw('sum(seconds) as seconds, avg(total_activity_percentage) as productivity, date, firstname, lastname, user_id')
+        ->whereBetween('date', [$this->startDate(true), $this->endDate(true)])
+        ->when($this->user_id, function($query) {
+    return $query->where('activities.user_id', $this->user_id);
+    })
+        ->when(Auth::guard('web')->user()->isNotOwnerOrManager(), function ($query) {
+    return $query->where('activities.user_id', Auth::user()->id);
+    })
+        ->get()
+        ->groupByUserName()
+        ->mapActivitiesStatsByDates($this->getWeekDates());
+    }
+    else{
+    return Activity::join('users', 'activities.user_id', '=', 'users.id')
+        ->groupBy('user_id', 'date','firstname','lastname')
+        ->selectRaw('sum(seconds) as seconds, avg(total_activity_percentage) as productivity, date, firstname, lastname, user_id')
+        ->wherein('activities.user_id',$unique_users)
+        ->whereBetween('date', [$this->startDate(true), $this->endDate(true)])
+        ->when($this->user_id, function($query) {
+    return $query->where('activities.user_id', $this->user_id);
+    })
+        ->when(Auth::guard('web')->user()->isNotOwnerOrManager(), function ($query) {
+            return $query->where('activities.user_id', Auth::user()->id);
+        })
+        ->get()
+        ->groupByUserName()
+        ->mapActivitiesStatsByDates($this->getWeekDates());
+    }
+    
+    
     }
 }

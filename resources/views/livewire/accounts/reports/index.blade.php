@@ -1,7 +1,14 @@
 <div>
+    <div class="header-container">
     <x-page.title svg="svgs.report">
         Weekly Report
     </x-page.title>
+
+    <div class="toggle-container">
+        <a href="dailyreport"><button id="dailyReportButton" class="toggle-button active" onclick="toggleReport('daily')">Daily Report</button></a>
+        <button id="weeklyReportButton" class="toggle-button" onclick="toggleReport('weekly')">Weekly Report</button>
+    </div>
+    </div>
 
     <div class="flex items-center flex-wrap pb-8 flex-col sm:flex-row">
         <div>
@@ -25,10 +32,10 @@
         @role(['owner', 'manager'])
                 <div class="mt-4  sm:mt-0 ">
                         <div class="ml-2">
-                                <x-inputs.select-without-label wire:model="user_id" class="w-60" name="user_id">
-                                    @if ($user_list->count())
-                                    @foreach ($user_list as $user)
-                                    <option value="{{ $user->id }}">
+                            <x-inputs.select-without-label wire:model="user_id" class="w-60" name="user_id">
+                                @if ($user_list->count())
+                                @foreach ($user_list as $user)
+                                <option value="{{ $user->id }}">
                                         {{ $user->full_name }}
                                         {{-- @if ($loop->iteration == 5)
                                             @break
@@ -135,6 +142,43 @@
         @livewire('time-modal')
     @endpush
 </div>
+<script>
+    function toggleReport(reportType) {
+        if (reportType === 'daily') {
+            document.getElementById('dailyReportButton').classList.add('active');
+            document.getElementById('weeklyReportButton').classList.remove('active');
+            // TODO: Show the daily report content and hide the weekly report content
+        } else if (reportType === 'weekly') {
+            document.getElementById('dailyReportButton').classList.remove('active');
+            document.getElementById('weeklyReportButton').classList.add('active');
+            // TODO: Show the weekly report content and hide the daily report content
+        }
+    }
+</script>
+
+<style>
+    .toggle-container {
+        display: flex;
+        margin-left: 50px;
+    }
+
+    .toggle-button {
+        padding: 5px 10px;
+        background-color: #ddd;
+        border: none;
+        outline: none;
+        cursor: pointer;
+    }
+
+    .toggle-button.active {
+        background-color: #007bff;
+        color: #fff;
+    }
+    .header-container {
+        display: flex;
+        align-items: flex-start;
+    }
+</style>
 
 @push('style')
 <style>
@@ -154,6 +198,6 @@
         background: #eee
     }
 
-    ​
+
 </style>
 @endpush

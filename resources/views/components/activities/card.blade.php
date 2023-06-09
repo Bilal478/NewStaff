@@ -2,14 +2,34 @@
 @if (isset($countActivity))
 @endif
 @php 
+$userTask='';
+$userProject='';
 $account_user = DB::table('account_user')
     ->where('user_id', auth()->user()->id)
     ->first();
-    
+
+    if ($activity['project_id']) {
+    $userProject=DB::table('projects')
+    ->where('id',$activity['project_id'])
+    ->first();
+    }
+    if ($activity['task_id']!=null) {
+    $userTask=DB::table('tasks')
+    ->where('id',$activity['task_id'])
+    ->first();
+    }
 @endphp
 <div class="w-full sm:w-1/2 md:w-1/3 xl:w-1/6">
     <article class="bg-white mx-4 mb-8 rounded-md border shadow-sm hover:shadow-md article">
-        <div class="relative group rounded-t-md overflow-hidden bg-black">
+       @if ($userProject)
+        <span id="projectTitle">{{$userProject->title}}</span>
+       @endif
+       @if ($userTask)
+       <span class="taskTitle">{{$userTask->title}}</span>
+       @else
+       <span class="taskTitle">No to-do</span>
+       @endif
+        <div class="relative group rounded-t-md overflow-hidden bg-black">      
             <div
                 class="activity-img flex items-center justify-center absolute inset-0 z-10 opacity-0 transition duration-500 ease-linear group-hover:opacity-100">
                 {{-- @dd($loop->iteration) --}}
@@ -179,5 +199,29 @@ SVG Icons - svgicons.sparkk.fr
     .font_weight{
         font-weight: 600 !important;
         cursor: default !important;
+    }
+    #projectTitle{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: 600;
+        font-size: 12px;
+        text-align: center;
+        background-color: #eee;
+        border-radius: 5px;
+        padding: 2px 4px;
+        margin: 5px
+    }
+    .taskTitle{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: 600;
+        font-size: 11px;
+        color: gray;
+        align-self: center;
+        align-content: center;
+        align-items: center;
+        margin-top: 10px;
     }
 </style>

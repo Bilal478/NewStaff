@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Task;
 use Carbon\CarbonInterval;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
@@ -27,7 +28,7 @@ class CollectionMacroServiceProvider extends ServiceProvider
     {
         Collection::macro('groupByUserName', function () {
             return $this->groupBy(function ($item) {
-                return $item->firstname . ' ' . $item->lastname;
+                return $item->project_title;
             });
         });
         Collection::macro('groupByUserNames', function () {
@@ -51,6 +52,7 @@ class CollectionMacroServiceProvider extends ServiceProvider
                             'user_id' =>  isset($activity->user_id)  ? $activity->user_id : ''
                         ];
                     }),
+                    'task_title' => $userActivities[0]->task_title,
                     'total' => CarbonInterval::seconds($userActivities->sum('seconds'))->cascade()->format('%H:%I:%S'),
                     'total_productivity' => round($userActivities->sum('productivity') / 7),
 

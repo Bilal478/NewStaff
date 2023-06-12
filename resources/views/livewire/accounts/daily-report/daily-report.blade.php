@@ -22,7 +22,7 @@ $account = Account::where('id', $account_id)
     
         <div class="toggle-container">
             <a href="dailyreport"><button id="dailyReportButton" class="toggle-button active" onclick="toggleReport('daily')">Daily Report</button></a>
-            <button id="weeklyReportButton" class="toggle-button" onclick="toggleReport('weekly')">Weekly Report</button>
+            <a href="reports"><button id="weeklyReportButton" class="toggle-button" onclick="toggleReport('weekly')">Weekly Report</button></a>
         </div>
     
     </div>
@@ -76,6 +76,7 @@ $account = Account::where('id', $account_id)
         @endif
 
     </div>
+    @if ($data->count())
     <div class="w-full overflow-x-auto rounded-md border">
         <table class="w-full bg-white">
             <tbody>
@@ -115,8 +116,8 @@ $account = Account::where('id', $account_id)
                 @foreach ($data as $userName => $activity)
                 <tr class="text-sm text-gray-600 hover:bg-gray-50 {{ $loop->last ? '' : 'border-b' }}">
                     <td class="min-w-20 sticky left-0 top-auto bg-white z-10 px-4 py-5">
-                        {{ $userName }}
-                        <p><span class="taskTitle">{{$activity['project_title']}}</span></p>
+                        {{ $activity['project_title'] }}
+                        <p><span class="taskTitle">{{$userName}}</span></p>
                         <div class="border-r-2 bg-red-500 absolute right-0 inset-y-0"></div>
                     </td>
 
@@ -129,7 +130,10 @@ $account = Account::where('id', $account_id)
                         @endif --}}
                     </td>
                     <td class="min-w-36 px-4 py-5">
-                        {{ $day['seconds'] }} 
+                        {{ $activity['total'] }} 
+                    </td>
+                    <td class="min-w-36 px-4 py-5">
+                        {{ $day['start_datetime']->format('H:i:s').' -- '.$day['end_datetime']->format('H:i:s')}} 
                     </td>
                     @endforeach
 
@@ -138,6 +142,9 @@ $account = Account::where('id', $account_id)
             </tbody>
         </table>
     </div>
+    @else
+    <x-states.empty-data message="There are no records for this day." />
+    @endif
 </div>
 @push('modals')
 @livewire('accounts.tasks.tasks-form')

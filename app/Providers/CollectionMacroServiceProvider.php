@@ -72,7 +72,9 @@ class CollectionMacroServiceProvider extends ServiceProvider
                             'seconds' => CarbonInterval::seconds($activity ? $activity->seconds : 0)->cascade()->format('%H:%I:%S'),
                             'date' => $date->format('M d, Y'),
                             'productivity' => $activity ? round($activity->productivity) : 0,
-                            'user_id' => isset($activity->user_id) ? $activity->user_id : ''
+                            'user_id' => isset($activity->user_id) ? $activity->user_id : '',
+                            'start_datetime' => $userActivities->min('start_datetime'),
+                            'end_datetime' => $userActivities->max('end_datetime')
                         ]
                     ],
                     'project_title' => $userActivities[0]->project_title,

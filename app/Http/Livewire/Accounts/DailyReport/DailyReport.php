@@ -99,7 +99,6 @@ class DailyReport extends Component
             Session::put('date', $this->date);
         }
         $this->activitiesTime();
-// dd($this->getUsersReport());
         return view('livewire.accounts.daily-report.daily-report', [
             'activitiesGroup' => $this->activities(),
             'WeeklyHours' => $this->calculateWeeklyHours(),
@@ -178,7 +177,7 @@ class DailyReport extends Component
             ->get()
             ->mapToGroups(function ($activity, $key) {
                 return [
-                    $activity->start_datetime->format('h:00 a') . ' - ' . $activity->start_datetime->addHour()->format('h:00 a') => $activity
+                    $activity->start_datetime->format('h:00 a') . ' - ' . $activity->end_datetime->format('h:00 a') => $activity
                 ];
             });
     }
@@ -308,8 +307,8 @@ public function getUsersReport()
         return Activity::join('users', 'activities.user_id', '=', 'users.id')
         ->join('projects', 'activities.project_id', '=', 'projects.id')
         ->join('tasks', 'activities.task_id', '=', 'tasks.id')
-        ->groupBy('activities.user_id', 'activities.date', 'users.firstname', 'users.lastname', 'activities.task_id', 'activities.project_id', 'projects.title', 'tasks.title')
-        ->selectRaw('sum(activities.seconds) as seconds, avg(activities.total_activity_percentage) as productivity, activities.date, users.firstname, users.lastname, activities.user_id, activities.task_id, activities.project_id, projects.title as project_title, tasks.title as task_title')
+        ->groupBy('activities.user_id', 'activities.date', 'users.firstname', 'users.lastname', 'activities.start_datetime', 'activities.end_datetime', 'activities.task_id', 'activities.project_id', 'projects.title', 'tasks.title')
+        ->selectRaw('sum(activities.seconds) as seconds, avg(activities.total_activity_percentage) as productivity, activities.date, activities.start_datetime, activities.end_datetime, users.firstname, users.lastname, activities.user_id, activities.task_id, activities.project_id, projects.title as project_title, tasks.title as task_title')
         ->whereDate('activities.date',$Date)
         ->when($this->user_id, function($query) {
     return $query->where('activities.user_id', $this->user_id);
@@ -323,7 +322,6 @@ public function getUsersReport()
         
     
     }
-
 
     
 }

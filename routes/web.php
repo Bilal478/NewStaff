@@ -25,6 +25,7 @@ use App\Http\Livewire\Accounts\Members\MembersInvite;
 use App\Http\Livewire\Accounts\Projects\ProjectsIndex;
 use App\Http\Livewire\Accounts\Projects\ProjectsShow;
 use App\Http\Livewire\Accounts\Reports\ReportsIndex;
+use App\Http\Livewire\Accounts\Reports\DailyReportsIndex;
 use App\Http\Livewire\Accounts\Tasks\TasksIndex;
 use App\Http\Livewire\Accounts\Teams\TeamsIndex;
 use App\Http\Livewire\Accounts\Teams\TeamsShow;
@@ -105,6 +106,7 @@ Route::middleware(['auth:web', 'account.verify'])->group(function () {
     Route::get('profile/edit', UserEdit::class)->name('profile.edit');
     Route::get('accounts/create', AccountCreate::class)->name('accounts.create');
     Route::get('reports', ReportsIndex::class)->name('accounts.reports');
+    Route::get('dailyreports', DailyReportsIndex::class)->name('accounts.dailyreports');
 	
     Route::get('departments/{department}', DepartmentsShow::class)->name('accounts.departments.show');
     Route::get('teams/{team}', TeamsShow::class)->name('accounts.teams.show');

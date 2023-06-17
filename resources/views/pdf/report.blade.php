@@ -33,9 +33,12 @@
     </head>
     <body>
         <div>
-            <h1 style="font-size: 18px; font-weight: bold; text-align: center; padding-bottom: 5px;">
+            <h1 style="font-size: 18px; font-weight: bold; text-align: center; padding-bottom: 2px;">
                 Weekly Report
             </h1>
+            <h4 style="font-size: 18px; font-weight: bold; text-align: center; padding-bottom: 2px;">
+                {{$userName}}
+            </h4>
             <h2 style="font-size: 14px; font-weight: bold; text-align: center; padding-bottom: 20px;">
                 {{ $week }}
             </h2>
@@ -45,7 +48,7 @@
                 <tbody>
                     <tr style="color: #374151; border-bottom: 1px solid #E5E7EB; font-size: 12px; text-align: left; font-weight: bold;">
                         <th style="padding: 15px 10px; text-align: left;">
-                            Member
+                            Projects
                         </th>
                         @foreach ($dates as $date)
                             <th style="padding: 15px 10px; text-align: left;">
@@ -60,6 +63,8 @@
                         <tr style="color: #374151; font-size: 12px; text-align: left; border-bottom: 1px solid #E5E7EB;">
                             <td style="padding: 15px 10px; text-align: left;">
                                 {{ $userName }}
+                                <p><span class="taskTitle">{{$activity['task_title']}}</span></p>
+                                <div class="border-r-2 bg-red-500 absolute right-0 inset-y-0"></div>
                             </td>
                             @foreach ($activity['days'] as $day)
                                 <td style="padding: 15px 10px; text-align: left;">

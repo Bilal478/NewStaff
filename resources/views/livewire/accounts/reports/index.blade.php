@@ -3,9 +3,14 @@ $user_login = auth()->id();
 ?>
 <div>
     <x-page.title svg="svgs.report">
-        Weekly Report
+        Timesheets
     </x-page.title>
-
+    <div class="container">
+        <span class="stripe">
+        <a class="toggle-button white" href="{{ route('accounts.reports') }}">Weekly</a>
+        <a class="toggle-button" href="{{ route('accounts.dailyreports') }}">Daily</a>
+        </span>
+    </div>
     <div class="flex items-center flex-wrap pb-8 flex-col sm:flex-row">
         <div>
             <div class="mx-auto flex items-center justify-center">
@@ -155,6 +160,24 @@ $user_login = auth()->id();
     color: gray;
     margin-top: 10px;
 }
-    ​
+.container {
+    margin-bottom: 5px;
+      display: flex;
+      justify-content: center;
+    }
+    
+    .toggle-button {
+      margin: 0 10px;
+      padding: 10px 28px;
+      border-radius: 18px;
+    }
+    .stripe{
+    background: #e5e5e5;
+    padding: 7px;
+    border-radius: 26px;
+    }
+    .white{
+        background: white;
+    }
 </style>
 @endpush

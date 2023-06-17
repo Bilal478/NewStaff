@@ -24,7 +24,7 @@
                         Projects
                     </x-navigation.sidebar-item>
                     <x-navigation.sidebar-item route="accounts.reports" img="svgs.report">
-                        Weekly Report
+                        Timesheets
                     </x-navigation.sidebar-item>
                 </ul>
             </div>

@@ -46,6 +46,13 @@ $user_login = auth()->id();
                             </x-inputs.select-without-label>
                         </div>
 		</div>
+        @if (count($users))
+        <button wire:click="download" type="button"
+            class="w-full sm:w-auto mt-4 sm:mt-0 h-10 text-sm flex items-center rounded-md bg-blue-600 text-white pl-4 pr-6 hover:bg-blue-500 focus:outline-none active:bg-blue-700 transition duration-150 ease-in-out">
+            <x-svgs.plus class="w-5 h-5 mr-1" />
+            Download PDF
+        </button>
+        @endif
 		@endrole
        
     </div>
@@ -73,11 +80,12 @@ $user_login = auth()->id();
                     <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
                             Project
                     </td>
-                    <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
-                            Activity
-                    </td>
+                   
                     <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
                             Duration
+                    </td>
+                    <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+                            Activity
                     </td>
                     <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
                             Time
@@ -102,6 +110,7 @@ $user_login = auth()->id();
                    <p><span class="taskTitle"> {{ $day['productivity'] }}</span></p>
                    
                </td>
+               
                <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
               
                    <p><span class="taskTitle"> {{ $day['start_time'] }} - {{ $day['end_time'] }}</span></p>

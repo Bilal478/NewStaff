@@ -23,6 +23,7 @@ class DailyReportsIndex extends Component
 
     public $date;
     public $week;
+    public $userName;
     public $search = '';
     public $login = '';
     public $user_list = '';
@@ -135,8 +136,9 @@ class DailyReportsIndex extends Component
 
     public function download()
     {
-        PDF::loadView('pdf.report', [
+        PDF::loadView('pdf.dailyreport', [
             'users' => $this->getUsersReport(),
+            'userName' => $this->userName,
             'dates' => $this->getWeekDates(),
             'week' => $this->getWeekFormatted(),
         ])
@@ -160,15 +162,37 @@ class DailyReportsIndex extends Component
         if(!$this->user_id){
             $this->user_id = Auth::user()->id;
         }
-
-
+        $name = User::where('id', $this->user_id)->first();
+        $this->userName = $name->firstname.' '.$name->lastname;
+// dd($this->user_id);
+// dd( Activity::join('users', 'activities.user_id', '=', 'users.id')
+// ->join('projects', 'activities.project_id', '=', 'projects.id')
+// ->leftJoin('tasks', function ($join) {
+//     $join->on('activities.task_id', '=', 'tasks.id')
+//         ->orWhereNull('activities.task_id');
+// })
+// ->whereBetween('activities.date', [$this->startDate(true), $this->endDate(true)])->where(['activities.user_id'=> $this->user_id])
+// ->groupBy('activities.id','activities.user_id', 'activities.date', 'activities.task_id', 'activities.project_id', 'projects.title', 'tasks.title','activities.seconds','activities.total_activity_percentage','activities.start_datetime','activities.end_datetime')
+// ->selectRaw('activities.id,activities.user_id,projects.title as project_title, sum(activities.seconds) as seconds, activities.date, avg(activities.total_activity_percentage) as productivity,activities.start_datetime,activities.end_datetime,
+// CASE
+// WHEN activities.task_id IS NULL THEN "No to-do"
+// ELSE tasks.title
+// END AS task_title')->toSql());
         $results = Activity::join('users', 'activities.user_id', '=', 'users.id')
         ->join('projects', 'activities.project_id', '=', 'projects.id')
-        ->join('tasks', 'activities.task_id', '=', 'tasks.id')
-        ->whereBetween('activities.date', [$this->startDate(true), $this->endDate(true)])->where(['activities.user_id'=> Auth::user()->id])
-        ->groupBy('activities.user_id', 'activities.date', 'activities.task_id', 'activities.project_id', 'projects.title', 'tasks.title','activities.seconds','activities.total_activity_percentage','activities.start_datetime','activities.end_datetime')
-        ->selectRaw('projects.title as project_title, tasks.title as task_title, sum(activities.seconds) as seconds, activities.date, avg(activities.total_activity_percentage) as productivity,activities.start_datetime,activities.end_datetime')->get();
+        ->leftJoin('tasks', function ($join) {
+            $join->on('activities.task_id', '=', 'tasks.id')
+                ->orWhereNull('activities.task_id');
+        })
+        ->whereBetween('activities.date', [$this->startDate(true), $this->endDate(true)])->where(['activities.user_id'=> $this->user_id])
+        ->groupBy('activities.id','activities.user_id', 'activities.date', 'activities.task_id', 'activities.project_id', 'projects.title', 'tasks.title','activities.seconds','activities.total_activity_percentage','activities.start_datetime','activities.end_datetime')
+        ->selectRaw('activities.id,activities.user_id,projects.title as project_title, sum(activities.seconds) as seconds, activities.date, avg(activities.total_activity_percentage) as productivity,activities.start_datetime,activities.end_datetime,
+        CASE
+        WHEN activities.task_id IS NULL THEN "No to-do"
+        ELSE tasks.title
+        END AS task_title')->orderBy('activities.id')->get();
 
+        $ss = [];
         $arrayData = [];
         $seconds_sum_of_day = 0;
         $seconds_sum = 0;
@@ -176,6 +200,7 @@ class DailyReportsIndex extends Component
         $i=0;
         $j=0;
         foreach($results as $index=>$result){
+            // dd($result);
             $startDateTime = Carbon::parse($result->end_datetime);
             $seconds_sum_of_day += $result->seconds;
             if(isset($results[$index+1])){
@@ -185,11 +210,12 @@ class DailyReportsIndex extends Component
                 $endDateTime = Carbon::parse($results[$index+1]->start_datetime);
                 
                 $seconds_sum += $result->seconds;
-                $diffInSeconds = $endDateTime->diffInSeconds($startDateTime);
-
-                if($diffInSeconds > 0){
+                $diffInSeconds = $startDateTime->diffInSeconds($endDateTime);
+                $ss[]=$diffInSeconds;
+                if($diffInSeconds > 0 ){
                    $j++;
                     $arrayData[] = [
+                        'user_id' => $result->user_id,
                         'start_time' => $results[$start_time_index]->start_datetime->format('h:i A'),
                         'end_time' => $result->end_datetime->format('h:i A'),
                         'date' => $result->date->format('Y-m-d'),
@@ -197,7 +223,7 @@ class DailyReportsIndex extends Component
                         'minutes'=> $seconds_sum/60,
                         'productivity' => intval($result->productivity),
                         'project_title' => $result->project_title,
-                        'task_title' => $result->task_title,
+                        'task_title' =>  isset($result->task_id)  ? $result->task_title : 'No to-do',
                         
                     ];
                     
@@ -207,19 +233,20 @@ class DailyReportsIndex extends Component
                 }
             }
 
-            if(isset($results[$index+1])){
-                if($results[$index+1]->date != $result->date){
+            // if(isset($results[$index+1])){
+            //     if($results[$index+1]->date != $result->date){
                     
-                    $arrayData[$i]['hours_of_day'] = CarbonInterval::seconds($seconds_sum_of_day)->cascade()->format('%H:%I:%S');
-                    $i+=$j;
-                    $seconds_sum_of_day = 0;
-                }
-            }else{
-                $arrayData[$i]['hours_of_day'] = CarbonInterval::seconds($seconds_sum_of_day)->cascade()->format('%H:%I:%S');
-            }
+            //         $arrayData[$i]['hours_of_day'] = CarbonInterval::seconds($seconds_sum_of_day)->cascade()->format('%H:%I:%S');
+            //         $i+=$j;
+            //         $seconds_sum_of_day = 0;
+            //     }
+            // }else{
+            //     $arrayData[$i]['hours_of_day'] = CarbonInterval::seconds($seconds_sum_of_day)->cascade()->format('%H:%I:%S');
+            // }
            
             
         }
+        // dd($ss);
         return $arrayData;
     }
 }

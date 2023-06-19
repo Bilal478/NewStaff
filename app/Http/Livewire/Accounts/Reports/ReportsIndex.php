@@ -172,7 +172,7 @@ class ReportsIndex extends Component
         ->groupBy('activities.user_id', 'activities.date', 'users.firstname', 'users.lastname', 'activities.task_id', 'activities.project_id', 'projects.title', 'tasks.title')
         ->selectRaw('CONCAT(users.firstname, " ", users.lastname) AS full_name, sum(activities.seconds) as seconds, avg(activities.total_activity_percentage) as productivity, activities.date, users.firstname, users.lastname, activities.user_id, activities.task_id, activities.project_id, projects.title as project_title, 
         CASE
-        WHEN activities.task_id IS NULL THEN "No Todo"
+        WHEN activities.task_id IS NULL THEN "No to-do"
         ELSE tasks.title
         END AS task_title')->whereBetween('activities.date', [$this->startDate(true), $this->endDate(true)])
         ->when($this->user_id, function($query) {

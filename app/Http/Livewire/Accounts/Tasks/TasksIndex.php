@@ -102,13 +102,12 @@ class TasksIndex extends Component
 
     public function tasksForUser()
     {
-        $projectsArray = Auth::guard('web')->user()->projects->pluck('id')->toArray();
+        $tasksArray = Auth::guard('web')->user()->tasks->pluck('id')->toArray();
         $role = Auth::guard('web')->user()->getRole();
         if($role == 'manager'){
-            return Task::where('title', 'like', '%' . $this->search . '%')->whereIn('project_id',$projectsArray)
+            return Task::where('title', 'like', '%' . $this->search . '%')->whereIn('id',$tasksArray)
             ->with('user:id,firstname,lastname')
             ->latest()
-           // ->paginate(2);
             ->paginate(8, ['*'], 'taskPage');
         }
         else{
@@ -117,7 +116,6 @@ class TasksIndex extends Component
             ->where('title', 'like', '%' . $this->search . '%')
             ->with('user:id,firstname,lastname')
             ->latest()
-           // ->paginate(2);
             ->paginate(8, ['*'], 'taskPage');
         }
     }

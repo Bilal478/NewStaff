@@ -43,18 +43,27 @@
                 {{ $week }}
             </h2>
         </div>
+
+
+
         <div cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="width: 100%;">
             <table style="width: 100%;">
-                <tbody>
-                <div class="w-full overflow-x-auto rounded-md border">
-        <table class="w-full bg-white">
             <tbody>
         
             @foreach ($dates as $date)
                 <?php $inner_count = 0; ?>
-            <tr class="text-left uppercase text-xs text-gray-700 font-medium border-b-2">
-            <th class="px-4 py-4">
+            <tr style="color: #374151; font-size: 12px; text-align: left; border-bottom: 1px solid #E5E7EB;">
+            <th style="padding: 15px 10px; text-align: left;">
                 {{ $date->format('M d, Y') }} 
+            </th>
+            <th style="padding: 15px 10px; text-align: left;">
+                
+            </th>
+            <th style="padding: 15px 10px; text-align: left;">
+                
+            </th>
+            <th style="padding: 15px 10px; text-align: left;">
+               
             </th>
             </tr>
             
@@ -63,43 +72,43 @@
                 @if($date->format('Y-m-d') == $day['date'])
                     @if($inner_count==0)
                    
-                    <tr class="text-left font-extrabold uppercase text-xs text-gray-700 font-medium border-b-2">
+                    <tr  style="color: #374151; font-size: 12px; text-align: left; border-bottom: 1px solid #E5E7EB;">
                     
-                    <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+                    <td style="padding: 15px 10px; text-align: left; font-weight:800;">
                             Project
                     </td>
                    
-                    <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+                    <td style="padding: 15px 10px; text-align: left; font-weight:800;">
                             Duration
                     </td>
-                    <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+                    <td style="padding: 15px 10px; text-align: left; font-weight:800;">
                             Activity
                     </td>
-                    <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+                    <td style="padding: 15px 10px; text-align: left; font-weight:800;">
                             Time
                     </td>
                 </tr>
                 @endif
                 <?php $inner_count = 1; ?>
-                <tr class="text-left uppercase text-xs text-gray-700 font-medium border-b-2">
+                <tr style="color: #374151; font-size: 12px; text-align: left; border-bottom: 1px solid #E5E7EB;">
                    
-                    <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+                    <td style="padding: 15px 10px; text-align: left;">
                     {{ $day['project_title'] }}
                         <p><span class="taskTitle"> {{ $day['task_title'] }}</span></p>
                         
                     </td>
-                    <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+                    <td style="padding: 15px 10px; text-align: left;">
                    
                    <p><span class="taskTitle"> {{ $day['duration'] }}</span></p>
                    
                </td>
-               <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+               <td style="padding: 15px 10px; text-align: left;">
               
                    <p><span class="taskTitle"> {{ $day['productivity'] }}</span></p>
                    
                </td>
                
-               <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+               <td style="padding: 15px 10px; text-align: left;">
               
                    <p><span class="taskTitle"> {{ $day['start_time'] }} - {{ $day['end_time'] }}</span></p>
                    
@@ -112,8 +121,7 @@
             </tbody>
         </table>
     </div>
-                </tbody>
-            </table>
+               
         </div>
     </body>
 </html>

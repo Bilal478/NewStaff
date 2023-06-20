@@ -33,7 +33,7 @@ $user_login = auth()->id();
             </div>
         </div>
         @role(['owner', 'manager'])
-                <div class="mt-4  sm:mt-0 ">
+                <div class="mt-4  sm:mt-0 mr-4">
                         <div class="ml-2">
                         <x-inputs.select-without-label wire:model="user_id" class="w-60" name="user_id">
                                 @forelse ($user_list->count() ? $user_list : $login as $user)

@@ -101,7 +101,7 @@ $user_login = auth()->id();
                 <?php $inner_count = 1; ?>
                 <tr class="text-left uppercase text-xs text-gray-700 font-medium border-b-2">
                    
-                    <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5" wire:click="$emit('showEditTimeModal')">
+                    <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5" wire:click="$emit('showEditTimeModal', {{ json_encode($day) }})">
                     {{ $day['project_title'] }}
                         <p><span class="taskTitle"> {{ $day['task_title'] }}</span></p>
                         

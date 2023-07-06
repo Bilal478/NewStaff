@@ -101,7 +101,7 @@ $user_login = auth()->id();
                 <?php $inner_count = 1; ?>
                 <tr class="text-left uppercase text-xs text-gray-700 font-medium border-b-2">
                    
-                    <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5" wire:click="$emit('showEditTimeModal', {{ json_encode($day) }})">
+                    <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
                     {{ $day['project_title'] }}
                         <p><span class="taskTitle"> {{ $day['task_title'] }}</span></p>
                         
@@ -117,7 +117,7 @@ $user_login = auth()->id();
                    
                </td>
                
-               <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+               <td style="cursor: pointer;" wire:click="$emit('showEditTimeModal', {{ json_encode($day) }})" class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
               
                    <p><span class="taskTitle"> {{ $day['start_time'] }} - {{ $day['end_time'] }}</span></p>
                    

@@ -20,13 +20,9 @@
                     <span>{{$date}} from {{$startTime}} to {{$endTime}}</span>
                 </div>
             </div>
-            <div class="toggle-container  mt-3 mb-3">
-                <button id="dailyReportButton" class="toggle-button active" onclick="toggleReport('daily')">Reassign Time</button>
-                <button id="weeklyReportButton" class="toggle-button" onclick="toggleReport('weekly')">Delete Time</button>
-            </div>
-            <h3 class="mb-3">New Time :</h3>
-            <span class="mr-2">From</span><input wire:model="newStartTime" id="startTimePicker" type="text" class="border border-dark custom-input" value="{{$startTime}}"><br><br>
-            <span class="mr-7">To</span><input wire:model="newEndTime" id="endTimePicker" type="text" class="border border-dark custom-input" value="{{$endTime}}">
+            <h3 class="mb-3 mt-3">New Time :</h3>
+            <span class="mr-2">From</span><input wire:model="newStartTime" id="startTimePicker" type="text" class="border border-dark custom-input"><input type="text" class="border border-dark custom-input-small" value="{{$startTime}}"><br><br>
+            <span class="mr-7">To</span><input wire:model="newEndTime" id="endTimePicker" type="text" class="border border-dark custom-input"><input type="text" class="border border-dark custom-input-small" value="{{$endTime}}">
 			<div class="flex justify-end mt-6">
 				<x-buttons.blue-inline type="submit">
 				  Update Time
@@ -62,38 +58,9 @@
         }
     });
 });
-
-
-    function toggleReport(reportType) {
-        if (reportType === 'daily') {
-            document.getElementById('dailyReportButton').classList.add('active');
-            document.getElementById('weeklyReportButton').classList.remove('active');
-            // TODO: Show the daily report content and hide the weekly report content
-        } else if (reportType === 'weekly') {
-            document.getElementById('dailyReportButton').classList.remove('active');
-            document.getElementById('weeklyReportButton').classList.add('active');
-            // TODO: Show the weekly report content and hide the daily report content
-        }
-    }
 </script>
 
 <style>
-    .toggle-container {
-        display: flex;
-    }
-
-    .toggle-button {
-        padding: 5px 10px;
-        background-color: #ddd;
-        border: none;
-        outline: none;
-        cursor: pointer;
-    }
-
-    .toggle-button.active {
-        background-color: #007bff;
-        color: #fff;
-    }
     #timespan{
         font-weight: 600;
         margin-top: 5px;
@@ -105,9 +72,16 @@
         font-weight: 600;
     }
     .custom-input {
-    height: 40px; /* Adjust the height as needed */
-    width: 308px; /* Adjust the width as needed */
+    height: 40px; 
+    width: 308px;
     border-radius: 5px;
+  }
+  .custom-input-small{
+    height: 40px; 
+    width: 80px; 
+    border-radius: 5px;
+    text-align: center;
+    margin-left: 5px;
   }
 </style>
 	

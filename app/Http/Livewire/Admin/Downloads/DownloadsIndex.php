@@ -23,6 +23,7 @@ class DownloadsIndex extends Component
     public $versionData ;
     public $windowSetupName = '';
     public $macSetupName = '';
+    public $ubuntuSetupName = '';
 
 
     protected $listeners = [
@@ -47,6 +48,7 @@ class DownloadsIndex extends Component
 
          $this->windowSetupName = $this->versionData[0]->version_name;
          $this->macSetupName = $this->versionData[1]->version_name;
+         $this->ubuntuSetupName = $this->versionData[2]->version_name;
         
     }
 
@@ -57,7 +59,7 @@ class DownloadsIndex extends Component
                 'windowSetupName' => ['required', 'string', 'max:200'],
             ]);
 
-            $fileName = $this->windowSetupName.'.exe';
+            $fileName = $this->windowSetupName;
             DB::table('setup_version')->where('id',1)->update(['version_name'=>$fileName]);
             return  $this->toast('Window version updated.');
        
@@ -70,11 +72,25 @@ class DownloadsIndex extends Component
             'macSetupName' => ['required', 'string', 'max:200'],
         ]);
 
-        $fileName = $this->macSetupName.'.dmg';
+        $fileName = $this->macSetupName;
         DB::table('setup_version')->where('id',2)->update(['version_name'=>$fileName]);
         return  $this->toast('MAC version updated.');
     
    
 }
+
+    public function updateUbuntuSetup(){
+            
+                
+        $this->validate([
+            'ubuntuSetupName' => ['required', 'string', 'max:200'],
+        ]);
+
+        $fileName = $this->ubuntuSetupName;
+        DB::table('setup_version')->where('id',3)->update(['version_name'=>$fileName]);
+        return  $this->toast('Ubuntu version updated.');
+
+
+    }
 
 }

@@ -21,8 +21,8 @@
                 </div>
             </div>
             <h3 class="mb-3 mt-3">New Time :</h3>
-            <span class="mr-2">From</span><input wire:model="newStartTime" id="startTimePicker" type="text" class="border border-dark custom-input"><input type="text" class="border border-dark custom-input-small" value="{{$startTime}}"><br><br>
-            <span class="mr-7">To</span><input wire:model="newEndTime" id="endTimePicker" type="text" class="border border-dark custom-input"><input type="text" class="border border-dark custom-input-small" value="{{$endTime}}">
+            <span class="mr-2">From</span><input wire:model="newStartTime" id="startTimePicker" type="text" class="border border-dark custom-input"><input type="text" class="border border-dark custom-input-small" value="{{$startTime}}" readonly><br><br>
+            <span class="mr-7">To</span><input wire:model="newEndTime" id="endTimePicker" type="text" class="border border-dark custom-input"><input type="text" class="border border-dark custom-input-small" value="{{$endTime}}" readonly>
 			<div class="flex justify-end mt-6">
 				<x-buttons.blue-inline type="submit">
 				  Update Time

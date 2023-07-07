@@ -29,7 +29,7 @@ class EditTimeModal extends Component
     public $newStartTime;
     public $newEndTime;
     protected $listeners = [
-    'showEditTimeModal' => 'EditTimeModal',
+        'showEditTimeModal' => 'EditTimeModal',
     ];
     
     public function render()
@@ -62,6 +62,15 @@ class EditTimeModal extends Component
 
     }
     public function update(){
+
+        if($this->newStartTime==''){
+            $this->newStartTime=$this->startTime;
+            // dd( $this->newStartTime,$this->newEndTime);
+        }
+        if($this->newEndTime==''){
+            $this->newEndTime=$this->endTime;
+            // dd( $this->newStartTime,$this->newEndTime);
+        }
         $newStartTimeValue =$this->simpleDate.' '.date('H:i:s', strtotime($this->newStartTime));
         $newEndTimeValue = $this->simpleDate.' '.date('H:i:s', strtotime($this->newEndTime));
         $newStartTimeValueTemp =strtotime($this->simpleDate . ' ' . $this->newStartTime);
@@ -70,6 +79,7 @@ class EditTimeModal extends Component
         $oldEndTimeValue = $this->simpleDate.' '.date('H:i:s', strtotime($this->endTime));
         $oldStartTimeValueTemp = strtotime($this->simpleDate . ' ' . $this->startTime);
         $oldEndTimeValueTemp = strtotime($this->simpleDate . ' ' . $this->endTime);
+       
         if($newStartTimeValue<$oldStartTimeValue){
         $time=($oldStartTimeValueTemp-$newStartTimeValueTemp)/600;
         for($i=0 ; $i<$time ; $i++){
@@ -169,7 +179,13 @@ class EditTimeModal extends Component
         }
     }
         $this->dispatchBrowserEvent('close-activities-edit-time-modal');
+        if(!($newStartTimeValue==$oldStartTimeValue && $newEndTimeValue==$oldEndTimeValue)){
 		$this->toast('Time Updated', "The Time has been updated successfully ");
-        
-    } 
+        }
+        $this->newStartTime = '';
+        $this->newEndTime = '';
+    
+    }
+  
+    
 }

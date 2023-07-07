@@ -146,7 +146,7 @@ class ReportsIndex extends Component
 
         return response()->download(storage_path() . '/' . $this->week . '.pdf')->deleteFileAfterSend(true);
     }
-
+   
     public function render()
     {		
         // dd($this->getUsersReport());

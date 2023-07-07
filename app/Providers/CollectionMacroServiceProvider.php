@@ -31,6 +31,11 @@ class CollectionMacroServiceProvider extends ServiceProvider
                 return $item->project_title;
             });
         });
+        Collection::macro('groupByUserNames', function () {
+            return $this->groupBy(function ($item) {
+                return $item->task_title;
+            });
+        });
 
         Collection::macro('mapActivitiesStatsByDates', function ($dateRange) {
             return $this->map(function ($userActivities) use ($dateRange) {

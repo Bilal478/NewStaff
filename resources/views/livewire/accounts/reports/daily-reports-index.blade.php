@@ -72,6 +72,12 @@ $user_login = auth()->id();
             
             @foreach ($users as $day)
                
+                   {{-- $data=$day['project_title'];
+                   $data1=$day['task_title'];
+                   $data2=$day['duration'];
+                   $data3=$day['start_time'];
+                   $data4=$day['end_time']; --}}
+                  
                 @if($date->format('Y-m-d') == $day['date'])
                     @if($inner_count==0)
                    
@@ -111,7 +117,7 @@ $user_login = auth()->id();
                    
                </td>
                
-               <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+               <td style="cursor: pointer;" wire:click="$emit('showEditTimeModal', {{ json_encode($day) }})" class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
               
                    <p><span class="taskTitle"> {{ $day['start_time'] }} - {{ $day['end_time'] }}</span></p>
                    
@@ -129,7 +135,9 @@ $user_login = auth()->id();
     @push('modals')
         @livewire('activites-modal')
         @livewire('time-modal')
+        @livewire('accounts.activities.edit-time-modal')
     @endpush
+    
 </div>
 
 @push('style')
@@ -177,3 +185,4 @@ $user_login = auth()->id();
     }
 </style>
 @endpush
+

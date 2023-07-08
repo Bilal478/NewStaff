@@ -14,6 +14,9 @@
                     <x-navigation.sidebar-item route="accounts.dashboard" img="svgs.chart">
                         Dashboard
                     </x-navigation.sidebar-item>
+                    <x-navigation.sidebar-item route="accounts.timesheets" img="svgs.chart">
+                        Timesheets
+                    </x-navigation.sidebar-item>
                     <x-navigation.sidebar-item route="accounts.activities" img="svgs.computer">
                         Activities
                     </x-navigation.sidebar-item>

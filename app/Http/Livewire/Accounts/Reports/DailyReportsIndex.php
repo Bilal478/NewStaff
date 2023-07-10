@@ -171,8 +171,8 @@ class DailyReportsIndex extends Component
                 ->orWhereNull('activities.task_id');
         })
         ->whereBetween('activities.date', [$this->startDate(true), $this->endDate(true)])->where(['activities.user_id'=> $this->user_id])
-        ->groupBy('activities.id','activities.user_id', 'activities.date', 'activities.task_id', 'activities.project_id', 'projects.title', 'tasks.title','activities.seconds','activities.total_activity_percentage','activities.start_datetime','activities.end_datetime')
-        ->selectRaw('activities.id,activities.user_id,projects.title as project_title, sum(activities.seconds) as seconds, activities.date, avg(activities.total_activity_percentage) as productivity,activities.start_datetime,activities.end_datetime,
+        ->groupBy('activities.id','activities.user_id', 'activities.account_id','activities.date', 'activities.task_id', 'activities.project_id', 'projects.title', 'tasks.title','activities.seconds','activities.total_activity_percentage','activities.start_datetime','activities.end_datetime')
+        ->selectRaw('activities.id,activities.user_id,activities.account_id,activities.task_id,activities.project_id,projects.title as project_title, sum(activities.seconds) as seconds, activities.date, avg(activities.total_activity_percentage) as productivity,activities.start_datetime,activities.end_datetime,
         CASE
         WHEN activities.task_id IS NULL THEN "No to-do"
         ELSE tasks.title
@@ -207,7 +207,10 @@ class DailyReportsIndex extends Component
                         'duration'=> CarbonInterval::seconds($seconds_sum)->cascade()->format('%H:%I:%S'),
                         'minutes'=> $seconds_sum/60,
                         'productivity' => intval($result->productivity),
+                        'project_id' => $result->project_id,
                         'project_title' => $result->project_title,
+                        'task_id' => $result->task_id,
+                        'account_id' => $result->account_id,
                         'task_title' =>  isset($result->task_id)  ? $result->task_title : 'No to-do',
                         
                     ];
@@ -241,10 +244,13 @@ class DailyReportsIndex extends Component
                 'start_time' => $results[$start_time_index]->start_datetime->format('h:i A'),
                 'end_time' => $lastResult->end_datetime->format('h:i A'),
                 'date' => $lastResult->date->format('Y-m-d'),
-                'duration' => CarbonInterval::seconds($seconds_sum)->cascade()->format('%H:%I:%S'),
+                'duration' => CarbonInterval::seconds($seconds_sum+600)->cascade()->format('%H:%I:%S'),
                 'minutes' => $seconds_sum / 60,
                 'productivity' => intval($lastResult->productivity),
+                'project_id' => $lastResult->project_id,
                 'project_title' => $lastResult->project_title,
+                'task_id' => $lastResult->task_id,
+                'account_id' => $lastResult->account_id,
                 'task_title' => isset($lastResult->task_id) ? $lastResult->task_title : 'No to-do',
             ];
     }

@@ -111,7 +111,7 @@ $user_login = auth()->id();
                    
                </td>
                
-               <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+               <td  style="cursor: pointer;" wire:click="$emit('showEditTimeModal', {{ json_encode($day) }})" class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
               
                    <p><span class="taskTitle"> {{ $day['start_time'] }} - {{ $day['end_time'] }}</span></p>
                    
@@ -129,6 +129,7 @@ $user_login = auth()->id();
     @push('modals')
         @livewire('activites-modal')
         @livewire('time-modal')
+        @livewire('accounts.activities.edit-time-modal')
     @endpush
 </div>
 

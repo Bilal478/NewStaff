@@ -43,7 +43,7 @@ if(count($count_subs) == '0'){
     @else
     <title>{{ config('app.name') }}</title>
     @endif
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.6/dist/flatpickr.min.css">
     <link rel="shortcut icon" href="{{ url(asset('neostaff-icon.png')) }}">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link

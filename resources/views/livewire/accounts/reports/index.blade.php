@@ -82,7 +82,7 @@ $user_login = auth()->id();
 
                     @foreach ($activity['days'] as $day)
                     <td class="min-w-36 px-4 py-5">
-                        <a href="#" wire:click="$emit('activityModal','{{ $day['date'] }}','{{ $day['user_id'] }}')">{{ $day['seconds'] }}</a>
+                        <a href="#" wire:click="$emit('activityModal','{{ $day['date'] }}','{{ $day['user_id'] }}','{{ $day['account_id'] }}','{{ $day['project_id'] }}','{{ $day['task_id'] }}')">{{ $day['seconds'] }}</a>
                         <x-svgs.computer class="w-4 h-4 text-blue-500 mr-1" />
                         {{ $day['productivity'] }}%
                         <br>
@@ -135,6 +135,7 @@ $user_login = auth()->id();
     @push('modals')
         @livewire('activites-modal')
         @livewire('time-modal')
+        @livewire('accounts.activities.edit-time-modal')
     @endpush
 </div>
 

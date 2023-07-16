@@ -80,15 +80,36 @@ class EditTimeModal extends Component
         $oldStartTimeValueTemp = strtotime($this->simpleDate . ' ' . $this->startTime);
         $oldEndTimeValueTemp = strtotime($this->simpleDate . ' ' . $this->endTime);
        
-        if($newStartTimeValue<$oldStartTimeValue){
+    if($newStartTimeValue<$oldStartTimeValue){
         $time=($oldStartTimeValueTemp-$newStartTimeValueTemp)/600;
-        for($i=0 ; $i<$time ; $i++){
+            for($i=0 ; $i<$time ; $i++){
             $temp = strtotime ( '+'.$i.'0 minutes ' , strtotime (substr($newStartTimeValue,0,19) ) ) ;
-			$new_start_time = date('Y-m-d H:i:s', $temp);
+            $new_start_time = date('Y-m-d H:i:s', $temp);
             $temp_two = strtotime ( '+'.$i.'0 minutes ' , strtotime (substr($newStartTimeValue,0,19)) ) ;
-			$new_end_time = date('Y-m-d H:i:s', $temp_two);
+            $new_end_time = date('Y-m-d H:i:s', $temp_two);
             $temp_two_final = strtotime ( '+10 minutes ' , strtotime ($new_end_time) ) ;
-			$end_time = date('Y-m-d H:i:s', $temp_two_final);
+            $end_time = date('Y-m-d H:i:s', $temp_two_final);
+
+            $data = DB::table('activities')
+            ->where('start_datetime', '>=', $new_start_time)
+            ->where('end_datetime', '<=', $end_time)
+            ->where('user_id', '=', $this->userId)
+            // ->where('project_id', '=', $this->projectId)
+            ->where('account_id', '=', $this->accountId)
+            // ->where('task_id', '=', $this->task->id)
+            ->whereNull('deleted_at')
+            ->get();
+
+            //Count rows finded in the period of time
+            $rows = count($data);
+            // dd('a',$rows);
+            if($rows>0)
+            {
+                $this->toast('Activity can not be created', "There is an activity in this period of time TimeStart: " . $new_start_time .
+                " - End time: " . $end_time,'error',15000);
+                return false;  
+            }
+            if($rows == 0){
             DB::table('activities')->insert([
                 'from' => 621,
                 'to' => 1200,
@@ -106,7 +127,8 @@ class EditTimeModal extends Component
                 'account_id' => $this->accountId,
                 'created_at' =>  $newStartTimeValue, 
                 'updated_at' =>  $newStartTimeValue, 
-            ]);    
+            ]);
+            }    
         }
     }
     if($newEndTimeValue>$oldEndTimeValue){
@@ -118,6 +140,27 @@ class EditTimeModal extends Component
 			$new_end_time = date('Y-m-d H:i:s', $temp_two);
             $temp_two_final = strtotime ( '+10 minutes ' , strtotime ($new_end_time) ) ;
 			$end_time = date('Y-m-d H:i:s', $temp_two_final);
+
+            $data = DB::table('activities')
+            ->where('start_datetime', '>=', $new_start_time)
+            ->where('end_datetime', '<=', $end_time)
+            ->where('user_id', '=', $this->userId)
+            // ->where('project_id', '=', $this->projectId)
+            ->where('account_id', '=', $this->accountId)
+            // ->where('task_id', '=', $this->task->id)
+            ->whereNull('deleted_at')
+            ->get();
+
+        //Count rows finded in the period of time
+        $rows = count($data);
+        // dd('b',$rows);
+        if($rows>0)
+        {
+            $this->toast('Activity can not be created', "There is an activity in this period of time TimeStart: " . $new_start_time .
+            " - End time: " . $end_time,'error',15000);
+            return false;  
+        }
+        if($rows == 0){
             DB::table('activities')->insert([
                 'from' => 621,
                 'to' => 1200,
@@ -135,7 +178,8 @@ class EditTimeModal extends Component
                 'account_id' => $this->accountId,
                 'created_at' =>  $newStartTimeValue, 
                 'updated_at' =>  $newStartTimeValue,
-            ]);    
+            ]);
+        }    
         }
     }
     if($newStartTimeValue>$oldStartTimeValue && $newStartTimeValue<$oldEndTimeValue ){
@@ -178,9 +222,12 @@ class EditTimeModal extends Component
             ->delete();   
         }
     }
+        $this->dispatchBrowserEvent('close-activity-modal');
+        $this->dispatchBrowserEvent('close-task-show-modal');
         $this->dispatchBrowserEvent('close-activities-edit-time-modal');
         if(!($newStartTimeValue==$oldStartTimeValue && $newEndTimeValue==$oldEndTimeValue)){
             $this->emit('activityUpdate');
+            $this->emit('tasksUpdate');
 		$this->toast('Time Updated', "The Time has been updated successfully ");
         }
         $this->newStartTime = '';

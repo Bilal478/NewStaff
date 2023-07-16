@@ -32,9 +32,21 @@ class ActivitiesController extends Controller
     
         $last_activity_record = Activity::find(Cache::get('last_activity_id'));
 
-        if(!($last_activity_record->start_datetime == $start_datetime && $last_activity_record->end_datetime == $end_datetime
-        && $last_activity_record->account_id == $account->id &&  $last_activity_record->project_id == $request->project_id &&  $last_activity_record->task_id == $task->id))
-        {
+        if($last_activity_record){
+            if(!($last_activity_record->start_datetime == $start_datetime && $last_activity_record->end_datetime == $end_datetime
+            && $last_activity_record->account_id == $account->id &&  $last_activity_record->project_id == $request->project_id &&  $last_activity_record->task_id == $task->id))
+            {
+                $activity = $task->activities()->create($request->validated());
+                Cache::put('last_activity_id', $activity->id);
+                $this->storeScreenshots($request, $account, $activity);
+    
+                return api_response([
+                    'message' => 'The activity has been saved.',
+                    'activity' => new ActivityResource($activity->refresh())
+                ], 200);  
+            }
+        }
+        else{
             $activity = $task->activities()->create($request->validated());
             Cache::put('last_activity_id', $activity->id);
             $this->storeScreenshots($request, $account, $activity);
@@ -44,6 +56,7 @@ class ActivitiesController extends Controller
                 'activity' => new ActivityResource($activity->refresh())
             ], 200);  
         }
+        
     }
 
     /**

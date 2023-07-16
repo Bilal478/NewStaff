@@ -16,7 +16,11 @@ class ProjectsShow extends Component
         'page' => ['except' => 1],
     ];
 
-    public function mount(Project $project)
+    protected $listeners = [
+        'tasksPageUpdate' => '$refresh', 
+    ];
+
+    public function mount(Project $project) 
     {
         $this->projectId = $project->id;
     }

@@ -38,7 +38,7 @@ class StoreTaskActivityRequest extends FormRequest
     {
         $validated = Arr::except($this->validator->validated(), ['screenshots']);
         $validated['user_id'] = request()->user()->id;
-        $validated['project_id'] = request()->task->project->id;
+        $validated['project_id'] = request()->project_id;
         $validated['account_id'] = request()->account->id;
 
         return $validated;

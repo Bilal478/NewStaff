@@ -34,7 +34,7 @@ class CollectionMacroServiceProvider extends ServiceProvider
 
         Collection::macro('mapActivitiesStatsByDates', function ($dateRange) {
             return $this->map(function ($userActivities) use ($dateRange) {
-                // dd($userActivities);
+                
                     $days = $dateRange->map(function ($date) use ($userActivities) {
                         
                         $activity = $userActivities->first(function ($activity) use ($date) {
@@ -47,7 +47,10 @@ class CollectionMacroServiceProvider extends ServiceProvider
                             'seconds' => CarbonInterval::seconds($activity ? $activity->seconds : 0)->cascade()->format('%H:%I:%S'),
                             'date' => $date->format('M d, Y'),
                             'productivity' => $activity ? round($activity->productivity) : 0,
-                            'user_id' =>  isset($activity->user_id)  ? $activity->user_id : '',
+                            'user_id' =>  isset($activity->user_id)  ? $activity->user_id : null,
+                            'account_id' =>  isset($activity->account_id)  ? $activity->account_id : null,
+                            'project_id' =>  isset($activity->project_id)  ? $activity->project_id : null,
+                            'task_id' =>  isset($activity->task_id)  ? $activity->task_id : null,
                             'project_title' =>  isset($activity->project_id)  ? $activity->project_title : '',
                             'task_title' =>  isset($activity->task_id)  ? $activity->task_title : 'No to-do',
                         ];

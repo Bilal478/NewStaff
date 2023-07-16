@@ -197,7 +197,7 @@ class DailyReportsIndex extends Component
                 $seconds_sum += $result->seconds;
                 $diffInSeconds = $startDateTime->diffInSeconds($endDateTime);
                 $ss[]=$diffInSeconds;
-                if($diffInSeconds > 0 ){
+                if($diffInSeconds > 0 || ($result->task_id != $results[$index+1]->task_id) ){
                    $j++;
                     $arrayData[] = [
                         'user_id' => $result->user_id,

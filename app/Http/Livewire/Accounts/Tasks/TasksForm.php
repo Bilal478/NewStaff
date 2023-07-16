@@ -210,9 +210,9 @@ class TasksForm extends Component
                 ->where('start_datetime', '>=', $new_start_time)
                 ->where('end_datetime', '<=', $end_time)
                 ->where('user_id', '=', $this->task->user_id)
-                ->where('project_id', '=', $this->task->project_id)
+                // ->where('project_id', '=', $this->task->project_id)
                 ->where('account_id', '=', $this->task->account_id)
-                ->where('task_id', '=', $this->task->id)
+                // ->where('task_id', '=', $this->task->id)
                 ->whereNull('deleted_at')
                 ->get();
 

@@ -10,6 +10,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Carbon\CarbonInterval;
 
 
 class TasksShow extends Component
@@ -23,6 +24,8 @@ class TasksShow extends Component
     public $seconds_one;
 	public $seconds_two;
 	public $datetimerange;
+    public $userName;
+    public $user_id;
 
     public $list_activities0=array();
 
@@ -87,8 +90,9 @@ class TasksShow extends Component
     {
         $this->date = Carbon::createFromFormat('M d, Y', $this->date)->subDay()->format('M d, Y');
     }
-    public function show($taskId)
+    public function show($taskId,$userId)
     {
+        $this->user_id = $userId;
         $this->taskId = $taskId;
         $this->dispatchBrowserEvent('open-task-show-modal');
     }
@@ -116,7 +120,8 @@ class TasksShow extends Component
 
         return view('livewire.accounts.tasks.show', [
             'task' => $this->task, 'activitiesGroup' => $this->activities(),
-            'activities' => $this->list_activities, 'count' => $count
+            'activities' => $this->list_activities, 'count' => $count,
+            'selectedDateRecord' => $this->selectedDateActivity()
         ]);
 
         // return view('livewire.accounts.tasks.show', [
@@ -126,6 +131,102 @@ class TasksShow extends Component
         //     ->paginate(10), 'count' => $count
         // ]);
     }
+
+    public function selectedDateActivity()
+    {
+        $startDate = Carbon::createFromFormat('M d, Y', $this->date);
+        $startDate = $startDate->format('Y-m-d');
+        
+        if(!$this->user_id){
+            $this->user_id = Auth::user()->id;
+        }
+       
+        $name = User::where('id', $this->user_id)->first();
+        $this->userName = $name->firstname.' '.$name->lastname;
+        $results = Activity::join('users', 'activities.user_id', '=', 'users.id')
+        ->join('projects', 'activities.project_id', '=', 'projects.id')
+        ->leftJoin('tasks', function ($join) {
+            $join->on('activities.task_id', '=', 'tasks.id')
+                ->orWhereNull('activities.task_id');
+        })
+        ->where('activities.date',$startDate)->where(['activities.user_id'=> $this->user_id,'activities.task_id'=> $this->taskId])
+        ->groupBy('activities.id','activities.user_id', 'activities.account_id','activities.date', 'activities.task_id', 'activities.project_id', 'projects.title', 'tasks.title','activities.seconds','activities.total_activity_percentage','activities.start_datetime','activities.end_datetime')
+        ->selectRaw('activities.id,activities.user_id,activities.account_id,activities.task_id,activities.project_id,projects.title as project_title, sum(activities.seconds) as seconds, activities.date, avg(activities.total_activity_percentage) as productivity,activities.start_datetime,activities.end_datetime,
+        CASE
+        WHEN activities.task_id IS NULL THEN "No to-do"
+        ELSE tasks.title
+        END AS task_title')->orderBy('activities.start_datetime')->get();
+        $ss = [];
+        $arrayData = [];
+        $seconds_sum_of_day = 0;
+        $seconds_sum = 0;
+        $start_time_index=0;
+        $i=0;
+        $j=0;
+        foreach($results as $index=>$result){
+            // dd($result);
+            $startDateTime = Carbon::parse($result->end_datetime);
+            $seconds_sum_of_day += $result->seconds;
+            if(isset($results[$index+1])){
+                if($seconds_sum == 0){
+                    $start_time_index = $index;
+                }
+                $endDateTime = Carbon::parse($results[$index+1]->start_datetime);
+                
+                $seconds_sum += $result->seconds;
+                $diffInSeconds = $startDateTime->diffInSeconds($endDateTime);
+                $ss[]=$diffInSeconds;
+                if($diffInSeconds > 0 ){
+                   $j++;
+                    $arrayData[] = [
+                        'user_id' => $result->user_id,
+                        'start_time' => $results[$start_time_index]->start_datetime->format('h:i A'),
+                        'end_time' => $result->end_datetime->format('h:i A'),
+                        'date' => $result->date->format('Y-m-d'),
+                        'duration'=> CarbonInterval::seconds($seconds_sum)->cascade()->format('%H:%I:%S'),
+                        'minutes'=> $seconds_sum/60,
+                        'productivity' => intval($result->productivity),
+                        'project_id' => $result->project_id,
+                        'project_title' => $result->project_title,
+                        'task_id' => $result->task_id,
+                        'account_id' => $result->account_id,
+                        'task_title' =>  isset($result->task_id)  ? $result->task_title : 'No to-do',
+                        
+                    ];
+                    
+                    
+                    $seconds_sum = 0;
+                    
+                }
+            }
+
+            
+        }
+
+        // / Code to handle the last index
+        $lastIndex = count($results) - 1;
+        if ($seconds_sum > 0 && isset($results[$lastIndex])) {
+            $lastResult = $results[$lastIndex];
+            $arrayData[] = [
+                'user_id' => $lastResult->user_id,
+                'start_time' => $results[$start_time_index]->start_datetime->format('h:i A'),
+                'end_time' => $lastResult->end_datetime->format('h:i A'),
+                'date' => $lastResult->date->format('Y-m-d'),
+                'duration' => CarbonInterval::seconds($seconds_sum+600)->cascade()->format('%H:%I:%S'),
+                'minutes' => $seconds_sum / 60,
+                'productivity' => intval($lastResult->productivity),
+                'project_id' => $lastResult->project_id,
+                'project_title' => $lastResult->project_title,
+                'task_id' => $lastResult->task_id,
+                'account_id' => $lastResult->account_id,
+                'task_title' => isset($lastResult->task_id) ? $lastResult->task_title : 'No to-do',
+            ];
+    }
+     
+    
+        return $arrayData;
+    }
+
     public function activities()
     {
         return Auth::guard('web')->user()->isOwnerOrManager()

@@ -1,6 +1,11 @@
 <?php 
 $user_login = auth()->id();
 ?>
+@php
+$account_user = DB::table('account_user')
+    ->where('user_id', auth()->user()->id)
+    ->first();
+@endphp
 <div>
     <x-page.title svg="svgs.report">
         Timesheets
@@ -111,10 +116,11 @@ $user_login = auth()->id();
                    
                </td>
                
-               <td  style="cursor: pointer;" wire:click="$emit('showEditTimeModal', {{ json_encode($day) }})" class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+               <td  style="cursor: pointer;"  class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
               
                    <p style="display: inline;"><span class="taskTitle"> {{ $day['start_time'] }} - {{ $day['end_time'] }}</span></p>
-                   <button type="button">
+                   @if($account_user->allow_edit_time == 1)
+                   <button type="button" wire:click="$emit('showEditTimeModal', {{ json_encode($day) }})">
                         <span class="text-xs text-gray-500"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -122,6 +128,13 @@ $user_login = auth()->id();
                                 </path>
                             </svg></span>
                     </button>
+                    <button id="alertConfirm" wire:click.prevent="confirmDeleteActivity(1)" type="button">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                            </path>
+                        </svg>
+                    </button>
+                    @endif
                </td>
                    
                 </tr>

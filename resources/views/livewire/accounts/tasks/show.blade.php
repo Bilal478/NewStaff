@@ -90,9 +90,10 @@ $account_user = DB::table('account_user')
                     
                 </td>
                 
-                <td  style="cursor: pointer;" wire:click="$emit('showEditTimeModal', {{ json_encode($item) }})" class="p-2 border-r">
+                <td  style="cursor: pointer;"  class="p-2 border-r">
                 <p style="display: inline;"><span class="taskTitle"> {{ $item['start_time'] }} - {{ $item['end_time'] }}</span></p>
-                <button type="button">
+                @if($account_user->allow_edit_time == 1)
+                <button type="button" wire:click="$emit('showEditTimeModal', {{ json_encode($item) }})">
                         <span class="text-xs text-gray-500"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -101,7 +102,7 @@ $account_user = DB::table('account_user')
                             </svg></span>
                     </button>
 
-                   
+                @endif   
                     
                 </td>
                   

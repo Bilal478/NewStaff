@@ -1,3 +1,8 @@
+@php
+$account_user = DB::table('account_user')
+    ->where('user_id', auth()->user()->id)
+    ->first();
+@endphp
 <x-modals.small x-on:open-activity-modal.window="open = true" x-on:close-activity-modal.window="open = false">
 
     <table class="w-full border mt-5">
@@ -30,16 +35,18 @@
                     
                 </td>
                 
-                <td  style="cursor: pointer;" wire:click="$emit('showEditTimeModal', {{ json_encode($item) }})" class="p-2 border-r">
+                <td  style="cursor: pointer;" class="p-2 border-r">
                 <p style="display: inline;"><span class="taskTitle"> {{ $item['start_time'] }} - {{ $item['end_time'] }}</span></p>
-                <button type="button">
+                @if($account_user->allow_edit_time == 1)
+                <button type="button"  wire:click="$emit('showEditTimeModal', {{ json_encode($item) }})">
                         <span class="text-xs text-gray-500"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
                                 </path>
                             </svg></span>
-                    </button>                    
+                    </button>   
+                @endif                 
                 </td>
             </tr>
     @endforeach

@@ -1,3 +1,17 @@
+@php
+$totalTime = Carbon\CarbonInterval::createFromDateString('00:00:00');
+foreach ($users as $userName => $activity) {
+    $time = $activity['total'];
+    $timeParts = explode(':', $time);
+    $hours = (int) $timeParts[0];
+    $minutes = (int) $timeParts[1];
+    $seconds = (int) $timeParts[2];
+    $totalTime = $totalTime->addHours($hours)
+                           ->addMinutes($minutes)
+                           ->addSeconds($seconds);
+}
+$totalTimeFormatted = $totalTime->format('%H:%I:%S');
+@endphp
 <!DOCTYPE html>
 <html>
     <head>
@@ -66,7 +80,10 @@
                         Timesheet Report - {{$userName}}
                     </h1><br><br>
                 </div>
-                <div cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="width: 100%;">
+                <div style="float: right">
+                <b>Total Hours = {{$totalTimeFormatted}}</b>
+                </div>
+                <div cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="width: 100%; margin-top:30px;">
                     <table style="width: 100%;">
                         <tbody>
                             <tr style="color: #374151; border-bottom: 1px solid #E5E7EB; font-size: 12px; text-align: left; font-weight: bold;">
@@ -82,6 +99,7 @@
                                     Weekly Total
                                 </th>
                             </tr>
+                            @if ($users->count())
                             @foreach ($users as $userName => $activity)
                                 <tr style="color: #374151; font-size: 12px; text-align: left; border-bottom: 1px solid #E5E7EB;">
                                     <td style="padding: 15px 10px; text-align: left;">
@@ -99,6 +117,20 @@
                                     </td>
                                 </tr>
                             @endforeach
+                            @else
+                            <tr style="color: #374151; font-size: 12px; text-align: left; border-bottom: 1px solid #E5E7EB;">
+                                <td style="padding: 15px 10px; text-align: left;">
+                                    No-todo
+                                    <p><span class="taskTitle">No-todo</span></p>
+                                    <div class="border-r-2 bg-red-500 absolute right-0 inset-y-0"></div>
+                                </td>
+                                @for ($i=0;$i<8;$i++)
+                                <td style="padding: 15px 10px; text-align: left;">
+                                        00:00:00
+                                </td>
+                                @endfor
+                            </tr>
+                            @endif
                         </tbody>
                     </table>
                 </div>

@@ -28,8 +28,10 @@ class EditTimeModal extends Component
     public $simpleDate;
     public $newStartTime;
     public $newEndTime;
+    public $activityToRemoved = null;
     protected $listeners = [
         'showEditTimeModal' => 'EditTimeModal',
+        'deleteConfirmed' => 'deleteActivitySelected',
     ];
     
     public function render()

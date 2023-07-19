@@ -29,6 +29,11 @@ class DailyReportsIndex extends Component
     public $user_list = '';
     public $user_id = '';
     public $show = '';
+    public $newStartTime;
+    public $newEndTime;
+    public $startTime;
+    public $endTime;
+    public $activityToRemoved = null;
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -38,6 +43,7 @@ class DailyReportsIndex extends Component
     protected $listeners = [
         'activityUpdate' => '$refresh',
         'deleteActivity' => 'deleteActivity',
+        'deleteConfirmed' => 'deleteActivitySelected',
     ];
 
     
@@ -256,5 +262,50 @@ class DailyReportsIndex extends Component
     }
         
         return $arrayData;
+    }
+
+    public function confirmDeleteActivity($data) {
+
+        $this->activityToRemoved = $data;
+
+        $this->dispatchBrowserEvent('show-delete-confirmation');
+    
+
+    }
+
+    public function deleteActivitySelected(){
+       
+      
+        $startDateTime = strtotime($this->activityToRemoved['date'] . ' ' . $this->activityToRemoved['start_time']);
+        $endDateTime =strtotime($this->activityToRemoved['date'] . ' ' . $this->activityToRemoved['end_time']);
+
+        $startDateTimeTemp =$this->activityToRemoved['date'].' '.date('H:i:s', strtotime($this->activityToRemoved['start_time']));
+        $endDateTimeValueTemp =$this->activityToRemoved['date'].' '.date('H:i:s', strtotime($this->activityToRemoved['start_time']));
+
+        $time=($endDateTime-$startDateTime)/600;
+        
+        for($i=0 ; $i<$time ; $i++){
+            $temp = strtotime ( '+'.$i.'0 minutes ' , strtotime (substr($startDateTimeTemp,0,19) ) ) ;
+			$new_start_time = date('Y-m-d H:i:s', $temp);
+            $temp_two = strtotime ( '+'.$i.'0 minutes ' , strtotime (substr($endDateTimeValueTemp,0,19)) ) ;
+			$new_end_time = date('Y-m-d H:i:s', $temp_two);
+            $temp_two_final = strtotime ( '+10 minutes ' , strtotime ($new_end_time) ) ;
+			$end_time = date('Y-m-d H:i:s', $temp_two_final);
+            
+            DB::table('activities')
+            ->where('start_datetime', $new_start_time)
+            ->where('end_datetime', $end_time)
+            ->where('date', $this->activityToRemoved['date'])
+            ->where('task_id', $this->activityToRemoved['task_id'])
+            ->where('user_id', $this->activityToRemoved['user_id'])
+            ->where('project_id', $this->activityToRemoved['project_id'])
+            ->where('account_id', $this->activityToRemoved['account_id'])
+            ->delete();    
+        }
+        $this->emit('activityUpdate');
+        // Activity::find($this->activityIDBeingRemoved)->delete();
+       // $this->dispatchBrowserEvent('close-task-show-modal');
+        //$this->emitself('refreshActivities');
+    
     }
 }

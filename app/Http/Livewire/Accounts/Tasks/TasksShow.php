@@ -11,7 +11,7 @@ use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Carbon\CarbonInterval;
-
+use Illuminate\Support\Facades\DB;
 
 class TasksShow extends Component
 {
@@ -26,7 +26,7 @@ class TasksShow extends Component
 	public $datetimerange;
     public $userName;
     public $user_id;
-
+    public $activityToRemoved;
     public $list_activities0=array();
 
     protected $listeners = [
@@ -37,6 +37,7 @@ class TasksShow extends Component
         'deleteConfirmed' => 'deleteActivitySelected',
         'refreshActivities' => '$refresh',
         'refreshPagination' => 'refreshPagination',
+        'deleteConfirmedActivitesFromTask' => 'deleteActivitySelected',
     ];
 
     public function updatingSearch()
@@ -44,21 +45,21 @@ class TasksShow extends Component
         $this->resetPage();
     }
 
-    public function confirmDeleteActivity($activityID) {
+    // public function confirmDeleteActivity($activityID) {
 
-        $this->activityIDBeingRemoved = $activityID;
+    //     $this->activityIDBeingRemoved = $activityID;
 
-        $this->dispatchBrowserEvent('show-delete-confirmation');
+    //     $this->dispatchBrowserEvent('show-delete-confirmation');
     
 
-    }
-    public function deleteActivitySelected(){
+    // }
+    // public function deleteActivitySelected(){
 
-        Activity::find($this->activityIDBeingRemoved)->delete();
-       // $this->dispatchBrowserEvent('close-task-show-modal');
-        //$this->emitself('refreshActivities');
+    //     Activity::find($this->activityIDBeingRemoved)->delete();
+    //    // $this->dispatchBrowserEvent('close-task-show-modal');
+    //     //$this->emitself('refreshActivities');
     
-    }
+    // }
 
 
     public function deleteActivity($id)
@@ -264,5 +265,49 @@ class TasksShow extends Component
     public function create_activity_time(){
         
       //  mail('carlosl@mailinator.com', 'Mi título',$this->task);
+    }
+
+    public function confirmDeleteActivity($data) {
+        
+        $this->activityToRemoved = $data;
+        
+        $this->dispatchBrowserEvent('show-delete-confirmation');
+    
+
+    }
+
+    public function deleteActivitySelected(){
+        // dd($this->activityToRemoved);
+        $startDateTime = strtotime($this->activityToRemoved['date'] . ' ' . $this->activityToRemoved['start_time']);
+        $endDateTime =strtotime($this->activityToRemoved['date'] . ' ' . $this->activityToRemoved['end_time']);
+
+        $startDateTimeTemp =$this->activityToRemoved['date'].' '.date('H:i:s', strtotime($this->activityToRemoved['start_time']));
+        $endDateTimeValueTemp =$this->activityToRemoved['date'].' '.date('H:i:s', strtotime($this->activityToRemoved['start_time']));
+
+        $time=($endDateTime-$startDateTime)/600;
+        
+        for($i=0 ; $i<$time ; $i++){
+            $temp = strtotime ( '+'.$i.'0 minutes ' , strtotime (substr($startDateTimeTemp,0,19) ) ) ;
+			$new_start_time = date('Y-m-d H:i:s', $temp);
+            $temp_two = strtotime ( '+'.$i.'0 minutes ' , strtotime (substr($endDateTimeValueTemp,0,19)) ) ;
+			$new_end_time = date('Y-m-d H:i:s', $temp_two);
+            $temp_two_final = strtotime ( '+10 minutes ' , strtotime ($new_end_time) ) ;
+			$end_time = date('Y-m-d H:i:s', $temp_two_final);
+            
+            DB::table('activities')
+            ->where('start_datetime', $new_start_time)
+            ->where('end_datetime', $end_time)
+            ->where('date', $this->activityToRemoved['date'])
+            ->where('task_id', $this->activityToRemoved['task_id'])
+            ->where('user_id', $this->activityToRemoved['user_id'])
+            ->where('project_id', $this->activityToRemoved['project_id'])
+            ->where('account_id', $this->activityToRemoved['account_id'])
+            ->delete();    
+        }
+        $this->emit('tasksUpdate');
+        $this->dispatchBrowserEvent('close-task-show-modal');
+       
+        
+    
     }
 }

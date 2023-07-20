@@ -45,16 +45,16 @@ $user_login = auth()->id();
                         </div>
 		</div>
 		@endrole
-        @if ($users->count())
+        {{-- @if ($users->count()) --}}
         <button wire:click="download" type="button"
             class="w-full sm:w-auto mt-4 sm:mt-0 h-10 text-sm flex items-center rounded-md bg-blue-600 text-white pl-4 pr-6 hover:bg-blue-500 focus:outline-none active:bg-blue-700 transition duration-150 ease-in-out">
             <x-svgs.plus class="w-5 h-5 mr-1" />
             Download PDF
         </button>
-        @endif
+        {{-- @endif --}}
     </div>
 
-    @if ($users->count())
+    
     <div class="w-full overflow-x-auto rounded-md border">
         <table class="w-full bg-white">
             <tbody>
@@ -72,6 +72,7 @@ $user_login = auth()->id();
                         Weekly Total
                     </th>
                 </tr>
+                @if ($users->count())
                 @foreach ($users as $userName => $activity)
                 <tr class="text-sm text-gray-600 hover:bg-gray-50 {{ $loop->last ? '' : 'border-b' }}">
                     <td class="min-w-52 sticky left-0 top-auto bg-white z-10 px-4 py-5">
@@ -126,12 +127,35 @@ $user_login = auth()->id();
                     </td>
                 </tr>
                 @endforeach
+                @else
+                <tr class="text-sm text-gray-600 hover:bg-gray-50">
+                    <td class="min-w-52 sticky left-0 top-auto bg-white z-10 px-4 py-5">
+                        No-todo
+                        <p><span class="taskTitle">No-todo</span></p>
+                        <div class="border-r-2 bg-red-500 absolute right-0 inset-y-0"></div>
+                    </td>
+
+                    @for ($i=0;$i<7;$i++)
+                    <td class="min-w-36 px-4 py-5">
+                        00:00:00
+                        <x-svgs.computer class="w-4 h-4 text-blue-500 mr-1" />
+                        0%
+                        <br>
+                    </td>
+                    @endfor
+                    <td class="min-w-36 px-4 py-5">
+                        00:00:00 
+                        <x-svgs.computer class="w-4 h-4 text-blue-500 mr-1" />
+                        0%
+                    </td>
+                </tr>
+                @endif
             </tbody>
         </table>
     </div>
-    @else
+    {{-- @else
     <x-states.empty-data message="There are no records for this week." />
-    @endif
+    @endif --}}
     @push('modals')
         @livewire('activites-modal')
         @livewire('time-modal')

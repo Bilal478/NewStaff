@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-        <title>Report - {{ $week }}</title>
+        <title>{{$userName}}_timesheet_report_{{ $week }}</title>
         <style type="text/css">
             * { 
                 -webkit-text-size-adjust: none; }
@@ -29,20 +29,44 @@
             td {
                 border-bottom: 1px solid #E5E7EB !important; 
             }
+            .wrapper {
+                display: flex;
+                flex-direction: column;
+                min-height: 100vh;
+            }
+            .content {
+                flex: 1;
+                padding-bottom: 60px; /* Adjust padding to accommodate the footer height */
+            }
+            .footer {
+                padding: 10px;
+                position: fixed;
+                left: 0;
+                bottom: 0;
+                width: 100%;
+            }
+            #neo_link{
+                padding-left: 200px
+            }
+
+            /* Media query to adjust the footer position on smaller screens */
+            @media (max-height: 600px) {
+                .footer {
+                    position: static;
+                }
+            }
         </style>
     </head>
     <body>
-        <div>
-            <h1 style="font-size: 18px; font-weight: bold; text-align: center; padding-bottom: 2px;">
-                Daily Report
-            </h1>
-            <h4 style="font-size: 18px; font-weight: bold; text-align: center; padding-bottom: 2px;">
-                {{$userName}}
-            </h4>
-            <h2 style="font-size: 14px; font-weight: bold; text-align: center; padding-bottom: 20px;">
-                {{ $week }}
-            </h2>
-        </div>
+        <div class="wrapper">
+            <div class="content">
+                <div>
+                    <span style="float: right">{{ $week }}</span><br>
+                    <hr style="color: gray; margin-top:0px;"><br>
+                    <h1 style="font-size: 18px; font-weight: bold; text-align: center; padding-bottom: 2px;">
+                        Timesheet Report - {{$userName}}
+                    </h1><br><br>
+                </div>
 
 
 
@@ -119,9 +143,13 @@
                 @endforeach
                 @endforeach 
             </tbody>
-        </table>
-    </div>
-               
+         </table>
         </div>
+               
+       </div>
+         <div class="footer">
+            <span style="color: gray">Generated With </span><b style="color: blueviolet">NeoStaff</b><a href="#" style="margin-left: 767px">neostaff.app</a>   
+         </div>
+      </div>
     </body>
 </html>

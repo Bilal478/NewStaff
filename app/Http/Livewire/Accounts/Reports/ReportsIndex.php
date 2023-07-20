@@ -125,7 +125,7 @@ class ReportsIndex extends Component
 
     public function getWeekFormatted()
     {
-        return $this->startDate()->format('M d, Y') . '  -  ' . $this->endDate()->format('M d, Y');
+        return $this->startDate()->format('D, M d, Y') . '  -  ' . $this->endDate()->format('D, M d, Y');
     }
 
     public function getWeekDates()
@@ -142,9 +142,9 @@ class ReportsIndex extends Component
             'week' => $this->getWeekFormatted(),
         ])
             ->setPaper('a4', 'landscape')
-            ->save(storage_path() . '/' . $this->week . '.pdf');
+            ->save(storage_path() .'/'.$this->userName.'_timesheet_report_' . $this->week . '.pdf');
 
-        return response()->download(storage_path() . '/' . $this->week . '.pdf')->deleteFileAfterSend(true);
+        return response()->download(storage_path() .'/'.$this->userName.'_timesheet_report_' . $this->week . '.pdf')->deleteFileAfterSend(true);
     }
 
     public function render()

@@ -55,21 +55,31 @@ elseif($user_subscriptions[0]->name =='Monthly'){
 			</td>
 		  </tr>
 		  <tr>
-			<td colspan="2" style="padding:20px 15px 15px 0px;font-weight:bold; border-bottom: 1px solid #ddd;">
-				<strong style="font-size:20px;color:#436D9E;display:block;" >Thank you for your business.</strong><br>
-				<p style="font-size:14px;font-weight:normal; line-height: 150%;">The credit card ending in&nbsp;<?php echo $CC;?>&nbsp;has been successfully charged $<?php echo $total; ?><br>
-				A copy of the receipt is also in your Billing Statements.<br><br>
-				If you use Windows, you can download the time tracker desktop app from here:<br>
-		        <a href="https://media.neostaff.app/downloads/windows">https://media.neostaff.app/downloads/windows</a><br>
-                If you use MAC, you can download the time tracker desktop app from here:<br> 
-			    <a href="https://media.neostaff.app/downloads/mac">https://media.neostaff.app/downloads/mac</a><br><br>
-				Click here to <a href="{{ route('login') }}">Login</a><br><br>
-				If you have any questions, please let us know. We'll get back to you soon<br>
-				as we can.<br><br>
-				Your friends,<br>
-				<a style="color: #0EA5E9;" href="#">support@neostaff.app</a>
-				</p>
-			</td>
+<td colspan="2" style="padding:20px 15px 15px 0px;font-weight:bold; border-bottom: 1px solid #ddd;">
+    <strong style="font-size:20px;color:#436D9E;display:block;">Thank you for your business.</strong><br>
+    <p style="font-size:14px;font-weight:normal; line-height: 150%;">
+        The credit card ending in&nbsp;<?php echo $CC;?>&nbsp;has been successfully charged $<?php echo $total; ?>.<br>
+        A copy of the receipt is also in your Billing Statements.<br><br>
+        If you use Windows, Mac or Linux, you can download the time tracker desktop app from here:<br><br>
+		<div style="text-align: center;">
+        <a href="https://media.neostaff.app/downloads/windows" style="text-decoration: none;">
+            <button style="background-color: #007BFF; color: #fff; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer;">Windows</button>
+        </a>
+        <a href="https://media.neostaff.app/downloads/mac" style="text-decoration: none;">
+            <button style="background-color: #007BFF; color: #fff; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer;">Mac</button>
+        </a>
+        <a href="https://media.neostaff.app/downloads/ubuntu" style="text-decoration: none;">
+            <button style="background-color: #007BFF; color: #fff; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer;">Linux</button>
+        </a>
+	    </div>
+		<br><br>
+        Click here to <a href="{{ route('login') }}" style="color: #007BFF; text-decoration: none;">Login</a><br><br>
+        If you have any questions, please let us know. We'll get back to you soon<br>
+        as we can.<br><br>
+        Your friends,<br>
+        <a style="color: #0EA5E9;" href="#">support@neostaff.app</a>
+    </p>
+</td>
 		</tr>
 		<tr>
 			<td colspan="2" style="font-size:14px;padding:20px 15px 0 0px;border-bottom: 1px solid #ddd; line-height: 150%;">

@@ -21,10 +21,19 @@ Accept Invitation
 
 Joining the team will give you access to the team's dashboard, including information 
 about projects, tasks, teams, and more.<br><br>
-If you use Windows, you can download the time tracker desktop app from here:<br>
-<a href="https://media.neostaff.app/downloads/windows">https://media.neostaff.app/downloads/windows</a><br>
-If you use MAC, you can download the time tracker desktop app from here:<br> 
-<a href="https://media.neostaff.app/downloads/mac">https://media.neostaff.app/downloads/mac</a><br><br>      
+If you use Windows, Mac or Linux, you can download the time tracker desktop app from here:<br><br>
+<div style="text-align: center;">
+    <a href="https://media.neostaff.app/downloads/windows" style="text-decoration: none;">
+        <button style="background-color: #007BFF; color: #fff; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;">Windows</button>
+    </a>
+    <a href="https://media.neostaff.app/downloads/mac" style="text-decoration: none;">
+        <button style="background-color: #007BFF; color: #fff; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;">Mac</button>
+    </a>
+    <a href="https://media.neostaff.app/downloads/ubuntu" style="text-decoration: none;">
+        <button style="background-color: #007BFF; color: #fff; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;">Linux</button>
+    </a>
+    </div>
+<br><br>      
 You can find answers to most questions and get in touch with us at 
 <br>
 <a href="https://neostaff.app/support">https://neostaff.app/support.</a> We’re here to help you at any step along the way.                  

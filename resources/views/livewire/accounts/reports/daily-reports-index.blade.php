@@ -66,7 +66,16 @@ $account_user = DB::table('account_user')
     <div class="w-full overflow-x-auto rounded-md border">
         <table class="w-full bg-white">
             <tbody>
-        
+            <div wire:loading>
+                <!-- Show the loading animation -->
+                <div class="loading-overlay">
+                <div  class="loading-animation">
+                    <!-- Add your loading animation here -->
+                   
+                </div>
+                </div>
+       
+            </div>
             @foreach ($dates as $date)
                 <?php $inner_count = 0; ?>
             <tr class="text-left uppercase text-xs text-gray-700 font-medium border-b-2">
@@ -196,6 +205,36 @@ $account_user = DB::table('account_user')
     .white{
         background: white;
     }
+    .loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(255, 255, 255, 0.7);
+        z-index: 999;
+    }
+
+    
+
+    .loading-animation {
+    /* Add your styles for the loading animation */
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 </style>
 @endpush
 @push('scripts')

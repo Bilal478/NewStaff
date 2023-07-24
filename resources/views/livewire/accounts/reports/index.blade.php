@@ -57,6 +57,15 @@ $user_login = auth()->id();
     
     <div class="w-full overflow-x-auto rounded-md border">
         <table class="w-full bg-white">
+        <div wire:loading>
+            <!-- Show the loading animation -->
+            <div class="loading-overlay">
+            <div  class="loading-animation">
+                <!-- Add your loading animation here -->
+                
+            </div>
+            </div>
+        </div>
             <tbody>
                 <tr class="text-left uppercase text-xs text-gray-700 font-medium border-b-2">
                     <th class="min-w-52 sticky left-0 top-auto bg-white z-10 px-4 py-4">
@@ -206,5 +215,34 @@ $user_login = auth()->id();
     .white{
         background: white;
     }
+    .loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(255, 255, 255, 0.7);
+        z-index: 999;
+    }
+
+    
+
+    .loading-animation {
+    /* Add your styles for the loading animation */
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
 </style>
 @endpush

@@ -106,20 +106,15 @@ class EditActivityModal extends Component
        
         $name = User::where('id', $this->user_id)->first();
         $this->userName = $name->firstname.' '.$name->lastname;
-        $results = Activity::join('users', 'activities.user_id', '=', 'users.id')
-        ->join('projects', 'activities.project_id', '=', 'projects.id')
-        ->leftJoin('tasks', function ($join) {
-            $join->on('activities.task_id', '=', 'tasks.id')
-                ->orWhereNull('activities.task_id');
-        })
-        ->where('activities.date',$startDate)->where('activities.user_id',$this->user_id)
-        ->groupBy('activities.id','activities.user_id', 'activities.account_id','activities.date', 'activities.task_id', 'activities.project_id', 'projects.title', 'tasks.title','activities.seconds','activities.total_activity_percentage','activities.start_datetime','activities.end_datetime')
-        ->selectRaw('activities.id,activities.user_id,activities.account_id,activities.task_id,activities.project_id,projects.title as project_title, sum(activities.seconds) as seconds, activities.date, avg(activities.total_activity_percentage) as productivity,activities.start_datetime,activities.end_datetime,
-        CASE
-        WHEN activities.task_id IS NULL THEN "No to-do"
-        ELSE tasks.title
-        END AS task_title')->orderBy('activities.start_datetime')->get();
-        // dd($results);
+        $results = Activity::where('activities.date', $startDate)
+        ->where('activities.user_id', $this->user_id)
+        ->leftJoin('tasks', 'activities.task_id', '=', 'tasks.id')
+        ->leftJoin('projects', 'activities.project_id', '=', 'projects.id')
+        ->select('activities.*', 
+                 DB::raw('COALESCE(tasks.title, "No-todo") as task_title'),
+                 DB::raw('COALESCE(projects.title, "No-todo") as project_title'))
+        ->orderBy('activities.start_datetime')
+        ->get();
         
         $ss = [];
         $arrayData = [];

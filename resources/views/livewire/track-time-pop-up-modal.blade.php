@@ -11,13 +11,14 @@
                 <ol >
                     <li>1. Each team member needs to open their invite email and click the accept link.</li>
                     <li>
-                            <li>2. You use Windows, you can download the time tracker desktop app from here:
+                            <li>2. If you use Windows, you can download the time tracker desktop app from here:
                                 <a href="//media.neostaff.app/downloads/windows" style="color: blue">https://media.neostaff.app/downloads/windows</a></li><br>
     
             
                                <li>If you use MAC, you can download the time tracker desktop app from here:
-                                <a href="https://media.neostaff.app/downloads/mac" style="color: blue">https://media.neostaff.app/downloads/mac</a></li>
-                            
+                                <a href="https://media.neostaff.app/downloads/mac" style="color: blue">https://media.neostaff.app/downloads/mac</a></li><br>
+                            <li>If you use Linux, you can download the time tracker desktop app from here:
+                                <a href="https://media.neostaff.app/downloads/ubuntu" style="color: blue">https://media.neostaff.app/downloads/ubuntu</a></li>
                     </li>
                     <li>3. Finally they have to install the app and use it to track time to a project.</li>
                 </ol>

@@ -36,6 +36,8 @@ $account_user = DB::table('account_user')
                     @if ($activity->screenshots->first()->path === '00/1234567890.png')
                         <img class="img_placeholder" src="2.png">
                     @endif
+                @else
+                <img class="img_placeholder" src="2.png">
                 @endif
             </div>
 

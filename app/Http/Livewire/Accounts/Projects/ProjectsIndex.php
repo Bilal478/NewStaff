@@ -58,7 +58,7 @@ class ProjectsIndex extends Component
 
     public function projects()
     {
-        return Auth::guard('web')->user()->isOwnerOrManager()
+        return Auth::guard('web')->user()->isOwner()
             ? $this->projectsForAccount()
             : $this->projectsForUser();
     }
@@ -74,10 +74,11 @@ class ProjectsIndex extends Component
 
     public function projectsForUser()
     {
-        return Auth::guard('web')->user()
-            ->projects()
-            ->titleSearch($this->search)
+        $departmentsArray = Auth::guard('web')->user()->departments->pluck('id')->toArray();
+        
+        return  Project::WhereIn('department_id',$departmentsArray)
             ->with('users:id,firstname,lastname')
+            ->titleSearch($this->search)
             ->withCount(['users', 'tasks'])
             ->latest()
             ->paginate(12);

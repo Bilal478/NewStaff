@@ -60,7 +60,7 @@ class DepartmentsIndex extends Component
 
     public function departments()
     {
-        return Auth::guard('web')->user()->isOwnerOrManager()
+        return Auth::guard('web')->user()->isOwner()
             ? $this->departmentsForAccount()
             : $this->departmentsForUser();
     }

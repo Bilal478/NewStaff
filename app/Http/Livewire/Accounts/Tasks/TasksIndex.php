@@ -86,7 +86,7 @@ class TasksIndex extends Component
 
     public function tasks()
     {
-        return Auth::guard('web')->user()->isOwnerOrManager()
+        return Auth::guard('web')->user()->isOwner()
             ? $this->tasksForAccount()
             : $this->tasksForUser();
     }
@@ -102,12 +102,21 @@ class TasksIndex extends Component
 
     public function tasksForUser()
     {
-        return Auth::guard('web')->user()
+        $tasksArray = Auth::guard('web')->user()->tasks->pluck('id')->toArray();
+        $role = Auth::guard('web')->user()->getRole();
+        if($role == 'manager'){
+            return Task::where('title', 'like', '%' . $this->search . '%')->whereIn('id',$tasksArray)
+            ->with('user:id,firstname,lastname')
+            ->latest()
+            ->paginate(8, ['*'], 'taskPage');
+        }
+        else{
+            return Auth::guard('web')->user()
             ->tasks()
             ->where('title', 'like', '%' . $this->search . '%')
             ->with('user:id,firstname,lastname')
             ->latest()
-           // ->paginate(2);
             ->paginate(8, ['*'], 'taskPage');
+        }
     }
 }

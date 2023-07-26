@@ -1,3 +1,7 @@
+<?php
+use App\Models\Department;
+    $category = $project->category ?? Department::where('id',$project->department_id)->pluck('title')->first();
+?>
 <div>
     <x-page.title-breadcrum svg="svgs.folder" route="{{ route('accounts.projects', ['account' => request()->account]) }}">
         Projects
@@ -14,7 +18,7 @@
                         <h4 class="font-montserrat font-semibold text-xl text-gray-700 pb-2">
                             {{ $project->title }}
                         </h4>
-                        <span class="px-2 py-1 text-xs bg-purple-100 text-purple-500 rounded">{{ $project->category }}</span>
+                        <span class="px-2 py-1 text-xs bg-purple-100 text-purple-500 rounded">{{ $category }}</span>
                     </div>
                 </div>
                 <p class="text-gray-500">

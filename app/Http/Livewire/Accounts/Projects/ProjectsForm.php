@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Accounts\Projects;
 use App\Http\Livewire\Traits\Notifications;
 use App\Models\Project;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class ProjectsForm extends Component
@@ -22,18 +23,18 @@ class ProjectsForm extends Component
     protected $rules = [
         'project.title' => 'required|string|max:250',
         'project.description' => 'required|string|max:500',
-        'project.category' => 'required|string|max:30',
+        'project.department_id' => 'required|string|max:30',
     ];
 
     public function create(Project $project)
     {
-        if (request()->user()->cannot('create', Project::class)) {
-            return $this->toast(
-                'Unauthorize Action',
-                'You don\'t have permission to create a project.',
-                'error'
-            );
-        }
+        // if (request()->user()->cannot('create', Project::class)) {
+        //     return $this->toast(
+        //         'Unauthorize Action',
+        //         'You don\'t have permission to create a project.',
+        //         'error'
+        //     );
+        // }
 
         $this->isEditing = false;
         $this->project = $project;
@@ -42,13 +43,13 @@ class ProjectsForm extends Component
 
     public function edit(Project $project)
     {
-        if (request()->user()->cannot('update', $project)) {
-            return $this->toast(
-                'Unauthorize Action',
-                'You don\'t have permission to update a project.',
-                'error'
-            );
-        }
+        // if (request()->user()->cannot('update', $project)) {
+        //     return $this->toast(
+        //         'Unauthorize Action',
+        //         'You don\'t have permission to update a project.',
+        //         'error'
+        //     );
+        // }
 
         $this->isEditing = true;
         $this->project = $project;
@@ -65,6 +66,8 @@ class ProjectsForm extends Component
 		
         $this->validate();
         $this->project->save();
+        $projectId = $this->project->id;
+        DB::table('project_user')->insert(['project_id'=>$projectId,'user_id'=>auth()->user()->id]);
 
         $this->emit('projectsUpdate');
         $this->dispatchBrowserEvent('close-create-modal');

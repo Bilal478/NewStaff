@@ -44,12 +44,7 @@ $account = Account::where('id', $account_id)
                 <x-inputs.select-without-label2 wire:model="user_id" class="w-48" name="user_id">
                     <?php //  <option value="{{ auth()->id() }}" selected > {{ auth()->user()->firstname }}  {{ auth()->user()->lastname }}</option>
                     ?>
-
-                    @foreach ($login as $log)
-                    <option value="{{ $log->id }}">
-                        {{ $log->full_name }}
-                    </option>
-                    @endforeach
+                    @if ($users->count())
                     @foreach ($users as $user)
                     <option value="{{ $user->id }}">
                         {{ $user->full_name }}
@@ -57,7 +52,14 @@ $account = Account::where('id', $account_id)
                             @break
                         @endif --}}
                     </option>
+                    @endforeach 
+                    @else
+                    @foreach ($login as $log)
+                    <option value="{{ $log->id }}">
+                        {{ $log->full_name }}
+                    </option>
                     @endforeach
+                    @endif
 
                     </x-inputs.select-without-label>
             </div>
@@ -180,7 +182,16 @@ $account = Account::where('id', $account_id)
         </div>
     </div>
     </div>
+    <div wire:loading>
+        <!-- Show the loading animation -->
+        <div class="loading-overlay">
+        <div  class="loading-animation">
+            <!-- Add your loading animation here -->
+            
+        </div>
+        </div>
 
+    </div>
 
 
 
@@ -398,6 +409,35 @@ $account = Account::where('id', $account_id)
 }
 .golden{
     color: #f8c58d !important;
+}
+.loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(255, 255, 255, 0.7);
+        z-index: 999;
+    }
+
+    
+
+    .loading-animation {
+    /* Add your styles for the loading animation */
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
  @media screen and (min-width: 768px) and (max-width: 1440px) {
             .sm\:flex.new-activity-button.pb-0 {

@@ -17,6 +17,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 use DateTime;
+use Illuminate\Support\Facades\Auth;
 
 class TasksForm extends Component
 {
@@ -49,6 +50,7 @@ class TasksForm extends Component
     public $activities = [];
     public $var = [];
     public $datetimerange;
+    public $tasksDropdownOptions = [];
 
 
     protected $listeners = [
@@ -73,9 +75,30 @@ class TasksForm extends Component
         'project_id.required' => 'The project is required.',
     ];
 
+    public function updatedUserId($value)
+    {
+        $this->user_id = $value;
+        if (!empty($value)) {
+          
+            $this->tasksDropdownOptions = Task::where('user_id', $value)->get();
+        } else {
+            $this->tasksDropdownOptions = []; // Reset the options when no user is selected
+        }
+        $this->emit('tasksUpdated',json_encode($this->tasksDropdownOptions));
+        
+        
+    }
+
     public function mount($project = null, $team = null, $department = null)
     {
-        $this->projects = Project::orderBy('title')->get(['id', 'title']);
+        if(Auth::guard('web')->user()->isOwner()){
+            $this->projects = Project::orderBy('title')->get(['id', 'title']);
+        }
+        else{
+            $this->projects = Auth::guard('web')->user()
+            ->projects()->orderBy('title')->get();
+            
+        }
         $this->teams = Team::orderBy('title')->get(['id', 'title']);
         $this->departments = Department::orderBy('title')->get(['id', 'title']);
 
@@ -187,6 +210,9 @@ class TasksForm extends Component
                 ->where('start_datetime', '>=', $new_start_time)
                 ->where('end_datetime', '<=', $end_time)
                 ->where('user_id', '=', $this->task->user_id)
+                // ->where('project_id', '=', $this->task->project_id)
+                ->where('account_id', '=', $this->task->account_id)
+                // ->where('task_id', '=', $this->task->id)
                 ->whereNull('deleted_at')
                 ->get();
 

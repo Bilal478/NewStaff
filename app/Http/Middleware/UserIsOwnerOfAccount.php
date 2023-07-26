@@ -25,7 +25,7 @@ class UserIsOwnerOfAccount
         }
             $user=Auth::user();
             $permissions_array=explode(',',$user->permissions);
-            if(session()->get('account_role') == 'member'){
+            if(session()->get('account_role') == 'member' || session()->get('account_role') == 'manager'){
                 $currenturl = url()->current();
                 $segments = explode('/', $currenturl);
                 $lastSegment = end($segments);

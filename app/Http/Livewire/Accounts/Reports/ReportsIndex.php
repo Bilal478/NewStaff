@@ -125,7 +125,7 @@ class ReportsIndex extends Component
 
     public function getWeekFormatted()
     {
-        return $this->startDate()->format('M d, Y') . '  -  ' . $this->endDate()->format('M d, Y');
+        return $this->startDate()->format('D, M d, Y') . '  -  ' . $this->endDate()->format('D, M d, Y');
     }
 
     public function getWeekDates()
@@ -142,9 +142,9 @@ class ReportsIndex extends Component
             'week' => $this->getWeekFormatted(),
         ])
             ->setPaper('a4', 'landscape')
-            ->save(storage_path() . '/' . $this->week . '.pdf');
+            ->save(storage_path() .'/'.$this->userName.'_timesheet_report_' . $this->week . '.pdf');
 
-        return response()->download(storage_path() . '/' . $this->week . '.pdf')->deleteFileAfterSend(true);
+        return response()->download(storage_path() .'/'.$this->userName.'_timesheet_report_' . $this->week . '.pdf')->deleteFileAfterSend(true);
     }
    
     public function render()
@@ -169,8 +169,8 @@ class ReportsIndex extends Component
             $join->on('activities.task_id', '=', 'tasks.id')
                 ->orWhereNull('activities.task_id');
         })
-        ->groupBy('activities.user_id', 'activities.date', 'users.firstname', 'users.lastname', 'activities.task_id', 'activities.project_id', 'projects.title', 'tasks.title')
-        ->selectRaw('CONCAT(users.firstname, " ", users.lastname) AS full_name, sum(activities.seconds) as seconds, avg(activities.total_activity_percentage) as productivity, activities.date, users.firstname, users.lastname, activities.user_id, activities.task_id, activities.project_id, projects.title as project_title, 
+        ->groupBy('activities.user_id', 'activities.date', 'users.firstname', 'users.lastname', 'activities.task_id', 'activities.project_id', 'projects.title', 'tasks.title','activities.account_id')
+        ->selectRaw('CONCAT(users.firstname, " ", users.lastname) AS full_name, sum(activities.seconds) as seconds, avg(activities.total_activity_percentage) as productivity, activities.date, users.firstname, users.lastname, activities.user_id, activities.task_id, activities.project_id, projects.title as project_title, activities.account_id, 
         CASE
         WHEN activities.task_id IS NULL THEN "No to-do"
         ELSE tasks.title

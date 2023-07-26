@@ -1,6 +1,11 @@
 <?php 
 $user_login = auth()->id();
 ?>
+@php
+$account_user = DB::table('account_user')
+    ->where('user_id', auth()->user()->id)
+    ->first();
+@endphp
 <div>
     <x-page.title svg="svgs.report">
         Timesheets
@@ -61,7 +66,16 @@ $user_login = auth()->id();
     <div class="w-full overflow-x-auto rounded-md border">
         <table class="w-full bg-white">
             <tbody>
-        
+            <div wire:loading>
+                <!-- Show the loading animation -->
+                <div class="loading-overlay">
+                <div  class="loading-animation">
+                    <!-- Add your loading animation here -->
+                   
+                </div>
+                </div>
+       
+            </div>
             @foreach ($dates as $date)
                 <?php $inner_count = 0; ?>
             <tr class="text-left uppercase text-xs text-gray-700 font-medium border-b-2">
@@ -119,8 +133,23 @@ $user_login = auth()->id();
                
                <td style="cursor: pointer;" wire:click="$emit('showEditTimeModal', {{ json_encode($day) }})" class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
               
-                   <p><span class="taskTitle"> {{ $day['start_time'] }} - {{ $day['end_time'] }}</span></p>
-                   
+                   <p style="display: inline;"><span class="taskTitle"> {{ $day['start_time'] }} - {{ $day['end_time'] }}</span></p>
+                   @if($account_user->allow_edit_time == 1)
+                   <button type="button" wire:click="$emit('showEditTimeModal', {{ json_encode($day) }})">
+                        <span class="text-xs text-gray-500"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                                </path>
+                            </svg></span>
+                    </button>
+                    <button id="alertConfirm" wire:click.prevent="confirmDeleteActivity({{ json_encode($day) }})" type="button">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                            </path>
+                        </svg>
+                    </button>
+                    @endif
                </td>
                    
                 </tr>
@@ -183,6 +212,66 @@ $user_login = auth()->id();
     .white{
         background: white;
     }
+    .loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(255, 255, 255, 0.7);
+        z-index: 999;
+    }
+
+    
+
+    .loading-animation {
+    /* Add your styles for the loading animation */
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 </style>
 @endpush
+@push('scripts')
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+
+<script>
+     
+    window.addEventListener('show-delete-confirmation', event => {
+        swal({
+                title: "Are you sure?",
+                text: "Once deleted, you will not be able to recover this activity!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+            .then((willDelete) => {
+                if (willDelete) {
+                    Livewire.emit('deleteConfirmed');
+                    // Livewire.emit('refreshActivities')
+                    swal("Your activity has been deleted!", {
+                        icon: "success",
+                    });
+                }
+            });
+    });
+
+    function refreshPagintation()
+    {
+        Livewire.emit('refreshPagination');
+    }
+</script>
+@endpush

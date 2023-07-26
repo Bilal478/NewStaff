@@ -58,6 +58,7 @@ Route::view('/download', 'download')->name('download');
 
 Route::get('/downloads/windows/', [download::class, 'index'])->name('download.index');
 Route::get('/downloads/mac/', [download::class, 'macFile'])->name('download.macFile');
+Route::get('/downloads/ubuntu/', [download::class, 'ubuntuFile'])->name('download.ubuntuFile');
 
 Route::get('/terms-and-conditions', [download::class, 'TermsAndConditions']);
 Route::get('/hipaa', [download::class, 'hipaa']);

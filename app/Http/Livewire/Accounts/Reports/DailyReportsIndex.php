@@ -29,6 +29,11 @@ class DailyReportsIndex extends Component
     public $user_list = '';
     public $user_id = '';
     public $show = '';
+    public $newStartTime;
+    public $newEndTime;
+    public $startTime;
+    public $endTime;
+    public $activityToRemoved = null;
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -38,6 +43,7 @@ class DailyReportsIndex extends Component
     protected $listeners = [
         'activityUpdate' => '$refresh',
         'deleteActivity' => 'deleteActivity',
+        'deleteConfirmed' => 'deleteActivitySelected',
     ];
 
     
@@ -126,7 +132,7 @@ class DailyReportsIndex extends Component
 
     public function getWeekFormatted()
     {
-        return $this->startDate()->format('M d, Y') . '  -  ' . $this->endDate()->format('M d, Y');
+        return $this->startDate()->format('D, M d, Y') . '  -  ' . $this->endDate()->format('D, M d, Y');
     }
 
     public function getWeekDates()
@@ -143,9 +149,9 @@ class DailyReportsIndex extends Component
             'week' => $this->getWeekFormatted(),
         ])
             ->setPaper('a4', 'landscape')
-            ->save(storage_path() . '/' . $this->week . '.pdf');
+            ->save(storage_path() .'/'.$this->userName.'_timesheet_report_' . $this->week . '.pdf');
 
-        return response()->download(storage_path() . '/' . $this->week . '.pdf')->deleteFileAfterSend(true);
+        return response()->download(storage_path() .'/'.$this->userName.'_timesheet_report_' . $this->week .'.pdf')->deleteFileAfterSend(true);
     }
 
     public function render()
@@ -171,7 +177,7 @@ class DailyReportsIndex extends Component
                 ->orWhereNull('activities.task_id');
         })
         ->whereBetween('activities.date', [$this->startDate(true), $this->endDate(true)])->where(['activities.user_id'=> $this->user_id])
-        ->groupBy('activities.id','activities.user_id', 'activities.date', 'activities.account_id', 'activities.task_id', 'activities.project_id', 'projects.title', 'tasks.title','activities.seconds','activities.total_activity_percentage','activities.start_datetime','activities.end_datetime')
+        ->groupBy('activities.id','activities.user_id', 'activities.account_id','activities.date', 'activities.task_id', 'activities.project_id', 'projects.title', 'tasks.title','activities.seconds','activities.total_activity_percentage','activities.start_datetime','activities.end_datetime')
         ->selectRaw('activities.id,activities.user_id,activities.account_id,activities.task_id,activities.project_id,projects.title as project_title, sum(activities.seconds) as seconds, activities.date, avg(activities.total_activity_percentage) as productivity,activities.start_datetime,activities.end_datetime,
         CASE
         WHEN activities.task_id IS NULL THEN "No to-do"
@@ -197,7 +203,7 @@ class DailyReportsIndex extends Component
                 $seconds_sum += $result->seconds;
                 $diffInSeconds = $startDateTime->diffInSeconds($endDateTime);
                 $ss[]=$diffInSeconds;
-                if($diffInSeconds > 0 ){
+                if($diffInSeconds > 0 || ($result->task_id != $results[$index+1]->task_id) ){
                    $j++;
                     $arrayData[] = [
                         'user_id' => $result->user_id,
@@ -244,7 +250,7 @@ class DailyReportsIndex extends Component
                 'start_time' => $results[$start_time_index]->start_datetime->format('h:i A'),
                 'end_time' => $lastResult->end_datetime->format('h:i A'),
                 'date' => $lastResult->date->format('Y-m-d'),
-                'duration' => CarbonInterval::seconds($seconds_sum)->cascade()->format('%H:%I:%S'),
+                'duration' => CarbonInterval::seconds($seconds_sum+600)->cascade()->format('%H:%I:%S'),
                 'minutes' => $seconds_sum / 60,
                 'productivity' => intval($lastResult->productivity),
                 'project_id' => $lastResult->project_id,
@@ -256,5 +262,50 @@ class DailyReportsIndex extends Component
     }
         
         return $arrayData;
+    }
+
+    public function confirmDeleteActivity($data) {
+
+        $this->activityToRemoved = $data;
+
+        $this->dispatchBrowserEvent('show-delete-confirmation');
+    
+
+    }
+
+    public function deleteActivitySelected(){
+       
+      
+        $startDateTime = strtotime($this->activityToRemoved['date'] . ' ' . $this->activityToRemoved['start_time']);
+        $endDateTime =strtotime($this->activityToRemoved['date'] . ' ' . $this->activityToRemoved['end_time']);
+
+        $startDateTimeTemp =$this->activityToRemoved['date'].' '.date('H:i:s', strtotime($this->activityToRemoved['start_time']));
+        $endDateTimeValueTemp =$this->activityToRemoved['date'].' '.date('H:i:s', strtotime($this->activityToRemoved['start_time']));
+
+        $time=($endDateTime-$startDateTime)/600;
+        
+        for($i=0 ; $i<$time ; $i++){
+            $temp = strtotime ( '+'.$i.'0 minutes ' , strtotime (substr($startDateTimeTemp,0,19) ) ) ;
+			$new_start_time = date('Y-m-d H:i:s', $temp);
+            $temp_two = strtotime ( '+'.$i.'0 minutes ' , strtotime (substr($endDateTimeValueTemp,0,19)) ) ;
+			$new_end_time = date('Y-m-d H:i:s', $temp_two);
+            $temp_two_final = strtotime ( '+10 minutes ' , strtotime ($new_end_time) ) ;
+			$end_time = date('Y-m-d H:i:s', $temp_two_final);
+            
+            DB::table('activities')
+            ->where('start_datetime', $new_start_time)
+            ->where('end_datetime', $end_time)
+            ->where('date', $this->activityToRemoved['date'])
+            ->where('task_id', $this->activityToRemoved['task_id'])
+            ->where('user_id', $this->activityToRemoved['user_id'])
+            ->where('project_id', $this->activityToRemoved['project_id'])
+            ->where('account_id', $this->activityToRemoved['account_id'])
+            ->delete();    
+        }
+        $this->emit('activityUpdate');
+        // Activity::find($this->activityIDBeingRemoved)->delete();
+       // $this->dispatchBrowserEvent('close-task-show-modal');
+        //$this->emitself('refreshActivities');
+    
     }
 }

@@ -23,7 +23,17 @@ class download extends Controller
       $setup = DB::table('setup_version')->where('id',2)->first();
       $filePath = public_path($setup->version_name.'.dmg');
     	$headers = ['Content-Type: application/zip'];
-    	$fileName = $setup->version_name.'.exe';
+    	$fileName = $setup->version_name.'.dmg';
+		
+    	return response()->download($filePath, $fileName, $headers);
+    }
+
+    public function ubuntuFile()
+    {   
+      $setup = DB::table('setup_version')->where('id',3)->first();
+      $filePath = public_path($setup->version_name.'.deb');
+    	$headers = ['Content-Type: application/zip'];
+    	$fileName = $setup->version_name.'.deb';
 		
     	return response()->download($filePath, $fileName, $headers);
     }

@@ -207,6 +207,10 @@ class DailyReportsIndex extends Component
                 if($seconds_sum == 0){
                     $start_time_index = $index;
                 }
+                if($results[$index]->start_datetime==$results[$index+1]->start_datetime){
+                // $seconds_sum += $result->seconds;
+                    continue;
+                }
                 $endDateTime = Carbon::parse($results[$index+1]->start_datetime);
                 
                 $seconds_sum += $result->seconds;

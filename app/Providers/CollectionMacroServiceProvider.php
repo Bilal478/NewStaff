@@ -28,7 +28,7 @@ class CollectionMacroServiceProvider extends ServiceProvider
     {
         Collection::macro('groupByUserName', function () {
             return $this->groupBy(function ($item) {
-                return $item->task_title;
+                return $item->project_title;
             });
         });
 

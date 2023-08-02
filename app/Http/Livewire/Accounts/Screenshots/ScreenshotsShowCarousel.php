@@ -24,8 +24,13 @@ class ScreenshotsShowCarousel extends Component
             $this->user_id = $user_id;
             $this->account_id = $account_id;
             $this->date = $date;
-            $this->allActivity = Activity::withCount('screenshots')->where('date',$date)->where('user_id',$user_id)->where('account_id',$account_id)->oldest('start_datetime')->get();
-           
+            $this->allActivity = Activity::with(['project', 'screenshots'])
+            ->withCount('screenshots')
+            ->where('date', $this->date)
+            ->where('user_id', $this->user_id)
+            ->where('account_id', $this->account_id)
+            ->oldest('start_datetime')
+            ->get();
             $this->totalScreenshots = 0;
             foreach($this->allActivity as $index=>$activity){
                $this->totalScreenshots =  $this->totalScreenshots  + $activity->screenshots_count;

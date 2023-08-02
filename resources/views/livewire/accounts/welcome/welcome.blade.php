@@ -53,15 +53,15 @@ if(count($count_subs) == '0'){
 					</div>
 				</div>
 				<div class="p-50">
-				<div class="row">
-						<div class="col-md-6 col-sm-6 col-xs-12">
+				<div class="row justify-content-center">
+						{{-- <div class="col-md-6 col-sm-6 col-xs-12">
 							<div class="video-btn text-rightbtn">
 								<button class="btn-thankyou" id="myBtn">How To Use <i aria-hidden="true" class="fas fa-arrow-right"></i></button>
 							</div>
-						</div>
-						<div class="col-md-6 col-sm-6 col-xs-12">
+						</div> --}}
+						<div class="col-md-12 col-sm-12 col-xs-12">
 							<div class="dash-btn text-leftbtn">
-								<a class="btn-thankyou" href="https://media.neostaff.app/dashboard">Dashboard <i aria-hidden="true" class="fas fa-arrow-right"></i></a>
+								<a class="btn-thankyou" href="http://127.0.0.1:8000/dashboard">Dashboard <i aria-hidden="true" class="fas fa-arrow-right"></i></a>
 							</div>
 						</div>
 				</div>
@@ -169,7 +169,7 @@ if(count($count_subs) == '0'){
 		text-align: right;
 	}
 	.text-leftbtn {
-		text-align: left;
+		text-align: center;
 	}
 }
 

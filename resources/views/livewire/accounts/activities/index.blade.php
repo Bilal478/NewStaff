@@ -19,6 +19,9 @@ $account = Account::where('id', $account_id)
         <button type="button" class="ml-20 h-10 text-sm flex items-center rounded-md bg-blue-600 text-white pl-3 pr-3 hover:bg-blue-500 focus:outline-none active:bg-blue-700 transition duration-150 ease-in-out">
             <a href="#miModal"> Track Time</a>
          </button>
+         <button wire:click.stop="$emit('editActivityShow','{{$user_id}}','{{$date}}')" type="button" class="ml-5 h-10 text-sm flex items-center rounded-md bg-blue-600 text-white pl-3 pr-3 hover:bg-blue-500 focus:outline-none active:bg-blue-700 transition duration-150 ease-in-out">
+             Edit Activity
+         </button>
     </x-page.title>
     
     <div></div>
@@ -383,6 +386,8 @@ $account = Account::where('id', $account_id)
 
     @push('modals')
     @livewire('accounts.tasks.tasks-form')
+    @livewire('accounts.activities.edit-activity-modal')
+    @livewire('accounts.activities.edit-time-modal')
     @endpush
 
     @push('modals')

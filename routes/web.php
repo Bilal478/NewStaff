@@ -32,6 +32,7 @@ use App\Http\Livewire\Accounts\Teams\TeamsShow;
 use App\Http\Livewire\Accounts\User\UserEdit;
 use App\Http\Livewire\Auth\Invitation;
 use App\Http\Livewire\Auth\Login;
+use App\Http\Livewire\Auth\Login2;
 use App\Http\Livewire\Auth\Home;
 use App\Http\Livewire\Auth\Passwords\Confirm;
 use App\Http\Livewire\Auth\Passwords\Email;
@@ -46,7 +47,6 @@ use App\Mail\SubscriptionMail;
 use Illuminate\Support\Facades\Mail;
 
 use App\Http\Livewire\Accounts\PlansandPayment\PlansandPayment;
-
 use App\Http\Livewire\SelectPlan;
 
 //Route::view('/', 'welcome')->name('home');
@@ -54,6 +54,7 @@ use App\Http\Livewire\SelectPlan;
 //Route::get('/', WelcomeController::class)->name('home');
 
 Route::view('/download', 'download')->name('download');
+Route::get('accept-invitation/{randomID}', Login2::class)->name('accept-invitation');
 
 Route::get('/downloads/windows/', [download::class, 'index'])->name('download.index');
 Route::get('/downloads/mac/', [download::class, 'macFile'])->name('download.macFile');

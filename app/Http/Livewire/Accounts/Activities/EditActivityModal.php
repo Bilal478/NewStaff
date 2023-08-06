@@ -27,7 +27,7 @@ class EditActivityModal extends Component
     public $userName;
     public $user_id;
     public $activityToRemoved;
-    public $list_activities0=array();
+    private $list_activities=array();
 
     protected $listeners = [
         'editActivityShow' => 'show',

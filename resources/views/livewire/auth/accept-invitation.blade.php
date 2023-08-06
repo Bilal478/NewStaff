@@ -28,14 +28,14 @@
                     label="First Name"
                     name="firstname"
                     type="text"
-                    placeholder="john"
+                    placeholder="First Name"
                 />
                 <x-inputs.text
                     wire:model.lazy="lastname"
                     label="Last Name"
                     name="lastname"
                     type="text"
-                    placeholder="doe"
+                    placeholder="Last Name"
                 />
                 <x-inputs.text
                     wire:model.lazy="password"
@@ -44,9 +44,9 @@
                     type="password"
                 />
                 <x-inputs.text
-                    wire:model.lazy="confirm_password"
+                    wire:model.lazy="password_confirmation"
                     label="Confirm Password"
-                    name="confirm_password"
+                    name="password_confirmation"
                     type="password"
                 />
                 <div class="mt-6">

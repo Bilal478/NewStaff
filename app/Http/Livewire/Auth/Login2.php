@@ -19,12 +19,18 @@ class Login2 extends Component
     public $firstname = '';
     public $lastname = '';
     public $password = '';
-    public $confirm_password = '';
+    public $password_confirmation;
     public $randomid = '';
     public $email = '';
    
     public function update()
     {
+       $this->validate([
+            'firstname' => ['required', 'max:50'],
+            'lastname' => ['required', 'max:50'],
+            'password' => ['required', 'min:8', 'confirmed'],
+        ]);
+
         $user = User::where('email', $this->email)->first();
         if ($user) {
             $user->update([

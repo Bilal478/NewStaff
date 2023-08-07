@@ -16,6 +16,7 @@ class AccountInvite extends Mailable
     use Queueable, SerializesModels;
 
     public $url;
+    public $randomID;
     public $account;
 
     /**
@@ -23,10 +24,15 @@ class AccountInvite extends Mailable
      *
      * @return void
      */
-    public function __construct(Account $account, AccountInvitation $accountInvitation)
+    public function __construct(Account $account, AccountInvitation $accountInvitation,$randomID)
     {
         $this->account = $account;
-        $this->url = URL::signedRoute('invitation', ['accountInvitation' => $accountInvitation->id]);
+        // $this->url = URL::signedRoute('invitation', ['accountInvitation' => $accountInvitation->id]);
+        $urlParameters = ['randomID' => $randomID];
+        $this->randomID = $randomID;
+        $this->url = url(route('accept-invitation', $urlParameters));
+
+        
     }
     /**
      * Build the message.

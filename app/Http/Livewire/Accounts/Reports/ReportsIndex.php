@@ -164,7 +164,7 @@ class ReportsIndex extends Component
         $name = User::where('id', $this->user_id)->first();
        $this->userName = $name->firstname.' '.$name->lastname;
     return Activity::join('users', 'activities.user_id', '=', 'users.id')
-        ->join('projects', 'activities.project_id', '=', 'projects.id')
+        ->leftjoin('projects', 'activities.project_id', '=', 'projects.id')
         ->leftJoin('tasks', function ($join) {
             $join->on('activities.task_id', '=', 'tasks.id')
                 ->orWhereNull('activities.task_id');

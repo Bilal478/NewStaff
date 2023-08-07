@@ -32,7 +32,9 @@ class ActivitiesIndex extends Component
     protected $listeners = [
         'activityUpdate' => '$refresh',
         'activityCreate' => 'create',
+        'showPopUp' => 'openModal',
         'activityDelete' => 'delete',
+        
     ];
 
     public function mount()
@@ -51,6 +53,10 @@ class ActivitiesIndex extends Component
     public function subDay()
     {
         $this->date = Carbon::createFromFormat('M d, Y', $this->date)->subDay()->format('M d, Y');
+    }
+    public function openModal()
+    {
+        $this->dispatchBrowserEvent('open-track-time-pop-up-modal');
     }
 
     public function render()

@@ -11,7 +11,7 @@ $account_user = DB::table('account_user')
     <article class="bg-white mx-4 mb-8 rounded-md border shadow-sm hover:shadow-md article">
         <div class="relative group rounded-t-md overflow-hidden bg-black">
             <div
-                class="activity-img flex items-center justify-center absolute inset-0 z-1 opacity-0 transition duration-500 ease-linear group-hover:opacity-100">
+                class="activity-img flex items-center justify-center absolute inset-0 z-10 opacity-0 transition duration-500 ease-linear group-hover:opacity-100">
                 {{-- @dd($loop->iteration) --}}
                 @if($activity->screenshots->first() != NULL)
                     @if ($activity->screenshots->first()->path != '00/1234567890.png')
@@ -36,13 +36,15 @@ $account_user = DB::table('account_user')
                     @if ($activity->screenshots->first()->path === '00/1234567890.png')
                         <img class="img_placeholder" src="2.png">
                     @endif
+                @else
+                <img class="img_placeholder" src="2.png">
                 @endif
             </div>
 
         </div>
 
         <div class="relative pt-6 pb-4">
-            <div class="number_of_screeshot absolute w-full flex justify-center top-1 -mt-5 z-1">
+            <div class="number_of_screeshot absolute w-full flex justify-center top-1 -mt-5 z-10">
             @if($activity->screenshots->first() != NULL)
                 @if ($activity->screenshots->first()->path != '00/1234567890.png')    
                 <span style="margin-top: -35px;" class=" font_weight bg-white flex items-center justify-center h-6 rounded-full shadow-md text-blue-600 text-center text-xs w-24">{{$activity->screenshots->count()}} {{ $activity->screenshots->count() == 1 ? 'screen' : 'screens'}}</span>

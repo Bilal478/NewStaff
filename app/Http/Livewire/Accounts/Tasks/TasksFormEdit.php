@@ -10,6 +10,7 @@ use App\Models\Task;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class TasksFormEdit extends Component
@@ -59,9 +60,18 @@ class TasksFormEdit extends Component
 
     public function mount($project = null, $team = null, $department = null)
     {
-        $this->projects = Project::orderBy('title')->get(['id', 'title']);
+        if(Auth::guard('web')->user()->isOwner()){
+            $this->projects = Project::orderBy('title')->get(['id', 'title']);
+            $this->departments = Department::orderBy('title')->get(['id', 'title']);
+        }
+        else{
+            $this->projects = Auth::guard('web')->user()
+            ->projects()->orderBy('title')->get();
+            $this->departments = Auth::guard('web')->user()
+            ->departments()->orderBy('title')->get();
+        }
         $this->teams = Team::orderBy('title')->get(['id', 'title']);
-        $this->departments = Department::orderBy('title')->get(['id', 'title']);
+        
 
         if ($project) {
             $this->project_id = $project->id;

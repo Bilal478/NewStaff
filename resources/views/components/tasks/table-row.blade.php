@@ -1,6 +1,6 @@
 @props(['task','project'])
 
-<div wire:click.stop="$emit('taskShow', {{$task->id}})" class="w-full bg-white py-5 rounded-md border mb-3 cursor-pointer hover:shadow-md">
+<div wire:click.stop="$emit('taskShow', '{{$task->id}}','{{$task->user_id}}')" class="w-full bg-white py-5 rounded-md border mb-3 cursor-pointer hover:shadow-md">
     <div class="hidden md:flex items-center text-sm">
         <div class="flex-1 px-3 text-gray-700 font-montserrat font-semibold">
             {{ $task->title }}

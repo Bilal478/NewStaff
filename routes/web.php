@@ -25,12 +25,14 @@ use App\Http\Livewire\Accounts\Members\MembersInvite;
 use App\Http\Livewire\Accounts\Projects\ProjectsIndex;
 use App\Http\Livewire\Accounts\Projects\ProjectsShow;
 use App\Http\Livewire\Accounts\Reports\ReportsIndex;
+use App\Http\Livewire\Accounts\Reports\DailyReportsIndex;
 use App\Http\Livewire\Accounts\Tasks\TasksIndex;
 use App\Http\Livewire\Accounts\Teams\TeamsIndex;
 use App\Http\Livewire\Accounts\Teams\TeamsShow;
 use App\Http\Livewire\Accounts\User\UserEdit;
 use App\Http\Livewire\Auth\Invitation;
 use App\Http\Livewire\Auth\Login;
+use App\Http\Livewire\Auth\Login2;
 use App\Http\Livewire\Auth\Home;
 use App\Http\Livewire\Auth\Passwords\Confirm;
 use App\Http\Livewire\Auth\Passwords\Email;
@@ -45,7 +47,6 @@ use App\Mail\SubscriptionMail;
 use Illuminate\Support\Facades\Mail;
 
 use App\Http\Livewire\Accounts\PlansandPayment\PlansandPayment;
-
 use App\Http\Livewire\SelectPlan;
 
 //Route::view('/', 'welcome')->name('home');
@@ -53,9 +54,11 @@ use App\Http\Livewire\SelectPlan;
 //Route::get('/', WelcomeController::class)->name('home');
 
 Route::view('/download', 'download')->name('download');
+Route::get('accept-invitation/{randomID}', Login2::class)->name('accept-invitation');
 
 Route::get('/downloads/windows/', [download::class, 'index'])->name('download.index');
 Route::get('/downloads/mac/', [download::class, 'macFile'])->name('download.macFile');
+Route::get('/downloads/ubuntu/', [download::class, 'ubuntuFile'])->name('download.ubuntuFile');
 
 Route::get('/terms-and-conditions', [download::class, 'TermsAndConditions']);
 Route::get('/hipaa', [download::class, 'hipaa']);
@@ -105,27 +108,25 @@ Route::middleware(['auth:web', 'account.verify'])->group(function () {
     Route::get('profile/edit', UserEdit::class)->name('profile.edit');
     Route::get('accounts/create', AccountCreate::class)->name('accounts.create');
     Route::get('reports', ReportsIndex::class)->name('accounts.reports');
+    Route::get('dailyreports', DailyReportsIndex::class)->name('accounts.dailyreports');
 	
+    Route::get('departments/{department}', DepartmentsShow::class)->name('accounts.departments.show');
+    Route::get('teams/{team}', TeamsShow::class)->name('accounts.teams.show');
+    Route::get('companies/{company}', CompaniesShow::class)->name('accounts.companies.show');
+    Route::get('cancelsubscription',[BillingInfo::class, 'cancel2'])->name('accounts.cancel2');
+    Route::post('deleteseats',[BillingInfo::class, 'deleteseats'])->name('accounts.deleteseats');
+    Route::post('/members', [MembersIndex::class, 'payandcontinue']);
+	Route::post('/billing', [BillingInfo::class, 'payandcontinue']);
 
     Route::middleware('account.owner')->group(function () {
 		
         //Route::view('report/preview', 'pdf.report', ['data' => App\Models\User::all()]);
         Route::get('teams', TeamsIndex::class)->name('accounts.teams');
         Route::get('departments', DepartmentsIndex::class)->name('accounts.departments');
-        Route::get('departments/{department}', DepartmentsShow::class)->name('accounts.departments.show');
         Route::get('companies', CompaniesIndex::class)->name('accounts.companies');
-        Route::get('companies/{company}', CompaniesShow::class)->name('accounts.companies.show');
-        Route::get('teams/{team}', TeamsShow::class)->name('accounts.teams.show');
         Route::get('members', MembersIndex::class)->name('accounts.members');
         Route::get('settings', AccountEdit::class)->name('accounts.settings');
 		Route::get('billing', BillingInfo::class)->name('accounts.billing');
-		Route::get('cancelsubscription',[BillingInfo::class, 'cancel2'])->name('accounts.cancel2');
-		
-		Route::post('deleteseats',[BillingInfo::class, 'deleteseats'])->name('accounts.deleteseats');
-		
-		Route::post('/members', [MembersIndex::class, 'payandcontinue']);
-		Route::post('/billing', [BillingInfo::class, 'payandcontinue']);
-		
     });
 });
 

@@ -1,8 +1,16 @@
+<?php 
+$user_login = auth()->id();
+?>
 <div>
     <x-page.title svg="svgs.report">
-        Weekly Report
+        Timesheets
     </x-page.title>
-
+    <div class="container">
+        <span class="stripe">
+        <a class="toggle-button white" href="{{ route('accounts.reports') }}">Weekly</a>
+        <a class="toggle-button" href="{{ route('accounts.dailyreports') }}">Daily</a>
+        </span>
+    </div>
     <div class="flex items-center flex-wrap pb-8 flex-col sm:flex-row">
         <div>
             <div class="mx-auto flex items-center justify-center">
@@ -25,32 +33,43 @@
         @role(['owner', 'manager'])
                 <div class="mt-4  sm:mt-0 ">
                         <div class="ml-2">
-                                <x-inputs.select-without-label wire:model="user_id" class="w-60" name="user_id">
-                                        @foreach($user_list as $user)
-                                                <option value="{{ $user->id }}">
-                                                        {{$user->full_name}}
-                                                </option>
-                                        @endforeach
-                                </x-inputs.select-without-label>
+                        <x-inputs.select-without-label wire:model="user_id" class="w-60" name="user_id">
+                                @forelse ($user_list->count() ? $user_list : $login as $user)
+                                    <option value="{{ $user->id }}" {{ $user->id == $user_login ? 'selected' : '' }}>
+                                        {{ $user->full_name }}
+                                    </option>
+                                @empty
+                                    <option disabled>No users found.</option>
+                                @endforelse
+                            </x-inputs.select-without-label>
                         </div>
 		</div>
 		@endrole
-        @if ($users->count())
+        {{-- @if ($users->count()) --}}
         <button wire:click="download" type="button"
             class="w-full sm:w-auto mt-4 sm:mt-0 h-10 text-sm flex items-center rounded-md bg-blue-600 text-white pl-4 pr-6 hover:bg-blue-500 focus:outline-none active:bg-blue-700 transition duration-150 ease-in-out">
             <x-svgs.plus class="w-5 h-5 mr-1" />
             Download PDF
         </button>
-        @endif
+        {{-- @endif --}}
     </div>
 
-    @if ($users->count())
+    
     <div class="w-full overflow-x-auto rounded-md border">
         <table class="w-full bg-white">
+        <div wire:loading>
+            <!-- Show the loading animation -->
+            <div class="loading-overlay">
+            <div  class="loading-animation">
+                <!-- Add your loading animation here -->
+                
+            </div>
+            </div>
+        </div>
             <tbody>
                 <tr class="text-left uppercase text-xs text-gray-700 font-medium border-b-2">
                     <th class="min-w-52 sticky left-0 top-auto bg-white z-10 px-4 py-4">
-                        Member
+                        Projects
                         <div class="border-r-2 bg-red-500 absolute right-0 inset-y-0"></div>
                     </th>
                     @foreach ($dates as $date)
@@ -62,16 +81,18 @@
                         Weekly Total
                     </th>
                 </tr>
+                @if ($users->count())
                 @foreach ($users as $userName => $activity)
                 <tr class="text-sm text-gray-600 hover:bg-gray-50 {{ $loop->last ? '' : 'border-b' }}">
                     <td class="min-w-52 sticky left-0 top-auto bg-white z-10 px-4 py-5">
                         {{ $userName }}
+                        <p><span class="taskTitle">{{$activity['task_title']}}</span></p>
                         <div class="border-r-2 bg-red-500 absolute right-0 inset-y-0"></div>
                     </td>
 
                     @foreach ($activity['days'] as $day)
                     <td class="min-w-36 px-4 py-5">
-                        <a href="#" wire:click="$emit('activityModal','{{ $day['date'] }}','{{ $day['user_id'] }}')">{{ $day['seconds'] }}</a>
+                        <a href="#" wire:click="$emit('activityModal','{{ $day['date'] }}','{{ $day['user_id'] }}','{{ $day['account_id'] }}','{{ $day['project_id'] }}','{{ $day['task_id'] }}')">{{ $day['seconds'] }}</a>
                         <x-svgs.computer class="w-4 h-4 text-blue-500 mr-1" />
                         {{ $day['productivity'] }}%
                         <br>
@@ -115,15 +136,39 @@
                     </td>
                 </tr>
                 @endforeach
+                @else
+                <tr class="text-sm text-gray-600 hover:bg-gray-50">
+                    <td class="min-w-52 sticky left-0 top-auto bg-white z-10 px-4 py-5">
+                        No-todo
+                        <p><span class="taskTitle">No-todo</span></p>
+                        <div class="border-r-2 bg-red-500 absolute right-0 inset-y-0"></div>
+                    </td>
+
+                    @for ($i=0;$i<7;$i++)
+                    <td class="min-w-36 px-4 py-5">
+                        00:00:00
+                        <x-svgs.computer class="w-4 h-4 text-blue-500 mr-1" />
+                        0%
+                        <br>
+                    </td>
+                    @endfor
+                    <td class="min-w-36 px-4 py-5">
+                        00:00:00 
+                        <x-svgs.computer class="w-4 h-4 text-blue-500 mr-1" />
+                        0%
+                    </td>
+                </tr>
+                @endif
             </tbody>
         </table>
     </div>
-    @else
+    {{-- @else
     <x-states.empty-data message="There are no records for this week." />
-    @endif
+    @endif --}}
     @push('modals')
         @livewire('activites-modal')
         @livewire('time-modal')
+        @livewire('accounts.activities.edit-time-modal')
     @endpush
 </div>
 
@@ -144,7 +189,60 @@
     .activityTimeShow::-webkit-scrollbar-thumb {
         background: #eee
     }
+    .taskTitle {
+    
+    font-weight: 600;
+    font-size: 11px;
+    color: gray;
+    margin-top: 10px;
+}
+.container {
+    margin-bottom: 5px;
+      display: flex;
+      justify-content: center;
+    }
+    
+    .toggle-button {
+      margin: 0 10px;
+      padding: 10px 28px;
+      border-radius: 18px;
+    }
+    .stripe{
+    background: #e5e5e5;
+    padding: 7px;
+    border-radius: 26px;
+    }
+    .white{
+        background: white;
+    }
+    .loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(255, 255, 255, 0.7);
+        z-index: 999;
+    }
 
-    ​
+    
+
+    .loading-animation {
+    /* Add your styles for the loading animation */
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
 </style>
 @endpush

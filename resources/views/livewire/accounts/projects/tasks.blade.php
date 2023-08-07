@@ -25,6 +25,7 @@
         @livewire('accounts.tasks.tasks-show') 
         @livewire('accounts.tasks.tasks-form-edit')
 		@livewire('accounts.tasks.tasks-form2')
+        @livewire('accounts.activities.edit-time-modal')
     @endpush
 	
 	@push('modals')

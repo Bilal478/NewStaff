@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\User;
 use App\Models\Task;
+use App\Models\Project;
 use App\Traits\BelongsToAccount;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,6 +17,7 @@ class Department extends Model
     protected $fillable = [
       'title',
       'user_id',
+      'department_id'
     ];
 
     public function users()
@@ -30,6 +32,10 @@ class Department extends Model
     public function tasks()
     {
       return $this->hasMany(Task::class);
+    }
+    public function projects()
+    {
+      return $this->hasMany(Project::class);
     }
 
     /**

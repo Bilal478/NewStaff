@@ -6,7 +6,6 @@
     <div class="relative text-gray-400 focus-within:text-blue-600 rounded-md shadow-sm">
         <select
             id="{{ $name }}"
-            {{ $attributes->whereStartsWith('wire:model') }}
             {{ $attributes->whereStartsWith('autofocus') }}
             {{ $attributes->whereStartsWith('required') }}
             class="h-10 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 text-gray-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out text-sm leading-5"

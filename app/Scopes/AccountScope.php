@@ -5,7 +5,7 @@ namespace App\Scopes;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
-
+use Illuminate\Support\Str;
 class AccountScope implements Scope
 {
     /**
@@ -17,8 +17,9 @@ class AccountScope implements Scope
      */
     public function apply(Builder $builder, Model $model)
     {
+        $modelName = $model->getTable();
         if (session()->has('account_id')) {
-            $builder->where('account_id', session()->get('account_id'));
+            $builder->where($modelName . '.account_id', session()->get('account_id'));
         }
     }
 }

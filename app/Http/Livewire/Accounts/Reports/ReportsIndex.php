@@ -14,14 +14,17 @@ use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
 use PDF;
+use Illuminate\Support\Facades\DB;
 
 class ReportsIndex extends Component
 {
     use WithPagination;
 
     public $date;
+    public $userName;
     public $week;
     public $search = '';
+    public $login = '';
     public $user_list = '';
     public $user_id = '';
     public $show = '';
@@ -54,8 +57,35 @@ class ReportsIndex extends Component
     {
         $this->date = Carbon::today()->format('M d, Y');
         $this->week = $this->getWeekFormatted();
-	$this->user_list = User::orderBy('firstname')->get(['id', 'firstname', 'lastname']);
+        $departments_ids = [];
+	// $this->user_list = User::orderBy('firstname')->get(['id', 'firstname', 'lastname']);
 	#this->user_id = $this->users->first()->id;
+    $user_login = auth()->id();
+    $role=DB::select('SELECT role FROM account_user where user_id='.$user_login );
+            foreach($role as $val){
+                $user_role=$val->role;
+            }
+            if($user_role=='owner'){
+            $this->user_list =User::orderBy('firstname')->get(['id', 'firstname', 'lastname']);  
+            }
+            else{
+    $user_departments=DB::select('SELECT department_id FROM department_user where user_id='.$user_login );
+    foreach($user_departments as $val){
+        $departments_ids[]=$val->department_id;
+    }
+    $departments_user=DB::table('department_user')->whereIn('department_id', $departments_ids)->get();
+    $unique_users = [];
+    foreach($departments_user as $val){
+
+        if(!in_array($val->user_id,$unique_users)){
+            $unique_users[] = $val->user_id;
+        }
+    }
+
+    $this->user_list = User::wherein('id', $unique_users)->orderBy('firstname')->get(['id', 'firstname', 'lastname']);
+    $this->login = User::where('id', $user_login)->get();
+}
+	
     }
 
     public function prevWeek()
@@ -95,7 +125,7 @@ class ReportsIndex extends Component
 
     public function getWeekFormatted()
     {
-        return $this->startDate()->format('M d, Y') . '  -  ' . $this->endDate()->format('M d, Y');
+        return $this->startDate()->format('D, M d, Y') . '  -  ' . $this->endDate()->format('D, M d, Y');
     }
 
     public function getWeekDates()
@@ -107,17 +137,19 @@ class ReportsIndex extends Component
     {
         PDF::loadView('pdf.report', [
             'users' => $this->getUsersReport(),
+            'userName' => $this->userName,
             'dates' => $this->getWeekDates(),
             'week' => $this->getWeekFormatted(),
         ])
             ->setPaper('a4', 'landscape')
-            ->save(storage_path() . '/' . $this->week . '.pdf');
+            ->save(storage_path() .'/'.$this->userName.'_timesheet_report_' . $this->week . '.pdf');
 
-        return response()->download(storage_path() . '/' . $this->week . '.pdf')->deleteFileAfterSend(true);
+        return response()->download(storage_path() .'/'.$this->userName.'_timesheet_report_' . $this->week . '.pdf')->deleteFileAfterSend(true);
     }
 
     public function render()
     {		
+        // dd($this->getUsersReport());
 			return view('livewire.accounts.reports.index', [
 				'users' => $this->getUsersReport(),
 				'dates' => $this->getWeekDates(),
@@ -125,19 +157,33 @@ class ReportsIndex extends Component
     }
 
     public function getUsersReport()
-    {
-        return Activity::join('users', 'activities.user_id', '=', 'users.id')
-            ->groupBy('user_id', 'date','firstname','lastname')
-            ->selectRaw('sum(seconds) as seconds, avg(total_activity_percentage) as productivity, date, firstname, lastname, user_id')
-            ->whereBetween('date', [$this->startDate(true), $this->endDate(true)])
-            ->when($this->user_id, function($query) {
-		return $query->where('activities.user_id', $this->user_id);
-	    })
-            ->when(Auth::guard('web')->user()->isNotOwnerOrManager(), function ($query) {
-                return $query->where('activities.user_id', Auth::user()->id);
-            })
-            ->get()
-            ->groupByUserName()
-            ->mapActivitiesStatsByDates($this->getWeekDates());
+    { 
+         if(!$this->user_id){
+            $this->user_id = Auth::user()->id;
+        }
+        $name = User::where('id', $this->user_id)->first();
+       $this->userName = $name->firstname.' '.$name->lastname;
+    return Activity::join('users', 'activities.user_id', '=', 'users.id')
+        ->leftjoin('projects', 'activities.project_id', '=', 'projects.id')
+        ->leftJoin('tasks', function ($join) {
+            $join->on('activities.task_id', '=', 'tasks.id')
+                ->orWhereNull('activities.task_id');
+        })
+        ->groupBy('activities.user_id', 'activities.date', 'users.firstname', 'users.lastname', 'activities.task_id', 'activities.project_id', 'projects.title', 'tasks.title','activities.account_id')
+        ->selectRaw('CONCAT(users.firstname, " ", users.lastname) AS full_name, sum(activities.seconds) as seconds, avg(activities.total_activity_percentage) as productivity, activities.date, users.firstname, users.lastname, activities.user_id, activities.task_id, activities.project_id, projects.title as project_title, activities.account_id, 
+        CASE
+        WHEN activities.task_id IS NULL THEN "No to-do"
+        ELSE tasks.title
+        END AS task_title')->whereBetween('activities.date', [$this->startDate(true), $this->endDate(true)])
+        ->when($this->user_id, function($query) {
+    return $query->where('activities.user_id', $this->user_id);
+    })
+        ->when(Auth::guard('web')->user()->isNotOwnerOrManager(), function ($query) {
+    return $query->where('activities.user_id', Auth::user()->id);
+    })
+        ->get()
+        ->groupByUserName()
+        ->mapActivitiesStatsByDates($this->getWeekDates()); 
     }
+    
 }

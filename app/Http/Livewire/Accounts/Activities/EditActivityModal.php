@@ -1,54 +1,100 @@
 <?php
 
-namespace App\Http\Livewire;
+namespace App\Http\Livewire\Accounts\Activities;
 
-use App\Models\Activity;
-use App\Models\User;
-use Carbon\Carbon;
-use Carbon\CarbonInterval;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Livewire\Component;
+use Carbon\Carbon;
+use App\Models\Activity;
+use App\Models\Task;
+use App\Models\User;
+use Livewire\WithPagination;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use Carbon\CarbonInterval;
+use Illuminate\Support\Facades\DB;
 
-class ActivitesModal extends Component
+class EditActivityModal extends Component
 {
-
     public $date;
-    public $user_id;
-    public $activities=[];
+    use WithPagination;
+
+    public $activityIDBeingRemoved = null;
+    public $taskId = null;
+
+    public $seconds_one;
+	public $seconds_two;
+	public $datetimerange;
     public $userName;
-    public $account_id;
-    public $project_id;
-    public $task_id;
+    public $user_id;
     public $activityToRemoved;
+    private $list_activities=array();
 
     protected $listeners = [
-        'activityUpdate' => '$refresh',
-        'activityDelete' => '$refresh',
-        'activityModal' => 'show',
-        'deleteConfirmedActivites' => 'deleteActivitySelected',
+        'editActivityShow' => 'show',
+        'activityUpdate'=> '$refresh',
+        'deleteActivity' => 'deleteActivity',
+        'activityCreate' => 'create',
+        'deleteConfirmed' => 'deleteActivitySelected',
+        'refreshActivities' => '$refresh',
+        'refreshPagination' => 'refreshPagination',
+        'deleteConfirmedActivitesFromTask' => 'deleteActivitySelected',
     ];
-
-
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
     public function deleteActivity($id)
-    {
+    {   
         Activity::find($id)->delete();
-        $this->dispatchBrowserEvent('close-activity-modal');
     }
 
-    public function show($date,$user_id,$account_id,$project_id,$task_id)
+    public function refreshPagination()
     {
-        $this->date = $date;
-        $this->user_id = $user_id;
-        $this->account_id = $account_id;
-        $this->project_id = $project_id;
-        $this->task_id = $task_id;
-        $this->activities = $this->selectedDateActivity();
-        // $this->activities = Activity::where('date',date('Y-m-d',
-        // strtotime($date)))->where('user_id', $user_id)->get();
-        $this->showFormModal();
+        $lastpage = Activity::where('task_id',$this->taskId)
+        ->whereDate('date', $this->formatted_date)
+        ->paginate(10)->lastPage();
+
+        if($lastpage>0)
+        {
+            $this->setPage($lastpage);
+        }
     }
 
+
+    public function addDay()
+    {
+        $this->date = Carbon::createFromFormat('M d, Y', $this->date)->addDay()->format('M d, Y');
+    }
+    public function subDay()
+    {
+        $this->date = Carbon::createFromFormat('M d, Y', $this->date)->subDay()->format('M d, Y');
+    }
+    public function show($userId,$date){
+        // dd($this->selectedDateActivity());
+        $this->user_id = $userId;
+        $this->date = $date;
+        // dd($this->user_id, $this->date);
+        $this->dispatchBrowserEvent('open-edit-activity-modal');
+    }
+    public function render()
+    {
+        if ($this->date) {
+            Session::put('date', $this->date);
+        } else {
+            $this->date = Session::get('date', Carbon::today()->format('M d, Y'));
+            Session::forget('date');
+            Session::put('date', $this->date);
+        }
+        $this->list_activities= Activity::where('task_id',$this->taskId)
+        ->whereDate('date', $this->formatted_date)
+        ->paginate(10);
+        $count = count($this->list_activities);
+        return view('livewire.accounts.activities.edit-activity-modal',[
+            'task' => $this->task, 'activitiesGroup' => $this->activities(),
+            'activities' => $this->list_activities, 'count' => $count,
+            'selectedDateRecord' => $this->selectedDateActivity()
+        ]);
+    }
     public function selectedDateActivity()
     {
         $startDate = Carbon::createFromFormat('M d, Y', $this->date);
@@ -57,24 +103,19 @@ class ActivitesModal extends Component
         if(!$this->user_id){
             $this->user_id = Auth::user()->id;
         }
+       
         $name = User::where('id', $this->user_id)->first();
         $this->userName = $name->firstname.' '.$name->lastname;
-        $results = Activity::join('users', 'activities.user_id', '=', 'users.id')
-        ->leftJoin('projects', 'activities.project_id', '=', 'projects.id')
-        ->leftJoin('tasks', 'activities.task_id', '=', 'tasks.id')
-        ->where('activities.date', $startDate)
+        $results = Activity::where('activities.date', $startDate)
         ->where('activities.user_id', $this->user_id)
-        ->where('activities.account_id', $this->account_id)
-        ->where('activities.project_id', $this->project_id)
-        ->where(function ($query) {
-            $query->where('activities.task_id', $this->task_id)
-                  ->orWhereNull('activities.task_id');
-        })
-        ->groupBy('activities.id', 'activities.user_id', 'activities.account_id', 'activities.date', 'activities.task_id', 'activities.project_id', 'projects.title', 'tasks.title', 'activities.seconds', 'activities.total_activity_percentage', 'activities.start_datetime', 'activities.end_datetime')
-        ->selectRaw('activities.id, activities.user_id, activities.account_id, activities.task_id, activities.project_id, projects.title AS project_title, SUM(activities.seconds) AS seconds, activities.date, AVG(activities.total_activity_percentage) AS productivity, activities.start_datetime, activities.end_datetime,
-            COALESCE(tasks.title, "No to-do") AS task_title')
+        ->leftJoin('tasks', 'activities.task_id', '=', 'tasks.id')
+        ->leftJoin('projects', 'activities.project_id', '=', 'projects.id')
+        ->select('activities.*', 
+                 DB::raw('COALESCE(tasks.title, "No-todo") as task_title'),
+                 DB::raw('COALESCE(projects.title, "No-todo") as project_title'))
         ->orderBy('activities.start_datetime')
         ->get();
+        
         $ss = [];
         $arrayData = [];
         $seconds_sum_of_day = 0;
@@ -83,7 +124,7 @@ class ActivitesModal extends Component
         $i=0;
         $j=0;
         foreach($results as $index=>$result){
-            
+            // dd($result);
             $startDateTime = Carbon::parse($result->end_datetime);
             $seconds_sum_of_day += $result->seconds;
             if(isset($results[$index+1])){
@@ -145,13 +186,43 @@ class ActivitesModal extends Component
     
         return $arrayData;
     }
-    public function showFormModal()
+    public function activities()
     {
-        $this->dispatchBrowserEvent('open-activity-modal');
+        return Auth::guard('web')->user()->isOwnerOrManager()
+            ?  $this->activitiesForUser()
+            : $this->activitiesForUser();
     }
-    public function render()
+
+    public function getTaskProperty()
     {
-        return view('livewire.activites-modal');
+        return Task::with('user:id,firstname,lastname')
+            ->find($this->taskId);
+    }
+  
+    public function activitiesForUser()
+    {
+        return Auth::guard('web')->user()
+            ->activities()
+            ->whereDate('date', $this->formatted_date)
+            ->oldest('start_datetime')
+            ->get()
+            ->mapToGroups(function ($activity, $key) {
+                return [
+                    $activity->start_datetime->format('h:00 a') . ' - ' . $activity->start_datetime->addHour()->format('h:00 a') => $activity
+                ];
+            });
+    }
+    public function getFormattedDateProperty()
+    {
+        return Carbon::createFromFormat('M d, Y', $this->date)->format('Y-m-d');
+    }
+    public function create(){
+		
+        $this->dispatchBrowserEvent('open-activities-form-modal-show');
+	}
+    public function create_activity_time(){
+        
+      //  mail('carlosl@mailinator.com', 'Mi título',$this->task);
     }
 
     public function confirmDeleteActivity($data) {
@@ -164,7 +235,7 @@ class ActivitesModal extends Component
     }
 
     public function deleteActivitySelected(){
-        
+        // dd($this->activityToRemoved);
         $startDateTime = strtotime($this->activityToRemoved['date'] . ' ' . $this->activityToRemoved['start_time']);
         $endDateTime =strtotime($this->activityToRemoved['date'] . ' ' . $this->activityToRemoved['end_time']);
 
@@ -191,8 +262,11 @@ class ActivitesModal extends Component
             ->where('account_id', $this->activityToRemoved['account_id'])
             ->delete();    
         }
-        $this->dispatchBrowserEvent('close-activity-modal');
-        $this->emit('activityUpdate');
+        $this->emit('tasksUpdate');
+        $this->dispatchBrowserEvent('close-task-show-modal');
+       
+        
     
     }
+   
 }

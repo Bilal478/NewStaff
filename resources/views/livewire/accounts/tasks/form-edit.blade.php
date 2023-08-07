@@ -8,7 +8,7 @@
         @if (! $inProject)
 
         <div class="border-b mb-6">
-            <x-inputs.select wire:model="project_id" label="Project" name="edit_project_id" required>
+            <x-inputs.select wire:model="project_id" label="Project" name="project_id" required>
                 <option value="">Select a project</option>
                 @foreach ($projects as $project)
                 <option value="{{ $project->id }}">
@@ -25,7 +25,7 @@
         <x-inputs.textarea wire:model.lazy="description" label="Description" name="edit_description" type="text"
             placeholder="Description" required />
 
-        <x-inputs.select wire:model.lazy="user_id" label="Assignee" name="">
+        <x-inputs.select wire:model.lazy="user_id" label="Assignee" name="user_id">
             <option value="">Select a Assignee</option>
              @foreach (App\Models\User::get() as $user)
             <option value="{{ $user->id }}">
@@ -63,13 +63,13 @@
 		<x-inputs.time wire:model="tracking_time" label="Tracking time" name="edit_tracking_time" required />
 		--}}
 
-        <x-inputs.select wire:model.lazy="team_id" label="Team" name="edit_team_id" type="text">
+        <x-inputs.select wire:model.lazy="team_id" label="Team" name="team_id" type="text">
         {{-- <option value="">Select a team</option>--}}
             @foreach (App\Models\Team::get() as $item)
             <option value="{{ $item->id }}">{{ $item->title }}</option>
             @endforeach
         </x-inputs.select>
-        <x-inputs.select wire:model.lazy="department_id" label="Department" name="edit_department_id" type="text">
+        <x-inputs.select wire:model.lazy="department_id" label="Department" name="department_id" type="text">
 		{{--<option value="">Select a department</option>--}}
             @foreach (App\Models\Department::get() as $item)
             <option value="{{ $item->id }}">{{ $item->title }}</option>

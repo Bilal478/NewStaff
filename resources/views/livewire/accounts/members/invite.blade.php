@@ -18,14 +18,24 @@ $account = Account::find(session()->get('account_id'));
 
 	
 	$quantity_seats = DB::select('SELECT quantity FROM subscriptions WHERE user_id = "'.$user.'"AND stripe_status != "canceled"');
-		
-	$seats=  $quantity_seats[0]->quantity;		
+ 	
+	if($quantity_seats){
+		$seats= $quantity_seats[0]->quantity;		
+	}else{
+		$seats=0;
+	}
+	
 
 	$result=$seats-$count_subs;
 	
 	$plan = DB::select('SELECT name FROM subscriptions WHERE user_id = "'.$user.'"AND stripe_status != "canceled"');
 	
-	$plan_name = $plan[0]->name;
+	if($plan){
+		$plan_name = $plan[0]->name;
+	}else{
+		$plan_name = 'test';
+	}
+	
 ?>
 
 <?php
@@ -56,6 +66,25 @@ $account = Account::find(session()->get('account_id'));
             <option value="manager">Manager</option>
             <option value="member">Member</option>
         </x-inputs.select>
+		<div>
+			<label for="department">Department:</label>
+			<select wire:model="selectedDepartment" id="department">
+				<option value="">Select a department</option>
+				@foreach ($departments as $department)
+					<option value="{{ $department->id }}">{{ $department->title }}</option>
+				@endforeach
+			</select>
+		</div>
+		
+		<div>
+			<label for="project">Project:</label>
+			<select wire:model="selectedProject" id="project">
+				<option value="">Select a project</option>
+				@foreach ($projects as $project)
+					<option value="{{ $project->id }}">{{ $project->title }}</option>
+				@endforeach
+			</select>
+		</div>
 	<?php
 		}
 	?>

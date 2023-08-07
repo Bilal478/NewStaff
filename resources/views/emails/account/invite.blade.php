@@ -13,7 +13,7 @@ You have been invited to join the  {{ $accountName }} team owned by <?php echo $
 
 on NeoStaff. To get started, accept the invite below: 
 
-@component('mail::button', ['url' => $url])
+@component('mail::button', ['url' => $url,'randomID' => $randomID])
 Accept Invitation
 @endcomponent
 

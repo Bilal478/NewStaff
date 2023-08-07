@@ -1,3 +1,11 @@
+@php
+    $user_role=[];
+    $user_login = auth()->id();
+    $role=DB::select('SELECT * FROM department_admin where user_id='.$user_login );
+    foreach($role as $val){
+                $user_role[]=$val->department_id;
+            }    
+@endphp
 <div>
     <x-page.title-breadcrum svg="svgs.departments" route="{{ route('accounts.departments', ['account' => request()->account]) }}">
         Departments
@@ -22,12 +30,32 @@
         </div>
         <div class="w-full xl:w-1/3">
             <div class="bg-white mx-4 mb-8 rounded-md border shadow-sm p-6 sm:p-8">
-                <h4 class="font-montserrat text-sm font-semibold text-blue-600 pb-4 flex items-center">
+                <h4 class="font-montserrat text-sm font-semibold text-blue-600 pb-4 flex items-center float-left">
                     Members
                 </h4>
-
+                @role(['owner', 'manager'])
+                <x-buttons.blue-inline wire:click="$emit('showCreateAdmin','{{ $department->id }}')" class="h-10" id="btn-admin">
+                    Assign Admin
+                </x-buttons.blue-inline>
+                @endrole
+                @role('member')
+                @if (in_array($department->id,$user_role))
+                <x-buttons.blue-inline wire:click="$emit('showCreateAdmin','{{ $department->id }}')" class="h-10" id="btn-admin">
+                    Assign Admin
+                </x-buttons.blue-inline>
+                @endif
+                @endrole
                 @livewire('accounts.departments.department-users-form', ['departmentId' => $department->id])
             </div>
         </div>
     </div>
 </div>
+@push('modals')
+@livewire('create-admin-modal')    
+@endpush
+<style>
+    #btn-admin{
+        margin-left: 170px;
+        margin-bottom: 10px;
+    }
+</style>

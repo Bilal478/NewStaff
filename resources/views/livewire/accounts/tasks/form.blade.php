@@ -112,7 +112,31 @@
 	
 	<div>
 		<x-modals.date x-on:open-activities-form-modal.window="open = true" x-on:close-activities-form-modal.window="open = false">
-		     
+        @role(['owner'])
+                <?php
+                    $users = App\Models\User::orderBy('firstname')->get(['id', 'firstname', 'lastname']);
+               
+                
+                ?>
+        @endrole
+        @role(['member','manager'])
+                <?php 
+                $user_login = auth()->id();
+                $uniqueUsersQuery = App\Models\User::select('id', 'firstname', 'lastname')
+                ->whereIn('id', function ($query) use ($user_login) {
+                    $query->select('user_id')
+                        ->from('department_user')
+                        ->whereIn('department_id', function ($query) use ($user_login) {
+                            $query->select('department_id')
+                                ->from('department_user')
+                                ->where('user_id', $user_login);
+                        });
+                })
+                ->orderBy('firstname');
+        
+            $users = $uniqueUsersQuery->get();
+                ?>
+        @endrole
 			@if ($inTeam) 
 				 <form wire:submit.prevent="createActivity"  autocomplete="off"> 
 			@endif
@@ -124,9 +148,9 @@
             </h5>
 			
 			 @if (!$inProject) 
-            <x-inputs.select_two wire:model.lazy="user_id" label="Assignee" name="user_id" id="user_id">
+            <x-inputs.select_two wire:model.lazy="user_id" label="Assignee" name="user_id" id="user_id" required>
                 <option value="">Select a Assignee</option>
-                @foreach (App\Models\User::get() as $user)
+                @foreach ($users as $user)
                 <option value="{{ $user->id }}">
                     {{ $user->firstname }} {{ $user->lastname }}
                 </option>
@@ -137,13 +161,10 @@
 
 			if($user_id != ''){
 				
-				if( count(App\Models\Task::where('user_id', $user_id)->get()) > 0 ){
+				if( count($tasksDropdownOptions) > 0 ){
 			?> 
-				<x-inputs.select_two wire:model.lazy="task_id" label="Task" name="task_id" id="task_id">
+				<x-inputs.select_two wire:model.lazy="task_id" label="Task" name="task_id" id="task_id" required>
 					<option value="">Select a task</option>
-					@foreach (App\Models\Task::where('user_id', $user_id)->get() as $item)
-					<option value="{{ $item->id }}">{{ $item->title }}</option>
-					@endforeach
 				</x-inputs.select_two>
 			<?php
 				}else{
@@ -158,7 +179,7 @@
 			
 			<div class="flex-1">
                     <x-inputs.datepicker-without-label-two wire:model="datetimerange" class="w-full" name="datetimerange" type="text"
-                        :clear-button="false" />
+                        :clear-button="false" required />
             </div>
 			
 			<?php	//echo "Seconds: ".$seconds." - Seconds Two:".$seconds_two; ?>
@@ -275,6 +296,16 @@
             var data = $(".timepicker_two").val();
             @this.set(elementName, data);
         }
+        Livewire.on('tasksUpdated', (taskDropdownoptions) => {
+            let dropdown = $('#task_id');
+            data = JSON.parse(taskDropdownoptions);
+            dropdown.empty();
+            dropdown.append('<option value="" >Select a task</option>');
+            
+            $.each(data, function (key, entry) {
+            dropdown.append($("<option value="+entry.id+">"+entry.title+ "</option>"));
+  })
+});
 </script>
 @endpush
 

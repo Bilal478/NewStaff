@@ -24,7 +24,7 @@ class AccountInvite extends Mailable
      *
      * @return void
      */
-    public function __construct(Account $account, AccountInvitation $accountInvitation,$randomID)
+    public function __construct(Account $account, AccountInvitation $accountInvitation,$randomID=null)
     {
         $this->account = $account;
         // $this->url = URL::signedRoute('invitation', ['accountInvitation' => $accountInvitation->id]);

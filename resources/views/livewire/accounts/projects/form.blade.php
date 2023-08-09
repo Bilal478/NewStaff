@@ -25,7 +25,7 @@ else{
         <x-inputs.textarea wire:model.lazy="project.description" label="Description" name="description" type="text" placeholder="Description" required />
 
         <x-inputs.select wire:model.lazy="project.department_id" name="userId" label="Department" name="project.department_id" required>
-                    <option value="">Select member</option>
+                    <option value="">Select Department</option>
                     @foreach ($departments as $department)
 					<option value="{{ $department->id }}">{{ $department->title }}</option>
 					@endforeach

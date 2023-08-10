@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         Commands\ClearWeeklyLog::class,
+        Commands\SendDailyWorkSummary::class,
     ];
 
     /**
@@ -26,6 +27,9 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('clear:weeklylog')
         ->everyMinute();
+        $schedule->command('senddaily:worksummary')
+        ->daily();
+        // ->at('08:00');
     }
 
     /**

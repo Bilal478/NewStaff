@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Auth;
 
 use App\Models\Account;
+use App\Models\Department;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
@@ -67,7 +68,7 @@ class Register extends Component
                 'name' => $this->accountName,
             ]);
             
-            
+    
             $user = User::create([
                 'firstname' => $this->firstName,
                 'lastname' => $this->lastName,
@@ -75,10 +76,17 @@ class Register extends Component
                 'password' => Hash::make($this->password),
             ]);
 
+
+            $department = Department::create([
+                'title' => $account->name.' Department',
+                'account_id' => $account->id,
+            ]);
+
             $project = Project::create([
                 'title' => $account->name.' Project',
                 'description' => $account->name.' Project Description',
                 'account_id' => $account->id,
+                'department_id' => $department->id,
             ]);
 
             Task::create([
@@ -87,6 +95,7 @@ class Register extends Component
                 'project_id' => $project->id,
                 'account_id' => $account->id,
                 'user_id' => $user->id,
+                'department_id' => $department->id,
             ]);
 
             DB::table('project_user')->insert([

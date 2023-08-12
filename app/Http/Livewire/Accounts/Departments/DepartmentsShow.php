@@ -13,6 +13,7 @@ class DepartmentsShow extends Component
 
     public $departmentId;
     public $account;
+    public $managerExists;
 
     protected $queryString = [
         'page' => ['except' => 1],
@@ -20,7 +21,7 @@ class DepartmentsShow extends Component
 
     public function __construct()
     {
-        $this->account = Account::find(session()->get('account_id'));
+      
     }
     public function mount(Department $department)
     {
@@ -34,9 +35,10 @@ class DepartmentsShow extends Component
 
     public function render()
     {
+        $this->account = Account::find(session()->get('account_id'));
+        $this->managerExists = $this->account->usersWithRole()->where('role', '==', 'manager')->get()->count();
         return view('livewire.accounts.departments.show', [
             'department' => Department::find($this->departmentId),
-            'managerExists' =>!$this->account->usersWithRole()->where('role', '==', 'manager')->get()->isEmpty(),
         ])->layout('layouts.app', ['title' => 'Department']);
     }
 

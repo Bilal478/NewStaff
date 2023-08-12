@@ -34,7 +34,8 @@
                     Members
                 </h4>
                 <br>
-                @if($managerExists)
+               
+                @if($managerExists > 0)
                     @role(['owner', 'manager'])
                     <x-buttons.blue-inline wire:click="$emit('showCreateAdmin','{{ $department->id }}')" class="h-10" id="btn-admin">
                         Assign Admin

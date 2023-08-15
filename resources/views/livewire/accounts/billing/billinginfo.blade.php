@@ -82,19 +82,19 @@ $user_id = Auth::user()->id;
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-lg-12">
-			<h3 style="display:inline-block" ><b><?php echo $user_mail; ?> </b></h3><span style="display:inline-block">&nbsp;on&nbsp;&nbsp;</span><h5 style="background-color:#CBF4C9; color:#0E6245; display:inline-block;"><?php echo ucwords($status); ?></h5>
+			<h3 style="display:inline-block" class="user-email"><?php echo $user_mail; ?> </h3><span style="display:inline-block">&nbsp;on&nbsp;&nbsp;</span><h5 style="background-color:#CBF4C9; color: #007bff; display:inline-block;"><?php echo ucwords($status); ?></h5>
 			<hr>
 		</div>
 	</div>	
 
 	<div class="row">
 		<div class="col-lg-12">
-			<h5><b>Subscription details</b></h5>
+			<h6 class="font-set-heading">Subscription details</h6>
 			<hr>
 		</div>
 	</div>	
 
-	<div class="row">
+	<div class="row font-set-block">
 		<div class="col-lg-3">
 			<div class="customer">
 				<span>Customer</span>
@@ -131,7 +131,7 @@ $user_id = Auth::user()->id;
 	?>
 	</div>
 	
-	<div class="row mt-2">
+	<div class="row mt-2 font-set-block">
 		<div class="col-lg-3">
 			<div class="">
 				<span>Created</span>
@@ -158,7 +158,7 @@ $user_id = Auth::user()->id;
 		</div>
 	</div>
 	
-	<div class="row mt-2">
+	<div class="row mt-2 font-set-block">
 		<div class="col-lg-3">
 			<span>Current period</span>
 		</div>
@@ -189,11 +189,11 @@ $user_id = Auth::user()->id;
 	<br>
 	<div class="row">
 		<div class=" col-lg-12">
-			<h5><b>Pricing</b></h5>
+			<h6 class="font-set-heading">Pricing</h6>
 			<hr>
 		</div>
 	</div>	
-	<div class="row">
+	<div class="row font-set-block">
 		<div class="col-lg-4">
 			<div class="">
 				<span>PRODUCT</span>
@@ -213,7 +213,7 @@ $user_id = Auth::user()->id;
 		</div>
 	</div>
 	<hr>
-	<div class="row">
+	<div class="row font-set-block">
 		<div class="col-lg-4">
 			<div class="">
 			@foreach($subscriptions as $subscription)
@@ -245,7 +245,7 @@ $user_id = Auth::user()->id;
 	<br>
 	<div class="row pt-2">
 		<div class=" col-lg-6">
-			<h5><b>Available Seats</b></h5>
+			<h6 class="font-set-heading">Available Seats</h6>
 		</div>
 		<div class="btn-delete-seats col-lg-6">
 		@if($subscription->quantity - $users->count() > 0)
@@ -255,13 +255,13 @@ $user_id = Auth::user()->id;
 				<input type="hidden" name="planname" value="{{$subscription->name}}">
 				<input type="hidden" name="all-seats" value="{{$subscription->quantity - $users->count()}}">
 					
-				<button type="submit" class="delete-all btn btn-danger" >Delete all seats</button>	
+				<button type="submit" class="delete-all btn btn-danger">Delete all seats</button>	
 			</form>
 		@endif
 		</div>
 	</div>
 	<hr>
-	<div class="row">
+	<div class="row font-set-block">
 		@if($subscription->quantity - $users->count()>0)
 			@for($i = 0 ; $i < $subscription->quantity - $users->count() ; $i++)
 			<div class="seats-col col-lg-3">
@@ -320,16 +320,16 @@ $user_id = Auth::user()->id;
 	<br>
 	<div class="row">
 		<div class="col-lg-4">
-			<h5><b>Danger Zone</b></h5>
-			<span>Cancel subscription, this action don't be undone</span>
+			<h6 class="font-set-heading">Danger Zone</h6>
+			<span class="font-set-block">Cancel subscription, this action don't be undone</span>
 		</div>
 		
 		<div class="col-lg-8">
-			<div class="delete-subscription-box">
+			<div class="delete-subscription-box font-set-block">
 				<ul style="padding-left: 20px; padding-top: 20px;">
-					<li><img src="images/black-circle.png" style ="display: inline-block;" width="10px"> Cancel all seats</li>
-					<li><img src="images/black-circle.png" style ="display: inline-block;" width="10px"> If you still have a free trial you will lose it</li>
-					<li><img src="images/black-circle.png" style ="display: inline-block;" width="10px"> Your members won't be able to use Neostaff</li>
+					<li style="margin-top: 8px"><img src="images/black-circle.png" style ="display: inline-block;" width="10px"> Cancel all seats</li>
+					<li style="margin-top: 8px"><img src="images/black-circle.png" style ="display: inline-block;" width="10px"> If you still have a free trial you will lose it</li>
+					<li style="margin-top: 8px"><img src="images/black-circle.png" style ="display: inline-block;" width="10px"> Your members won't be able to use Neostaff</li>
 				</ul>
 				
 				<a href="/cancelsubscription?planname={{$subscription->name}}" class="btn-cancel-subscription btn btn-danger">
@@ -343,7 +343,11 @@ $user_id = Auth::user()->id;
 	
 </div>
 <style>
-
+	.btn-delete-seats .delete-all {
+    padding: 5px 10px;
+    font-size: 12px;
+	font-weight: 600;
+}
 .btn-delete-seats{
 	text-align:right;
 	margin-bottom: -25px;
@@ -352,6 +356,9 @@ $user_id = Auth::user()->id;
 	float: right;
 	margin-right: 25px;
 	margin-top: 30px;
+	padding: 5px 10px;
+    font-size: 12px;
+	font-weight: 600;
 }
 
 .delete-subscription-box{
@@ -416,6 +423,24 @@ $user_id = Auth::user()->id;
 
 .closebtn:hover {
 	color: black;
+}
+.font-set-heading{
+	font-family: Montserrat, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+	--tw-text-opacity: 1;
+    color: rgba(64, 64, 64, var(--tw-text-opacity));
+	font-size: 0.875rem;
+    line-height: 1.25rem;
+	font-weight: 600;
+}
+.font-set-block{
+	--tw-text-opacity: 1;
+    color: rgba(115, 115, 115, var(--tw-text-opacity));
+	font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+.user-email{
+	color: #007bff;
+    background-color: transparent;
 }
 </style>
 

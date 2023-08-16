@@ -110,7 +110,7 @@ $account_user = DB::table('account_user')
     </table>
     </x-modals.small>
 </div>
-@push('scripts')
+{{-- @push('scripts')
 
 <script>
     $('.timepicker_one').timepicker({
@@ -160,7 +160,7 @@ $account_user = DB::table('account_user')
         @this.set(elementName, data);
     }
 </script>
-@endpush
+@endpush --}}
 @push('scripts')
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>

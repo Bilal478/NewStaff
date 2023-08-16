@@ -48,11 +48,17 @@ use Illuminate\Support\Facades\Mail;
 
 use App\Http\Livewire\Accounts\PlansandPayment\PlansandPayment;
 use App\Http\Livewire\SelectPlan;
+use App\Jobs\DailyWorkSummaryJob;
 
 //Route::view('/', 'welcome')->name('home');
 
 //Route::get('/', WelcomeController::class)->name('home');
+Route::get('work-summary-email', function(){
+  
+         DailyWorkSummaryJob::dispatch();
 
+        echo 'Emails sent successfully';
+});
 Route::view('/download', 'download')->name('download');
 Route::get('accept-invitation/{randomID}', Login2::class)->name('accept-invitation');
 

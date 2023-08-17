@@ -43,7 +43,8 @@ class DailyWorkSummaryJob implements ShouldQueue
         $records=$this->getUsersReport();
         $totalTime = CarbonInterval::create(0, 0, 0);
         $userId=[];
-        $productivity=0;
+        $total_productivity=0;
+        $count=0;
      foreach ($records as $accountId => $data) {
       if($data){
         foreach ($data as $record) {
@@ -60,7 +61,8 @@ class DailyWorkSummaryJob implements ShouldQueue
                 }
                 return $mergedRecord;
             })
-            ->values();
+            ->values()
+            ->sortByDesc('minutes');
             $topMembers = collect($data)
             ->groupBy('user_id')
             ->map(function ($groupedRecords) {
@@ -143,11 +145,11 @@ class DailyWorkSummaryJob implements ShouldQueue
                     'project_title' => $project_title,
                     'productivity' => $productivity,
                 ];
-                break;
             }
             $duration = $record['duration']; // Parse the duration string
             $userId[]= $record['user_id'];
-            $productivity+= $record['productivity'];
+            $total_productivity+= $record['productivity'];
+            $count+=1;
             $timeParts = explode(':', $duration);
             $hours = (int) $timeParts[0];
             $minutes = (int) $timeParts[1];
@@ -168,7 +170,7 @@ class DailyWorkSummaryJob implements ShouldQueue
         $accountData[$accountId] = [
             'total_duration' => $totalDurationFormatted,
             'total_members' =>  $totalMembers,
-            'total_productivity' =>  $productivity,
+            'total_productivity' => intval(round(($total_productivity/$count),0)),
             'top_members' =>   $topMembersRecord,
             'low_members' =>   $lowMembersRecord,
             'top_project' =>   $topProjectRecord,
@@ -183,8 +185,7 @@ class DailyWorkSummaryJob implements ShouldQueue
         $productivity=0;
     }
     }
-    }
-   
+ }
  public function getUsersReport()
  {
      $allArrayData = [];
@@ -199,12 +200,14 @@ class DailyWorkSummaryJob implements ShouldQueue
      ->select('activities.*', 
               DB::raw('COALESCE(tasks.title, "No-todo") as task_title'),
               DB::raw('COALESCE(projects.title, "No-todo") as project_title'))
-     ->orderBy('activities.start_datetime')
+     ->orderBy('activities.user_id')
      ->get();
      $ss = [];
      $arrayData = [];
      $seconds_sum_of_day = 0;
      $seconds_sum = 0;
+     $productivity=0;
+     $count=0;
      $start_time_index=0;
      $i=0;
      $j=0;
@@ -215,16 +218,14 @@ class DailyWorkSummaryJob implements ShouldQueue
              if($seconds_sum == 0){
                  $start_time_index = $index;
              }
-             if ($results[$index]->start_datetime == $results[$index+1]->start_datetime
-             && $result->user_id == $results[$index+1]->user_id) {
-             continue;
-         }
              $endDateTime = Carbon::parse($results[$index+1]->start_datetime);
              
              $seconds_sum += $result->seconds;
+             $productivity+= $result->total_activity_percentage;
+             $count+=1;
              $diffInSeconds = $startDateTime->diffInSeconds($endDateTime);
              $ss[]=$diffInSeconds;
-             if($diffInSeconds > 0 || ($result->user_id != $results[$index+1]->user_id) ){
+             if($result->user_id != $results[$index+1]->user_id){
                 $j++;
                  $arrayData[] = [
                      'user_id' => $result->user_id,
@@ -233,14 +234,16 @@ class DailyWorkSummaryJob implements ShouldQueue
                      'date' => $result->date->format('Y-m-d'),
                      'duration'=> CarbonInterval::seconds($seconds_sum)->cascade()->format('%H:%I:%S'),
                      'minutes'=> $seconds_sum/60,
-                     'productivity' => intval($result->productivity),
+                     'productivity' => intval(round(($productivity/$count),0)),
                      'project_id' => $result->project_id,
                      'project_title' => $result->project_title,
                      'task_id' => $result->task_id,
                      'account_id' => $result->account_id,
                      'task_title' =>  isset($result->task_id)  ? $result->task_title : 'No to-do',  
                  ];
-                 $seconds_sum = 0; 
+                 $seconds_sum = 0;
+                 $productivity = 0;
+                 $count =0; 
              }
          }   
      }
@@ -255,7 +258,7 @@ class DailyWorkSummaryJob implements ShouldQueue
              'date' => $lastResult->date->format('Y-m-d'),
              'duration' => CarbonInterval::seconds($seconds_sum+600)->cascade()->format('%H:%I:%S'),
              'minutes' => ($seconds_sum / 60)+10,
-             'productivity' => intval($lastResult->productivity),
+             'productivity' => intval(round(($productivity/$count),0)),
              'project_id' => $lastResult->project_id,
              'project_title' => $lastResult->project_title,
              'task_id' => $lastResult->task_id,
@@ -265,6 +268,6 @@ class DailyWorkSummaryJob implements ShouldQueue
  } 
  $allArrayData[$account_id] = $arrayData;
  }
- return $allArrayData;
- }
+ return $allArrayData;  
+}
 }

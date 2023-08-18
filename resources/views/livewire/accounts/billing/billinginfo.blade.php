@@ -47,7 +47,6 @@ $user_id = Auth::user()->id;
 //	$date_end = date('M/d/Y', $fech_end);
 
 ?>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css" integrity="sha512-YWzhKL2whUzgiheMoBFwW8CKV4qpHQAEuvilg9FAn5VJUDwKZZxkJNuGM4XkWuk94WCrrwslk8yWNGmY1EduTA==" crossorigin="anonymous" referrerpolicy="no-referrer" />   
    <x-page.title svg="svgs.folder">
         Membership
@@ -80,28 +79,28 @@ $user_id = Auth::user()->id;
 	?>
 
 <div class="container-fluid">
-	<div class="row">
-		<div class="col-lg-12">
-			<h3 style="display:inline-block" class="user-email"><?php echo $user_mail; ?> </h3><span style="display:inline-block">&nbsp;on&nbsp;&nbsp;</span><h5 style="background-color:#CBF4C9; color: #007bff; display:inline-block;"><?php echo ucwords($status); ?></h5>
+	<div class="subscription_outer">
+		<div class="subscription_inner">
+			<h3 class="user-email"><?php echo $user_mail; ?> </h3><span style="display:inline-block">&nbsp;on&nbsp;&nbsp;</span><h5><?php echo ucwords($status); ?></h5>
 			<hr>
 		</div>
 	</div>	
 
-	<div class="row">
-		<div class="col-lg-12">
+	<div class="subscription_outer">
+		<div class="subscription_inner">
 			<h6 class="font-set-heading">Subscription details</h6>
 			<hr>
 		</div>
 	</div>	
 
-	<div class="row font-set-block">
-		<div class="col-lg-3">
+	<div class="customer_outer font-set-block">
+		<div class="customer_inner">
 			<div class="customer">
 				<span>Customer</span>
 			</div>
 		</div>
 		
-		<div class="col-lg-3">
+		<div class="customer_inner">
 			<div class="customer-email">
 				<span><i class="fas fa-user"></i>&nbsp;&nbsp;<a href="https://media.neostaff.app/profile/edit"><?php echo $user_mail; ?></a></span>
 			</div>
@@ -111,12 +110,12 @@ $user_id = Auth::user()->id;
 	?>
 	
 		@foreach($subscriptions as $subscription)
-		<div class="col-lg-3">
+		<div class="customer_inner">
 			<div class="customer">
 				<span>Trailing until</span>
 			</div>
 		</div>
-		<div class="col-lg-3">
+		<div class="customer_inner">
 			<div class="customer">
 			<?php 
 			$temp = $subscription->trial_ends_at;
@@ -131,26 +130,26 @@ $user_id = Auth::user()->id;
 	?>
 	</div>
 	
-	<div class="row mt-2 font-set-block">
-		<div class="col-lg-3">
+	<div class="customer_outer mt-2 font-set-block">
+		<div class="customer_inner">
 			<div class="">
 				<span>Created</span>
 			</div>
 		</div>
 		
-		<div class="col-lg-3">
+		<div class="customer_inner">
 			<div class="">
 				<span><?php echo $date_at; ?></span>
 			</div>
 		</div>
 		
-		<div class="col-lg-3">
+		<div class="customer_inner">
 			<div class="">
 				<span>Credit Card</span>
 			</div>
 		</div>
 		
-		<div class="col-lg-3">
+		<div class="customer_inner">
 			
 			<div class="customer">
 				<span>**** **** **** <?php echo $CC; ?></span>
@@ -158,8 +157,8 @@ $user_id = Auth::user()->id;
 		</div>
 	</div>
 	
-	<div class="row mt-2 font-set-block">
-		<div class="col-lg-3">
+	<div class="customer_outer mt-2 font-set-block">
+		<div class="customer_inner">
 			<span>Current period</span>
 		</div>
 		
@@ -179,7 +178,7 @@ $user_id = Auth::user()->id;
 				</div>
 			@endif
 			@if($subscription->name=="Annual")
-				<div class="col-lg-3">
+				<div class="customer_inner">
 					<span><?php echo $date_start; ?></span> to <span><?php echo date("M/j/Y",$mod_date_annual) ?></span>
 				</div>
 			@endif
@@ -187,34 +186,34 @@ $user_id = Auth::user()->id;
 	</div>
 	<br>
 	<br>
-	<div class="row">
-		<div class=" col-lg-12">
+	<div class="subscription_outer">
+		<div class="subscription_inner">
 			<h6 class="font-set-heading">Pricing</h6>
 			<hr>
 		</div>
 	</div>	
-	<div class="row font-set-block">
-		<div class="col-lg-4">
+	<div class="customer_outer font-set-block">
+		<div class="product_inner">
 			<div class="">
 				<span>PRODUCT</span>
 			</div>
 		</div>
 		
-		<div class="col-lg-4">
+		<div class="product_inner">
 			<div class="">
 				<span># SEATS</span>
 			</div>
 		</div>
 		
-		<div class="col-lg-4">
+		<div class="product_inner">
 			<div class="">
 				<span>TOTAL</span>
 			</div>
 		</div>
 	</div>
 	<hr>
-	<div class="row font-set-block">
-		<div class="col-lg-4">
+	<div class="customer_outer font-set-block">
+		<div class="product_inner">
 			<div class="">
 			@foreach($subscriptions as $subscription)
 				<span>{{$subscription->name}}</span>
@@ -222,14 +221,14 @@ $user_id = Auth::user()->id;
 			</div>
 		</div>
 		
-		<div class="col-lg-4">
+		<div class="product_inner">
 			<div class="">
 			@foreach($subscriptions as $subscription)
 				<span>{{$subscription->quantity}}</span>
 			@endforeach
 			</div>
 		</div>
-		<div class="col-lg-4">
+		<div class="product_inner">
 			<div class="">
 			@if($subscription->name =='Annual')
 				<span>${{$subscription->quantity*36}} USD / year</span>
@@ -243,11 +242,11 @@ $user_id = Auth::user()->id;
 	</div>
 	<br>
 	<br>
-	<div class="row pt-2">
-		<div class=" col-lg-6">
+	<div class="customer_outer pt-2">
+		<div class="available_inner">
 			<h6 class="font-set-heading">Available Seats</h6>
 		</div>
-		<div class="btn-delete-seats col-lg-6">
+		<div class="btn-delete-seats available_inner">
 		@if($subscription->quantity - $users->count() > 0)
 			<form action="/deleteseats" method="POST">
 			@csrf
@@ -261,10 +260,11 @@ $user_id = Auth::user()->id;
 		</div>
 	</div>
 	<hr>
-	<div class="row font-set-block">
+	<div class="customer_outer font-set-block">
 		@if($subscription->quantity - $users->count()>0)
+		<div class="seats-container">
 			@for($i = 0 ; $i < $subscription->quantity - $users->count() ; $i++)
-			<div class="seats-col col-lg-3">
+			<div class="seats-col customer_inner">
 				<div class="available-seats">
 					<span>Seat {{$i+1}}</span>
 				</div>
@@ -281,12 +281,13 @@ $user_id = Auth::user()->id;
 			</div>
 			@endfor
 		@endif
+		</div>
 		
 		@if($subscription->quantity - $users->count() == 0)
 	
-		<div class=" col-lg-3">
+		<div class=" customer_inner">
 		</div>
-		<div class=" col-lg-6 payment my-4">
+		<div class=" available_inner payment my-4">
 			<h4 class="mt-4 mb-3" style="text-align:center;" ><b>Buy more seats</b></h4>
 			
 			
@@ -313,13 +314,13 @@ $user_id = Auth::user()->id;
 			
 		@endif
 		</div>
-		<div class=" col-lg-3">
+		<div class=" customer_inner">
 		</div>
 	</div>	
 	<hr>
 	<br>
-	<div class="row">
-		<div class="col-lg-4">
+	<div class="customer_outer">
+		<div class="product_inner">
 			<h6 class="font-set-heading">Danger Zone</h6>
 			<span class="font-set-block">Cancel subscription, this action don't be undone</span>
 		</div>
@@ -343,15 +344,22 @@ $user_id = Auth::user()->id;
 	
 </div>
 <style>
-	.btn-delete-seats .delete-all {
+.btn-delete-seats {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0 10px;
+}
+.btn-delete-seats .delete-all {
     padding: 5px 10px;
     font-size: 12px;
-	font-weight: 600;
-}
-.btn-delete-seats{
-	text-align:right;
-	margin-bottom: -25px;
-}
+    font-weight: 600;
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}			
 .btn-cancel-subscription{
 	float: right;
 	margin-right: 25px;
@@ -359,11 +367,18 @@ $user_id = Auth::user()->id;
 	padding: 5px 10px;
     font-size: 12px;
 	font-weight: 600;
+	background-color: #dc3545;
+	color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    text-decoration: none;
 }
 
 .delete-subscription-box{
 	background-color:#ffffff;
 	height: 200px;
+	width: 688px;
 }
 .payment{
 	background-color: #ffffff;
@@ -384,7 +399,6 @@ $user_id = Auth::user()->id;
 	color: white;
 	text-align: center;	
 }
-
 .close-icon{
 	display:inline-block;
     padding-top: 2px;
@@ -398,18 +412,15 @@ $user_id = Auth::user()->id;
 		20px;
 	}
 }
-
 .seats-col {
 	text-align: center;
 }
-
 .alert {
   padding: 20px;
   background-color: #0284C7;
   color: white;
   border-radius: 6px;
 }
-
 .closebtn {
 	margin-left: 15px;
 	color: white;
@@ -420,7 +431,6 @@ $user_id = Auth::user()->id;
 	cursor: pointer;
 	transition: 0.3s;
 }
-
 .closebtn:hover {
 	color: black;
 }
@@ -442,6 +452,81 @@ $user_id = Auth::user()->id;
 	color: #007bff;
     background-color: transparent;
 }
+        body {
+            background-color: #f2f2f2;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container-fluid {
+            padding: 20px;
+            border-radius: 5px;
+        }
+        .subscription_outer {
+            margin: 0 -10px; /* Negative margin to counteract padding in cols */
+        }
+        .subscription_inner {
+            display: block;
+            margin: 10px;
+        }
+        h3.user-email {
+            display: inline-block;
+            margin: 0;
+            color: #007bff;
+			font-size: 30px;
+        }
+        h5 {
+            background-color: #CBF4C9;
+            color: #007bff;
+            display: inline-block;
+			font-size: 25px;
+		}
+        hr {
+            margin: 10px 0;
+            border: none;
+            border-top: 1px solid #ccc;
+        }
+		.customer_outer {
+            display: flex;
+            margin: 0 -10px; /* Negative margin to counteract padding in cols */
+        }
+        .customer_inner {
+            flex: 0 0 25%; /* Each column takes 25% width */
+            padding: 5px 10px; /* Column padding */
+        }
+        .customer, .customer-email {
+            font-size: 14px;
+        }
+        .customer-email i {
+            margin-right: 5px;
+        }
+		.customer {
+            font-size: 14px;
+        }
+        .customer span {
+            display: inline-block;
+        }
+        .customer i {
+            margin-right: 5px;
+        }
+		.product_inner {
+            flex: 0 0 33.33%; /* Each column takes 33.33% width */
+            padding: 0 10px; /* Column padding */
+        }
+        span {
+            display: inline-block;
+            font-size: 14px;
+        }
+		.available_inner {
+            flex: 0 0 50%; /* Each column takes 50% width */
+            padding: 0 10px; /* Column padding */
+        }
+		.seats-container {
+            display: flex;
+            flex-wrap: wrap;
+			padding: 5px 10px;
+			margin-top: 5px;
+        }
 </style>
 
 <script>

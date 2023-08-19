@@ -152,6 +152,7 @@ class TasksForm extends Component
     {
 
         $validated = $this->validate();
+        $deprtment_id = Project::where('id',$validated['project_id'])->pluck('department_id')->first();
 
 
         $validated['user_id'] = $validated['user_id'] ?: null;
@@ -166,6 +167,7 @@ class TasksForm extends Component
             $time = isset($seconds) ? $hours * 3600 + $minutes * 60 + $seconds : $hours * 60 + $minutes;
             Activity::find($this->activityId)->update(['seconds' => $time]);
         }
+        $validated['department_id'] = $deprtment_id;
 
         $this->isEditing
             ? $this->task->update($validated)

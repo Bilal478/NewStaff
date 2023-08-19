@@ -70,7 +70,7 @@
             @endforeach
         </x-inputs.select>
         <x-inputs.select wire:model.lazy="department_id" label="Department" name="department_id" type="text">
-		{{--<option value="">Select a department</option>--}}
+		    <option value="">Select a department</option>
             @foreach (App\Models\Department::get() as $item)
             <option value="{{ $item->id }}">{{ $item->title }}</option>
             @endforeach

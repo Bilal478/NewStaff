@@ -22,7 +22,8 @@ class Project extends Model
         'time_expense_tracking',
         'company_id',
         'user_id',
-        'account_id'
+        'account_id',
+        'department_id'
     ];
 
     protected $casts = [

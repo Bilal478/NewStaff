@@ -2,7 +2,7 @@
     <div role="alert">
         <h4>Assign Admin Role to Department</h4>
         <x-inputs.multiselect wire:model="manager_id" label="Managers" name="manager_id" required>   
-                <option>Select a project</option>
+                <option value="" selected disabled>Select Managers</option>
                 @foreach ($usersIn as $user)
                 <option value="{{ $user->id }}">
                     {{ $user->full_name }}

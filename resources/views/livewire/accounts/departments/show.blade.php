@@ -33,18 +33,22 @@
                 <h4 class="font-montserrat text-sm font-semibold text-blue-600 pb-4 flex items-center float-left">
                     Members
                 </h4>
-                @role(['owner', 'manager'])
-                <x-buttons.blue-inline wire:click="$emit('showCreateAdmin','{{ $department->id }}')" class="h-10" id="btn-admin">
-                    Assign Admin
-                </x-buttons.blue-inline>
-                @endrole
-                @role('member')
-                @if (in_array($department->id,$user_role))
-                <x-buttons.blue-inline wire:click="$emit('showCreateAdmin','{{ $department->id }}')" class="h-10" id="btn-admin">
-                    Assign Admin
-                </x-buttons.blue-inline>
+                <br>
+               
+                @if($managerExists > 0)
+                    @role(['owner', 'manager'])
+                    <x-buttons.blue-inline wire:click="$emit('showCreateAdmin','{{ $department->id }}')" class="h-10" id="btn-admin">
+                        Assign Admin
+                    </x-buttons.blue-inline>
+                    @endrole
+                    @role('member')
+                    @if (in_array($department->id,$user_role))
+                    <x-buttons.blue-inline wire:click="$emit('showCreateAdmin','{{ $department->id }}')" class="h-10" id="btn-admin">
+                        Assign Admin
+                    </x-buttons.blue-inline>
+                    @endif
+                    @endrole
                 @endif
-                @endrole
                 @livewire('accounts.departments.department-users-form', ['departmentId' => $department->id])
             </div>
         </div>

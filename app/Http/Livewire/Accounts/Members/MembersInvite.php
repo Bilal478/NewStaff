@@ -29,6 +29,8 @@ class MembersInvite extends Component
     public $role = 'member';
     public $selectedDepartment = null;
     public $selectedProject = null;
+    public $user_exist;
+
 
     protected $listeners = [
         'memberInvite' => 'show',
@@ -54,15 +56,27 @@ class MembersInvite extends Component
         $prefix = 'sub_1';
         $length = 28 - strlen($prefix);
         $randomString = Str::random($length);
-        $stripe_id = $prefix . $randomString;        
-        
+        $stripe_id = $prefix . $randomString;   
+        $userExist = DB::table('users')
+        ->where('email', $this->email)
+        ->first();    
+        if(!$userExist){
         $user = User::create([
             'firstname' => 'new',
             'lastname' => 'user',
             'email' => $this->email,
             'password' => Hash::make(12345678),
         ]);
-
+    }
+    else{
+      DB::table('users')
+            ->where('id', $userExist->id)
+            ->update(['multiple_company' => 1]);
+            $userExist = DB::table('users')
+            ->where('email', $this->email)
+            ->first();
+        $user= $userExist;
+    }
         DB::table('project_user')->insert([
             'project_id' => $projectId,
             'user_id' => $user->id,
@@ -91,9 +105,11 @@ class MembersInvite extends Component
         $validated['user_id'] = Auth::user()->id;
 
         $accountInvitation = $this->account->invitations()->create($validated);
+    
+    
 
         Mail::to($accountInvitation->email)
-            ->send(new AccountInvite($this->account, $accountInvitation,$randomID));
+            ->send(new AccountInvite($this->account, $accountInvitation,$randomID,$this->user_exist,$userExist));
 
         $this->emit('memberInvitationSend');
         $this->dispatchBrowserEvent('close-invite-modal');

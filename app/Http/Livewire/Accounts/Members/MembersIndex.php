@@ -99,7 +99,11 @@ class MembersIndex extends Component
                 'error'
             );
         }
-
+        $loggedUser=Auth::user();
+        if($loggedUser->id==$user->id){
+            $this->toast('Permission Denied', "Owner can not be deleted.");
+        }
+        else{
         $user->activities()->delete();
         $user->tasks()->update(['user_id' => null]);
         $user->projects()->detach();
@@ -110,6 +114,7 @@ class MembersIndex extends Component
             $this->account->removeMember($user);
             $user->forceDelete();
         }
+    }
     }
 
     public function copyInvitation(AccountInvitation $accountInvitation)

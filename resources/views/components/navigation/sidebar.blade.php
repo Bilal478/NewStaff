@@ -34,9 +34,11 @@
 
             {{-- @role('owner') --}}
             @php
+            $accountId = session('account_id');
+            $accountRole = session('account_role');
             $user = Auth::user();
-            $account_user = DB::table('account_user')->where('user_id',$user->id)->first();
-            if($account_user->role=='owner'){
+            // $account_user = DB::table('account_user')->where('user_id',$user->id)->first();
+            if($accountRole=='owner'){
                 @endphp
                 <div class="pt-6">
                 <h4 class="px-4 uppercase text-xs text-gray-400 font-semibold tracking-wider pb-2">

@@ -22,6 +22,7 @@ class Login2 extends Component
     public $password_confirmation;
     public $randomid = '';
     public $email = '';
+    // public $userexist;
    
     public function update()
     {
@@ -49,18 +50,39 @@ class Login2 extends Component
     public function mount($randomID)
     {
         $this->randomid = $randomID;
-    }
-
-    public function render()
-    {
-        $getUserId= DB::table('verify_invitations')->where('verification_id', $this->randomid)->first();
+         $getUserId= DB::table('verify_invitations')->where('verification_id', $this->randomid)->first();
         if (!$getUserId) {
             abort(404);
         }
         $user=User::where('id',$getUserId->user_id)->first();
+        if($user){
+        $userExist=$user->multiple_company;
+          if ($userExist==true) {
+            Auth::login($user);
+            $invitationRecord=DB::table('verify_invitations')->where('verification_id', $this->randomid)->first();
+            if ($invitationRecord) {
+              DB::table('verify_invitations')->where('verification_id', $this->randomid)->delete();
+          }
+           return redirect()->route('accounts.dashboard');
+
+        }
+    }
+
+
+    }
+
+    public function render()
+    {
+
+        $getUserId= DB::table('verify_invitations')->where('verification_id', $this->randomid)->first();
+        if (!$getUserId) {
+            abort(404);
+        }
+        $user=DB::table('users')->where('id',$getUserId->user_id)->first();     
         $this->email=$user->email;
         return view('livewire.auth.accept-invitation', ['email' => $this->email])
         ->layout('layouts.auth', ['title' => 'Accept Invitation']);
 
     }
+  
 }

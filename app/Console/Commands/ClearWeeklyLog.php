@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\ClearWeeklyLogJob;
 use Illuminate\Console\Command;
 
 class ClearWeeklyLog extends Command
@@ -37,7 +38,7 @@ class ClearWeeklyLog extends Command
      */
     public function handle()
     {
-        file_put_contents(storage_path('logs/laravel.log'), '');
+        ClearWeeklyLogJob::dispatch();
         $this->info('Laravel log file has been cleared!');
     }
 }

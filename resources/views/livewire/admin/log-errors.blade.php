@@ -15,9 +15,9 @@
         <div class="px-3" style="width: 700px;">
         Error Message
         </div>
-        <div class=" w-40 px-3">
+        {{-- <div class=" w-40 px-3">
         Status
-        </div>
+        </div> --}}
         <div class=" w-40 px-3">
         Created At
         </div>
@@ -42,9 +42,9 @@
                 <a href="#" class="show-more-link">Show More</a>
             </div>
             
-            <div class=" w-40 px-3 text-xs text-gray-500">
+            {{-- <div class=" w-40 px-3 text-xs text-gray-500">
                 {{ $data->status }}
-            </div>
+            </div> --}}
     
             <div class=" w-40 px-3 text-xs text-gray-500">
                 {{ $data->created_at}}

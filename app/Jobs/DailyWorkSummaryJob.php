@@ -10,6 +10,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\DailyWorkSummaryEmail;
+use App\Mail\ManagerDailyWorkSummaryEmail;
+use App\Mail\MemberDailyWorkSummaryEmail;
 use App\Models\Account;
 use App\Models\Activity;
 use App\Models\User;
@@ -39,8 +41,121 @@ class DailyWorkSummaryJob implements ShouldQueue
     public function handle()
     {
         $accountData= [];
-        $this->date = now()->format('Y-m-d');
+        $this->date = Carbon::now()->subDay()->format('Y-m-d');
         $records=$this->getUsersReport();
+        $membersRecords = $this->getMemberUsersReport();
+        $managersRecords = $this->getManagerUsersReport();
+
+        foreach ($managersRecords as $accountId => $managerData) {
+            if ($managerData) {
+                foreach ($managerData as $managerId => $records) {
+                    if($records){
+                    $mergedActivities = [];
+                    $managerUsers=[];
+                    foreach ($records as $memberid=>$record) {
+                        if($record){
+                        $totalDuration = 0; // Initialize total duration for the user
+                        $total_productivity=0;
+                        $count=0;       
+                        $mergedActivities = array_merge($mergedActivities, $record);
+                        foreach ($record as $activity) {
+                            $durationParts = explode(':', $activity['duration']);
+                            $seconds = ($durationParts[0] * 3600) + ($durationParts[1] * 60) + $durationParts[2];
+                            $totalDuration += $seconds;
+                            $total_productivity += $activity['productivity'];
+                            $count++;
+                            $userProjects = collect($record)
+                            ->groupBy('project_id')
+                            ->map(function ($groupedRecords) {
+                            $mergedRecord = null;
+                            foreach ($groupedRecords as $rec) {
+                                if (!$mergedRecord) {
+                                    $mergedRecord = $rec;
+                                } else {
+                                    $mergedRecord['minutes'] += $rec['minutes'];
+                                }
+                            }
+                            $mergedRecord['formatted_minutes'] = gmdate('H:i:s', $mergedRecord['minutes'] * 60);
+                            return $mergedRecord;
+                        })
+                        ->values()
+                        ->sortByDesc('minutes');
+                        }
+                        $totalDurationFormatted = gmdate('H:i:s', $totalDuration);
+                        $totalProductivityFormatted = intval(round(($total_productivity/$count),0));
+                        $member=User::where('id',$memberid)->first();
+                        $memberName=$member->firstname.' '.$member->lastname;
+                        $managerUsers[$memberid]=[
+                            'user_projects' => $userProjects,
+                            'member_name' => $memberName,
+                            'total_duration' => $totalDurationFormatted,
+                            'total_productivity' => $totalProductivityFormatted,
+                        ];
+
+                    }
+                    }
+                    $top5Members = [];
+                    usort($managerUsers, function ($a, $b) {
+                        $durationA = strtotime($a['total_duration']);
+                        $durationB = strtotime($b['total_duration']);
+                        return $durationB - $durationA;
+                    });  
+                    $top5Members = array_slice($managerUsers, 0, 5);
+                    $account=Account::where('id',$accountId)->first();
+                    $accountName= $account->name;
+                    $user=User::where('id',$managerId)->first();
+                    $userName=$user->firstname.' '.$user->lastname;
+                    Mail::to($user->email)->send(new ManagerDailyWorkSummaryEmail($top5Members,$accountName,$userName));
+                }
+              }
+            }
+        }
+        foreach ($membersRecords as $accountId => $userData) {
+            $total_productivity=0;
+            $count=0;
+            if ($userData) {
+                $membersAccountData = [];
+                foreach ($userData as $userId => $records) {
+                    if($records){
+                    $totalDuration = 0; 
+                    foreach ($records as $record) {
+                        $durationParts = explode(':', $record['duration']);
+                        $seconds = ($durationParts[0] * 3600) + ($durationParts[1] * 60) + $durationParts[2];
+                        $totalDuration += $seconds;
+                        $total_productivity+= $record['productivity'];
+                        $count+=1;
+                        $userProjects = collect($records)
+                        ->groupBy('project_id')
+                        ->map(function ($groupedRecords) {
+                            $mergedRecord = null;
+                            foreach ($groupedRecords as $record) {
+                                if (!$mergedRecord) {
+                                    $mergedRecord = $record;
+                                } else {
+                                    $mergedRecord['minutes'] += $record['minutes'];
+                                }
+                            }
+                            $mergedRecord['formatted_minutes'] = gmdate('H:i:s', $mergedRecord['minutes'] * 60);
+                            return $mergedRecord;
+                        })
+                        ->values()
+                        ->sortByDesc('minutes');
+                    }
+                    $totalDurationFormatted = gmdate('H:i:s', $totalDuration);
+                    $membersAccountData[$userId] = [
+                        'total_duration' => $totalDurationFormatted,
+                        'total_productivity' => intval(round(($total_productivity/$count),0)),
+                        'user_projects' =>   $userProjects,
+                    ];
+                    $account=Account::where('id',$accountId)->first();
+                    $accountName= $account->name;
+                    $user=User::where('id',$userId)->first();
+                    $userName=$user->firstname.' '.$user->lastname;
+                    Mail::to($user->email)->send(new MemberDailyWorkSummaryEmail($membersAccountData,$accountName,$userName));
+                }
+              }
+            }
+        }
         $totalTime = CarbonInterval::create(0, 0, 0);
         $userId=[];
         $total_productivity=0;
@@ -63,6 +178,7 @@ class DailyWorkSummaryJob implements ShouldQueue
             })
             ->values()
             ->sortByDesc('minutes');
+            
             $topMembers = collect($data)
             ->groupBy('user_id')
             ->map(function ($groupedRecords) {
@@ -179,7 +295,7 @@ class DailyWorkSummaryJob implements ShouldQueue
         $account=Account::where('id',$accountId)->first();
         $accountName= $account->name;
         $userMail=User::where('id',$owner->user_id)->first();
-        Mail::to($userMail->email)->send(new DailyWorkSummaryEmail($accountData,$accountName));
+        Mail::to('huzaifach508@gmail.com')->send(new DailyWorkSummaryEmail($accountData,$accountName));
         $totalTime = CarbonInterval::create(0, 0, 0);
         $userId=[]; 
         $productivity=0;
@@ -187,13 +303,13 @@ class DailyWorkSummaryJob implements ShouldQueue
     }
  }
  public function getUsersReport()
- {
+ {    
      $allArrayData = [];
      $accounts=Account::all();
      $accountIds = $accounts->pluck('id');
      foreach($accountIds as $account_id)
      {
-     $results = Activity::where('activities.date',$this->date)
+     $results = Activity::where('activities.date', $this->date)
      ->where('activities.account_id',$account_id)
      ->leftJoin('tasks', 'activities.task_id', '=', 'tasks.id')
      ->leftJoin('projects', 'activities.project_id', '=', 'projects.id')
@@ -270,4 +386,217 @@ class DailyWorkSummaryJob implements ShouldQueue
  }
  return $allArrayData;  
 }
+public function getMemberUsersReport()
+{   
+    $allAccountData = [];
+    $accounts=Account::all();
+    $accountIds = $accounts->pluck('id');
+    foreach($accountIds as $account_id)
+    {
+        $users=DB::table('account_user')->where(['account_id'=> $account_id,'role'=>'member'])->get();
+        $allArrayData = [];
+        foreach($users as $user){
+        $results = Activity::where('activities.date', $this->date)
+        ->where('activities.user_id',$user->user_id)
+        ->where('activities.account_id',$account_id)
+        ->leftJoin('tasks', 'activities.task_id', '=', 'tasks.id')
+        ->leftJoin('projects', 'activities.project_id', '=', 'projects.id')
+        ->select('activities.*', 
+                 DB::raw('COALESCE(tasks.title, "No-todo") as task_title'),
+                 DB::raw('COALESCE(projects.title, "No-todo") as project_title'))
+        ->orderBy('activities.start_datetime')
+        ->get();
+        $ss = [];
+        $arrayData = [];
+        $seconds_sum_of_day = 0;
+        $seconds_sum = 0;
+        $productivity=0;
+        $count=0;
+        $start_time_index=0;
+        $i=0;
+        $j=0;
+        foreach($results as $index=>$result){
+        $startDateTime = Carbon::parse($result->end_datetime);
+        $seconds_sum_of_day += $result->seconds;
+        if(isset($results[$index+1])){
+            if($seconds_sum == 0){
+                $start_time_index = $index;
+            }
+            if($results[$index]->start_datetime==$results[$index+1]->start_datetime){
+            // $seconds_sum += $result->seconds;
+                continue;
+            }
+            $endDateTime = Carbon::parse($results[$index+1]->start_datetime);
+            
+            $seconds_sum += $result->seconds;
+            $productivity+= $result->total_activity_percentage;
+            $count+=1;
+            $diffInSeconds = $startDateTime->diffInSeconds($endDateTime);
+            $ss[]=$diffInSeconds;
+            if($diffInSeconds > 0 || ($result->task_id != $results[$index+1]->task_id) ){
+               $j++;
+                $arrayData[] = [
+                    'user_id' => $result->user_id,
+                    'start_time' => $results[$start_time_index]->start_datetime->format('h:i A'),
+                    'end_time' => $result->end_datetime->format('h:i A'),
+                    'date' => $result->date->format('Y-m-d'),
+                    'duration'=> CarbonInterval::seconds($seconds_sum)->cascade()->format('%H:%I:%S'),
+                    'minutes'=> $seconds_sum/60,
+                    'productivity' => intval(round(($productivity/$count),0)),
+                    'project_id' => $result->project_id,
+                    'project_title' => $result->project_title,
+                    'task_id' => $result->task_id,
+                    'account_id' => $result->account_id,
+                    'task_title' =>  isset($result->task_id)  ? $result->task_title : 'No to-do',
+                    
+                ];
+                
+                
+                $seconds_sum = 0;
+                $productivity = 0;
+                $count =0; 
+            }
+        } 
+    }
+
+    // / Code to handle the last index
+    $lastIndex = count($results) - 1;
+    if ($seconds_sum > 0 && isset($results[$lastIndex])) {
+        $lastResult = $results[$lastIndex];
+        $arrayData[] = [
+            'user_id' => $lastResult->user_id,
+            'start_time' => $results[$start_time_index]->start_datetime->format('h:i A'),
+            'end_time' => $lastResult->end_datetime->format('h:i A'),
+            'date' => $lastResult->date->format('Y-m-d'),
+            'duration' => CarbonInterval::seconds($seconds_sum+600)->cascade()->format('%H:%I:%S'),
+            'minutes' => ($seconds_sum / 60)+10,
+            'productivity' => intval(round(($productivity/$count),0)),
+            'project_id' => $lastResult->project_id,
+            'project_title' => $lastResult->project_title,
+            'task_id' => $lastResult->task_id,
+            'account_id' => $lastResult->account_id,
+            'task_title' => isset($lastResult->task_id) ? $lastResult->task_title : 'No to-do',
+        ];
+}
+$allArrayData[$user->user_id] = $arrayData;
+}
+$allAccountData[$account_id]=$allArrayData;
+}
+return $allAccountData; 
+}
+public function getManagerUsersReport()
+{  
+    $allAccountDataFull = [];
+    $accounts=Account::all();
+    $accountIds = $accounts->pluck('id');
+    foreach($accountIds as $account_id)
+    {
+        $mamagers=DB::table('account_user')->where(['account_id'=> $account_id,'role'=>'manager'])->get();
+        $allAccountData = [];
+        foreach($mamagers as $mamager){
+            $userDepartment=DB::table('department_admin')->where('user_id',$mamager->user_id)->get();
+            $departmentIds=[];
+            foreach($userDepartment as $department){
+                $departmentIds[]=$department->department_id;
+            }
+            $uniqueDepartmentIds = array_unique($departmentIds);
+            $userIds=[];
+            foreach($uniqueDepartmentIds as $id){
+            $usersOfDepartment=DB::table('department_user')->where('department_id',$id)->get();
+            foreach($usersOfDepartment as $user){
+                $userIds[]=$user->user_id;
+            }
+        }
+        $uniqueUserIds = array_unique($userIds);
+        $allArrayData = [];
+        foreach($uniqueUserIds as $userid){
+        $results = Activity::where('activities.date',$this->date)
+        ->where('activities.user_id',$userid)
+        ->where('activities.account_id',$account_id)
+        ->leftJoin('tasks', 'activities.task_id', '=', 'tasks.id')
+        ->leftJoin('projects', 'activities.project_id', '=', 'projects.id')
+        ->select('activities.*', 
+                 DB::raw('COALESCE(tasks.title, "No-todo") as task_title'),
+                 DB::raw('COALESCE(projects.title, "No-todo") as project_title'))
+        ->orderBy('activities.start_datetime')
+        ->get();
+        $ss = [];
+        $arrayData = [];
+        $seconds_sum_of_day = 0;
+        $seconds_sum = 0;
+        $productivity=0;
+        $count=0;
+        $start_time_index=0;
+        $i=0;
+        $j=0;
+        foreach($results as $index=>$result){
+        $startDateTime = Carbon::parse($result->end_datetime);
+        $seconds_sum_of_day += $result->seconds;
+        if(isset($results[$index+1])){
+            if($seconds_sum == 0){
+                $start_time_index = $index;
+            }
+            if($results[$index]->start_datetime==$results[$index+1]->start_datetime){
+            // $seconds_sum += $result->seconds;
+                continue;
+            }
+            $endDateTime = Carbon::parse($results[$index+1]->start_datetime);
+            
+            $seconds_sum += $result->seconds;
+            $productivity+= $result->total_activity_percentage;
+            $count+=1;
+            $diffInSeconds = $startDateTime->diffInSeconds($endDateTime);
+            $ss[]=$diffInSeconds;
+            if($diffInSeconds > 0 || ($result->task_id != $results[$index+1]->task_id) ){
+               $j++;
+                $arrayData[] = [
+                    'user_id' => $result->user_id,
+                    'start_time' => $results[$start_time_index]->start_datetime->format('h:i A'),
+                    'end_time' => $result->end_datetime->format('h:i A'),
+                    'date' => $result->date->format('Y-m-d'),
+                    'duration'=> CarbonInterval::seconds($seconds_sum)->cascade()->format('%H:%I:%S'),
+                    'minutes'=> $seconds_sum/60,
+                    'productivity' => intval(round(($productivity/$count),0)),
+                    'project_id' => $result->project_id,
+                    'project_title' => $result->project_title,
+                    'task_id' => $result->task_id,
+                    'account_id' => $result->account_id,
+                    'task_title' =>  isset($result->task_id)  ? $result->task_title : 'No to-do',
+                    
+                ];
+                $seconds_sum = 0;
+                $productivity = 0;
+                $count =1; 
+            }
+        }
+    }
+
+    // / Code to handle the last index
+    $lastIndex = count($results) - 1;
+    if ($seconds_sum > 0 && isset($results[$lastIndex])) {
+        $lastResult = $results[$lastIndex];
+        $arrayData[] = [
+            'user_id' => $lastResult->user_id,
+            'start_time' => $results[$start_time_index]->start_datetime->format('h:i A'),
+            'end_time' => $lastResult->end_datetime->format('h:i A'),
+            'date' => $lastResult->date->format('Y-m-d'),
+            'duration' => CarbonInterval::seconds($seconds_sum+600)->cascade()->format('%H:%I:%S'),
+            'minutes' => ($seconds_sum / 60)+10,
+            'productivity' => intval(round(($productivity/$count),0)),
+            'project_id' => $lastResult->project_id,
+            'project_title' => $lastResult->project_title,
+            'task_id' => $lastResult->task_id,
+            'account_id' => $lastResult->account_id,
+            'task_title' => isset($lastResult->task_id) ? $lastResult->task_title : 'No to-do',
+        ];
+}
+$allArrayData[$userid] = $arrayData;
+}
+$allAccountData[$mamager->user_id]=$allArrayData;
+}
+$allAccountDataFull[$account_id]=$allAccountData;
+}
+return $allAccountDataFull; 
+}
+
 }

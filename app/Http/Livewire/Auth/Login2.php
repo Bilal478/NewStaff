@@ -26,6 +26,10 @@ class Login2 extends Component
    
     public function update()
     {
+        $getUser= DB::table('verify_invitations')->where('verification_id', $this->randomid)->first();
+        if (!$getUser) {
+            abort(404);
+        }
        $this->validate([
             'firstname' => ['required', 'max:50'],
             'lastname' => ['required', 'max:50'],
@@ -40,6 +44,27 @@ class Login2 extends Component
             'password' => Hash::make($this->password),
         ]);
       }
+      $account_invitation = DB::table('account_invitations')->where('email',$user->email)
+      ->where('account_id',$getUser->account_id)->first();
+      if($account_invitation){
+          DB::table('account_invitations')
+          ->where('email',$user->email)
+          ->where('account_id', $getUser->account_id)
+          ->update([
+              'invitation_accept' => 'true',
+          ]);
+      }
+      $account_user=DB::table('account_user')->where('account_id',$getUser->account_id)
+      ->where('user_id',$getUser->user_id)
+      ->first();
+      if($account_user){
+          DB::table('account_user')
+          ->where('account_id', $getUser->account_id)
+          ->where('user_id', $getUser->user_id)
+          ->update([
+              'invitation_accept' => 'false',
+          ]);
+      }
       $invitationRecord=DB::table('verify_invitations')->where('verification_id', $this->randomid)->first();
       if ($invitationRecord) {
         DB::table('verify_invitations')->where('verification_id', $this->randomid)->delete();
@@ -50,14 +75,35 @@ class Login2 extends Component
     public function mount($randomID)
     {
         $this->randomid = $randomID;
-         $getUserId= DB::table('verify_invitations')->where('verification_id', $this->randomid)->first();
-        if (!$getUserId) {
+         $getUser= DB::table('verify_invitations')->where('verification_id', $this->randomid)->first();
+        if (!$getUser) {
             abort(404);
         }
-        $user=User::where('id',$getUserId->user_id)->first();
+        $user=User::where('id',$getUser->user_id)->first();
         if($user){
         $userExist=$user->multiple_company;
           if ($userExist==true) {
+            $account_invitation = DB::table('account_invitations')->where('email',$user->email)
+            ->where('account_id',$getUser->account_id)->first();
+            if($account_invitation){
+                DB::table('account_invitations')
+                ->where('email',$user->email)
+                ->where('account_id', $getUser->account_id)
+                ->update([
+                    'invitation_accept' => 'true',
+                ]);
+            }
+            $account_user=DB::table('account_user')->where('account_id',$getUser->account_id)
+            ->where('user_id',$getUser->user_id)
+            ->first();
+            if($account_user){
+                DB::table('account_user')
+                ->where('account_id', $getUser->account_id)
+                ->where('user_id', $getUser->user_id)
+                ->update([
+                    'invitation_accept' => 'false',
+                ]);
+            }
             Auth::login($user);
             $invitationRecord=DB::table('verify_invitations')->where('verification_id', $this->randomid)->first();
             if ($invitationRecord) {

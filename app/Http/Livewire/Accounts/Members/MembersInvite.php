@@ -97,9 +97,11 @@ class MembersInvite extends Component
             'user_id' => $user->id,
             'allow_edit_time' => 1,
             'allow_delete_screenshot' => 1,
+            'invitation_accept' => 'true',
         ]);
         DB::table('verify_invitations')->insert([
             'user_id' => $user->id,
+            'account_id' => $this->account->id,
             'verification_id' => $randomID,
         ]);
         $validated['user_id'] = Auth::user()->id;

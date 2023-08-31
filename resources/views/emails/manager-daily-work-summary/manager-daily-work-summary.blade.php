@@ -11,7 +11,7 @@
     <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 5px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);">
         <div style="text-align: center; margin-bottom: 30px;">
             <h1 style="font-family: 'Helvetica Neue', sans-serif; color: #333333; margin: 0;">Daily Work Summary for {{$accountName}}</h1>
-            <p style="color: #777777; margin: 5px 0 0;">{{ now()->format('D, M j, Y') }}</p>
+            <p style="color: #777777; margin: 5px 0 0;">{{ now()->subDay()->format('D, M j, Y') }}</p>
         </div>
         <table style="width: 100%; border-collapse: collapse;">
             <tr>

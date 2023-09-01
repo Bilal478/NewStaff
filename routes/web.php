@@ -47,6 +47,7 @@ use App\Mail\SubscriptionMail;
 use Illuminate\Support\Facades\Mail;
 
 use App\Http\Livewire\Accounts\PlansandPayment\PlansandPayment;
+use App\Http\Livewire\Accounts\SummaryLogs\SummaryLogs;
 use App\Http\Livewire\SelectPlan;
 use App\Jobs\DailyWorkSummaryJob;
 
@@ -132,6 +133,7 @@ Route::middleware(['auth:web', 'account.verify'])->group(function () {
         Route::get('companies', CompaniesIndex::class)->name('accounts.companies');
         Route::get('members', MembersIndex::class)->name('accounts.members');
         Route::get('settings', AccountEdit::class)->name('accounts.settings');
+        Route::get('summary_logs', SummaryLogs::class)->name('accounts.summary_logs');
 		Route::get('billing', BillingInfo::class)->name('accounts.billing');
     });
 });

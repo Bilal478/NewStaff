@@ -40,8 +40,11 @@ class DailyWorkSummaryJob implements ShouldQueue
      */
     public function handle()
     {
+        $start_time = date('Y-m-d H:i:s');
+        $total_emails_sent=0;
         $accountData= [];
-        $this->date = Carbon::now()->subDay()->format('Y-m-d');
+        // $this->date = Carbon::now()->subDay()->format('Y-m-d');
+        $this->date = '2023-07-31';
         $records=$this->getUsersReport();
         $membersRecords = $this->getMemberUsersReport();
         $managersRecords = $this->getManagerUsersReport();
@@ -106,6 +109,7 @@ class DailyWorkSummaryJob implements ShouldQueue
                     $user=User::where('id',$managerId)->first();
                     $userName=$user->firstname.' '.$user->lastname;
                     Mail::to($user->email)->send(new ManagerDailyWorkSummaryEmail($top5Members,$accountName,$userName));
+                    $total_emails_sent++;
                 }
               }
             }
@@ -152,6 +156,7 @@ class DailyWorkSummaryJob implements ShouldQueue
                     $user=User::where('id',$userId)->first();
                     $userName=$user->firstname.' '.$user->lastname;
                     Mail::to($user->email)->send(new MemberDailyWorkSummaryEmail($membersAccountData,$accountName,$userName));
+                    $total_emails_sent++;
                 }
               }
             }
@@ -160,9 +165,9 @@ class DailyWorkSummaryJob implements ShouldQueue
         $userId=[];
         $total_productivity=0;
         $count=0;
-     foreach ($records as $accountId => $data) {
-      if($data){
-        foreach ($data as $record) {
+        foreach ($records as $accountId => $data) {
+          if($data){
+            foreach ($data as $record) {
             $topProjects = collect($data)
             ->groupBy('project_id')
             ->map(function ($groupedRecords) {
@@ -295,12 +300,21 @@ class DailyWorkSummaryJob implements ShouldQueue
         $account=Account::where('id',$accountId)->first();
         $accountName= $account->name;
         $userMail=User::where('id',$owner->user_id)->first();
-        Mail::to('huzaifach508@gmail.com')->send(new DailyWorkSummaryEmail($accountData,$accountName));
+        Mail::to($userMail->email)->send(new DailyWorkSummaryEmail($accountData,$accountName));
+        $total_emails_sent++;
         $totalTime = CarbonInterval::create(0, 0, 0);
         $userId=[]; 
         $productivity=0;
     }
     }
+    $end_time = date('Y-m-d H:i:s');
+    DB::table('summary_logs')->insert([
+        'start_datetime' => $start_time,
+        'end_datetime' =>  $end_time,
+        'total_emails_sent' => $total_emails_sent,
+    ]);
+    
+
  }
  public function getUsersReport()
  {    

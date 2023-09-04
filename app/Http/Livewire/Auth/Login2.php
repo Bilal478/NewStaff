@@ -76,7 +76,18 @@ class Login2 extends Component
     {
         $this->randomid = $randomID;
          $getUser= DB::table('verify_invitations')->where('verification_id', $this->randomid)->first();
-        if (!$getUser) {
+        if($getUser){
+         $inviteUser=User::where('id',$getUser->user_id)->first();
+         $invitation= DB::table('account_invitations')->where('email',$inviteUser->email)
+         ->where('account_id',$getUser->account_id)->first();
+        if(!$invitation){
+        $deleteInvitation=DB::table('verify_invitations')->where('verification_id', $this->randomid)->first();
+            if ($deleteInvitation) {
+              DB::table('verify_invitations')->where('verification_id', $this->randomid)->delete();
+          }
+        }
+        }
+        if (!$getUser || !$invitation) {
             abort(404);
         }
         $user=User::where('id',$getUser->user_id)->first();

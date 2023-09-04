@@ -10,6 +10,7 @@ use App\Http\Livewire\Auth\Passwords\Reset;
 use App\Http\Livewire\Auth\Admin\Invitation;
 use App\Http\Livewire\Auth\Passwords\Confirm;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Livewire\Accounts\SummaryLogs\SummaryLogs;
 use App\Http\Livewire\Admin\Members\MembersIndex;
 use App\Http\Livewire\Admin\Settings\SettingsIndex;
 use App\Http\Livewire\Admin\Downloads\DownloadsIndex;
@@ -31,6 +32,7 @@ Route::middleware('auth:admin')->group(function () {
     Route::get('dashboard', Dashboard::class)->name('dashboard');
     Route::get('deletedcompanies', DeletedCompanies::class)->name('deletedcompanies');
     Route::get('logerrors', LogErrors::class)->name('logerrors');
+    Route::get('summary_logs', SummaryLogs::class)->name('summary_logs');
     Route::get('members', MembersIndex::class)->name('members');
     Route::get('settings', SettingsIndex::class)->name('settings');
     Route::get('profile/edit', UserEdit::class)->name('profile.edit');

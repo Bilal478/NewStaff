@@ -14,6 +14,6 @@ class SummaryLogs extends Component
         $summary_logs=DB::table('summary_logs')->paginate(10);
         return view('livewire.accounts.summary-logs.summary-logs', [
             'summary_logs' => $summary_logs,
-        ])->layout('layouts.app', ['title' => 'Summary Logs']);
+        ])->layout('layouts.admin', ['title' => 'Summary Logs']);
     }
 }

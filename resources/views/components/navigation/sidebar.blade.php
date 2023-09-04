@@ -67,9 +67,9 @@
                         Settings
                     </x-navigation.sidebar-item>
 
-                    <x-navigation.sidebar-item route="accounts.summary_logs" img="svgs.logs-error">
+                    {{-- <x-navigation.sidebar-item route="accounts.summary_logs" img="svgs.logs-error">
                         Summary Logs
-                    </x-navigation.sidebar-item>
+                    </x-navigation.sidebar-item> --}}
 					
 					<x-navigation.sidebar-item route="accounts.billing" img="svgs.folder">
                         Membership

@@ -114,6 +114,12 @@ class MembersIndex extends Component
             $this->account->removeMember($user);
             $user->forceDelete();
         }
+        $invitationRecord=AccountInvitation::where('email',$user->email)
+        ->where('account_id',$this->account->id)->first();
+        if($invitationRecord){
+            $invitationRecord->delete();
+        }
+       
     }
     }
 

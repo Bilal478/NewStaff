@@ -12,14 +12,17 @@
         <div class="w-40 px-3">
         Timestamp
         </div>
-        <div class="px-3" style="width: 700px;">
+        <div class="px-3" style="width: 600px;">
         Error Message
         </div>
-        {{-- <div class=" w-40 px-3">
+        <div class=" w-40 px-3">
         Status
-        </div> --}}
+        </div>
         <div class=" w-40 px-3">
         Created At
+        </div>
+        <div class=" w-40 px-3 text-right">
+            Action
         </div>
     </div>
 
@@ -36,18 +39,25 @@
                 {{ $data->timestamp }}
             </div>
                
-            <div class="px-3 text-xs text-gray-500 error-message-container" style="width: 700px;">
-                <div class="truncate">{{ Str::limit($data->message,100) }}</div>
-                <div class="hidden full-message">{{ $data->message }}</div>
-                <a href="#" class="show-more-link">Show More</a>
+            <div class="px-3 text-xs text-gray-500 error-message-container" style="width: 600px;">
+                <div class="truncate">{{ Str::limit($data->message,75) }}</div>
+                {{-- <div class="hidden full-message">{{ $data->message }}</div> --}}
+                {{-- <a href="#" class="show-more-link">Show More</a> --}}
             </div>
             
-            {{-- <div class=" w-40 px-3 text-xs text-gray-500">
+            <div class=" w-40 px-3 text-xs text-gray-500">
                 {{ $data->status }}
-            </div> --}}
+            </div>
     
             <div class=" w-40 px-3 text-xs text-gray-500">
                 {{ $data->created_at}}
+            </div>
+
+            <div class="w-40 px-3 flex justify-end">
+                <x-dropdowns.context-menu>
+                    <x-dropdowns.context-menu-item  name="Edit" wire:click.stop="$emit('logErrorsEdit', {{$data->id}})" svg="svgs.edit"/>
+                    <x-dropdowns.context-menu-item  name="Remove" svg="svgs.x-circle"/>
+                </x-dropdowns.context-menu>
             </div>
     
         </div>
@@ -59,7 +69,10 @@
         {{ $logsData->links('vendor.pagination.default') }}
     </div>
 </div>
-<script>
+@push('modals')
+    @livewire('admin.edit-log-errors');
+@endpush
+{{-- <script>
     document.addEventListener("DOMContentLoaded", function () {
         const showMoreLinks = document.querySelectorAll(".show-more-link");
 
@@ -81,7 +94,8 @@
             });
         });
     });
-</script>
+</script> --}}
+
 
 
 

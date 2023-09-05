@@ -11,7 +11,7 @@ class SummaryLogs extends Component
     use WithPagination;
     public function render()
     {
-        $summary_logs=DB::table('summary_logs')->paginate(10);
+        $summary_logs=DB::table('summary_logs')->orderBy('id', 'desc')->paginate(10);
         return view('livewire.accounts.summary-logs.summary-logs', [
             'summary_logs' => $summary_logs,
         ])->layout('layouts.admin', ['title' => 'Summary Logs']);

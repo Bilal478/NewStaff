@@ -28,7 +28,7 @@
                         Log Errors
                     </x-navigation.sidebar-item>
                     <x-navigation.sidebar-item route="admin.summary_logs" img="svgs.logs-error">
-                        Summaery Logs
+                        Summary Logs
                     </x-navigation.sidebar-item>
                 </ul>
             </div>

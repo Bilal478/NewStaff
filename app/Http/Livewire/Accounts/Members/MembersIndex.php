@@ -114,6 +114,12 @@ class MembersIndex extends Component
             $this->account->removeMember($user);
             $user->forceDelete();
         }
+        $invitationRecord=AccountInvitation::where('email',$user->email)
+        ->where('account_id',$this->account->id)->first();
+        if($invitationRecord){
+            $invitationRecord->delete();
+        }
+       
     }
     }
 
@@ -172,6 +178,7 @@ class MembersIndex extends Component
         return $this->account
             ->usersWithRole()
             ->where('role', '!=', 'removed')
+            ->where('invitation_accept', '!=', 'true')
             ->latest()
             ->where(function (Builder $query) {
                 return $query->where('firstname', 'like', '%' . $this->search . '%')
@@ -182,7 +189,7 @@ class MembersIndex extends Component
 
     public function invites()
     {
-        return AccountInvitation::latest()
+        return AccountInvitation::where('invitation_accept', '!=', 'true')->latest()
             ->where('email', 'like', '%' . $this->search . '%')
             ->paginate(8);
     }

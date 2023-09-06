@@ -24,6 +24,12 @@
                     <x-navigation.sidebar-item route="admin.deletedcompanies" img="svgs.x-circle">
                         Deleted Accounts
                     </x-navigation.sidebar-item>
+                    <x-navigation.sidebar-item route="admin.logerrors" img="svgs.logs-error">
+                        Log Errors
+                    </x-navigation.sidebar-item>
+                    <x-navigation.sidebar-item route="admin.summary_logs" img="svgs.logs-error">
+                        Summary Logs
+                    </x-navigation.sidebar-item>
                 </ul>
             </div>
         </div>

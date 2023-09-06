@@ -1,11 +1,9 @@
 @php
+// dd($data,$accountName,$userName);
     foreach($data as $key=>$value){
         $totalHours=$value['total_duration'];
-        $totalMembers=$value['total_members'];
         $totalProductivity=$value['total_productivity'];
-        $topMembers=$value['top_members'];
-        $lowMembers=$value['low_members'];
-        $topProject=$value['top_project'];
+        $userProjects=$value['user_projects'];
     }
 @endphp
 <!DOCTYPE html>
@@ -25,42 +23,27 @@
         </div>
         <table style="width: 100%; border-collapse: collapse;">
             <tr>
+                <th style="background-color: #f3f3f3; padding: 10px; text-align: left;">Member</th>
                 <th style="background-color: #f3f3f3; padding: 10px; text-align: left;">Hours Worked</th>
-                <th style="background-color: #f3f3f3; padding: 10px; text-align: left;">Members Worked</th>
                 <th style="background-color: #f3f3f3; padding: 10px; text-align: left;">Activity</th>
             </tr>
             <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{$userName}}</td>
                 <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{$totalHours}}</td>
-                <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{$totalMembers}}</td>
                 <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{$totalProductivity}}%</td>
             </tr>
         </table>
-        <h2 style="margin-top: 20px;">Low Activity</h2>
+        <h2 style="margin-top: 20px;">Projects Worked</h2>
         <table style="width: 100%; border-collapse: collapse;">
-            @foreach ($lowMembers as $member)
-                <tr>
-                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{$member['user_name']}}</td>
-                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{$member['duration']}} total</td>
-                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{$member['productivity']}}% active</td>
-                </tr>
-            @endforeach
-        </table>
-        <h2 style="margin-top: 20px;">Top Members</h2>
-        <table style="width: 100%; border-collapse: collapse;">
-            @foreach ($topMembers as $member)
-                <tr>
-                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{$member['user_name']}}</td>
-                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{$member['duration']}} total</td>
-                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{$member['productivity']}}% active</td>
-                </tr>
-            @endforeach
-        </table>
-        <h2 style="margin-top: 20px;">Top Project</h2>
-        <table style="width: 100%; border-collapse: collapse;">
-            @foreach ($topProject as $project)
+            <tr>
+                <th style="background-color: #f3f3f3; padding: 10px; text-align: left;">Project</th>
+                <th style="background-color: #f3f3f3; padding: 10px; text-align: left;">Hours Worked</th>
+                <th style="background-color: #f3f3f3; padding: 10px; text-align: left;">Activity</th>
+            </tr>
+            @foreach ($userProjects as $project)
                 <tr>
                     <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{$project['project_title']}}</td>
-                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{$project['duration']}} total</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{$project['formatted_minutes']}} total</td>
                     <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{$project['productivity']}}% active</td>
                 </tr>
             @endforeach

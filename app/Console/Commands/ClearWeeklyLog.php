@@ -39,6 +39,6 @@ class ClearWeeklyLog extends Command
     public function handle()
     {
         ClearWeeklyLogJob::dispatch();
-        $this->info('Laravel log file has been cleared!');
+        $this->info('Laravel log file has been cleared and errors are send to database');
     }
 }

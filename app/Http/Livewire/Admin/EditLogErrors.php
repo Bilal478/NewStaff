@@ -26,6 +26,7 @@ class EditLogErrors extends Component
         $logRecord = DB::table('logs_data')->where('id', $this->logErrorId)->first();
         $this->error_message=$logRecord->message;
         $this->status=$logRecord->status;
+        $this->comments=$logRecord->comments;
         $this->dispatchBrowserEvent('open-edit-log-errors');
     }
     public function save()

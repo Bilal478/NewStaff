@@ -46,10 +46,19 @@ class LoginController extends Controller
 
         $user_role = DB::table('account_user')
         ->where('user_id', '=', $user->id)->pluck('role')->first();
+
+        $companies = $user->accounts()->get(['accounts.id', 'accounts.name']);
+        $companies_list = $companies->map(function ($company) {
+            return [
+                'id' => $company->id,
+                'company_name' => $company->name,
+            ];
+        });
+
         return api_response([
             'token' => $user->createToken($request->device_name)->plainTextToken, 'UserID' => $user['id'],
             'role' => $user_role,
-            'company_id' => $account_id,
+            'companies_list' => $companies_list,
         ], 200);
     }
 

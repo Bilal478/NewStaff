@@ -5,7 +5,7 @@
         Edit Log Error
         </h5>
         <x-inputs.log-textarea  label="Error Message" wire:model.lazy="error_message" name="error_message"  type="text"/>
-        <x-inputs.comment-log-textarea  label="Comments" wire:model.lazy="comments" name="comments"  type="text"/>
+        <x-inputs.comment-log-textarea  label="Comments" wire:model="comments" name="comments"  type="text"/>
 
         <x-inputs.select label="Status" wire:model.lazy="status" name="status" required>
                     <option value="">Select Status</option>

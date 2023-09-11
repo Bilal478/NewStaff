@@ -3,7 +3,7 @@
     'label',
     'type' => 'text',
     'placeholder' => '',
-    'height' => 'h-48',
+    'height' => 'h-40',
     'readonly'  => true,
 ])
 

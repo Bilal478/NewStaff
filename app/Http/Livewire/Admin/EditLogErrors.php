@@ -26,27 +26,36 @@ class EditLogErrors extends Component
         $logRecord = DB::table('logs_data')->where('id', $this->logErrorId)->first();
         $this->error_message=$logRecord->message;
         $this->status=$logRecord->status;
+        $this->comments=$logRecord->comments;
         $this->dispatchBrowserEvent('open-edit-log-errors');
     }
-    public function save(){
-        $errorData=DB::table('logs_data')->where('id',$this->logErrorId)->first();
-        if($errorData){
-            DB::table('logs_data')
-            ->where('id', $this->logErrorId)
-            ->update([
-                'status' => $this->status,
-                'comments' => $this->comments,
-            ]);
-            $this->closeModal();
-            $this->emit('logErrorUpdate');
-            $this->toast('Data Updated', "The log errors data has been updated.");
+    public function save()
+{
+    $errorData = DB::table('logs_data')->where('id', $this->logErrorId)->first();
+    if ($errorData) {
+        $updateData = [
+            'status' => $this->status,
+        ];
+
+        if (!empty($this->comments)) {
+            $updateData['comments'] = $this->comments;
         }
-       
+
+        DB::table('logs_data')
+            ->where('id', $this->logErrorId)
+            ->update($updateData);
+
+        $this->closeModal();
+        $this->emit('logErrorUpdate');
+        $this->toast('Data Updated', "The log errors data has been updated.");
     }
+}
+
     public function closeModal()
     {
-    $this->comments = '';
+   
     $this->dispatchBrowserEvent('close-edit-log-errors');
+    $this->comments=NULL;
     }
    
 }

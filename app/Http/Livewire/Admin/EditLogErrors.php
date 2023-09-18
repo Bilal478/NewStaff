@@ -40,6 +40,9 @@ class EditLogErrors extends Component
         if (!empty($this->comments)) {
             $updateData['comments'] = $this->comments;
         }
+        if($this->status=='completed'){
+            $updateData['completed_date'] = now();
+        }
 
         DB::table('logs_data')
             ->where('id', $this->logErrorId)

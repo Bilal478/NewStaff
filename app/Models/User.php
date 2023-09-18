@@ -36,6 +36,10 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected $dates = [
+        'deleted_at'
+    ];
+
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
@@ -120,7 +124,7 @@ class User extends Authenticatable
 
     public function belongsToManyAccounts(): bool
     {
-        return $this->accounts()->count() > 1;
+        return $this->accounts()->wherePivotNull('deleted_at')->count() > 1;
     }
 
     /**
@@ -129,7 +133,7 @@ class User extends Authenticatable
     public function scopeInProject($query, $projectId)
     {
         return $query->whereHas('projects', function ($query) use ($projectId) {
-            $query->where('project_id', $projectId);
+            $query->where('project_id', $projectId)->whereNull('project_user.deleted_at');
         });
     }
 

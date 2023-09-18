@@ -43,7 +43,7 @@ class AccountInfo extends Component
     {
         return view('livewire.accounts.account.info', [
             'currentAccount' => Account::find(session()->get('account_id')),
-            'accounts' => Auth::guard('web')->user()->accounts()->get(['accounts.id', 'accounts.name']),
+            'accounts' => Auth::guard('web')->user()->accounts()->whereNull('account_user.deleted_at')->get(['accounts.id', 'accounts.name']),
         ]);
     }
 }

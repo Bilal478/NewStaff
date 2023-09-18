@@ -1,104 +1,110 @@
-@php
-    // dd($logsData);
-@endphp
-<div>
-    <div class="pb-12">
-        <h1 class="font-montserrat text-xl font-semibold text-gray-700">
-            Log Errors
-        </h1>
-    </div>
-    <div class="w-full pb-4">
-    <div class="uppercase text-xs text-gray-400 font-medium hidden md:flex items-center">
-        <div class="w-40 px-3">
-        Timestamp
-        </div>
-        <div class="px-3" style="width: 600px;">
-        Error Message
-        </div>
-        <div class=" w-40 px-3">
-        Status
-        </div>
-        <div class=" w-40 px-3">
-        Created At
-        </div>
-        <div class=" w-40 px-3 text-right">
-            Action
-        </div>
-    </div>
-
-    <div class="text-center uppercase text-xs text-gray-400 font-medium px-3 block md:hidden">
-        Tasks
-    </div>
-  </div>
-  <div>
-    @foreach ($logsData as $data)
-    
-    <div  class="w-full bg-white py-5 rounded-md border mb-3 cursor-pointer hover:shadow-md">
-        <div class="hidden md:flex items-center text-sm">
-            <div class=" w-40 px-3 text-xs text-gray-500">
-                {{ $data->timestamp }}
-            </div>
-               
-            <div class="px-3 text-xs text-gray-500 error-message-container" style="width: 600px;">
-                <div class="truncate">{{ Str::limit($data->message,75) }}</div>
-                {{-- <div class="hidden full-message">{{ $data->message }}</div> --}}
-                {{-- <a href="#" class="show-more-link">Show More</a> --}}
-            </div>
+<div style="overflow-x: auto;">
+    <x-page.title svg="svgs.logs-error">
+        Log Errors
+    </x-page.title>
+    <table>
+        <thead>
+            <tr class="text-gray-400 text-xs" style="font-size: 0.85rem;">
+                <th style="text-align: left">Error Message</th>
+                <th>Date Occurred</th>
+                <th>Last Date Occurred</th>
+                <th>Times Occurred</th>
+                <th>Completed Date</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+            <tr style="background-color: transparent;">
+                <th style="height: 10px;"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($logsData as $data)
+            <tr style="font-size:13px;" class="bg-white border border-gray-200 text-gray-500 ">
+                <td style="text-align: left; padding: 10px;">{{ Str::limit($data->message, 50) }}</td>
+                <td style="padding: 10px;">{{ $data->timestamp }}</td>
+                <td style="padding: 10px;">{{ $data->last_date_ocurred }}</td>
+                <td style="padding: 10px;">{{ $data->times_ocurred }}</td>
+                <td style="padding: 10px;">{{ $data->completed_date }}</td>
+                <td style="padding: 10px;">{{ $data->status }}</td>
+                <td style="padding: 10px;">
+                    <x-dropdowns.context-menu>
+                        <x-dropdowns.context-menu-item  name="Edit" wire:click.stop="$emit('logErrorsEdit', {{$data->id}})" svg="svgs.edit"/>
+                    </x-dropdowns.context-menu>
+                </td>
+            </tr>
+            <tr style="background-color: transparent;">
+                <td style="height: 10px;"></td>
+            </tr>
             
-            <div class=" w-40 px-3 text-xs text-gray-500">
-                {{ $data->status }}
-            </div>
-    
-            <div class=" w-40 px-3 text-xs text-gray-500">
-                {{ $data->created_at}}
-            </div>
-
-            <div class="w-40 px-3 flex justify-end">
-                <x-dropdowns.context-menu>
-                    <x-dropdowns.context-menu-item  name="Edit" wire:click.stop="$emit('logErrorsEdit', {{$data->id}})" svg="svgs.edit"/>
-                    <x-dropdowns.context-menu-item  name="Remove" svg="svgs.x-circle"/>
-                </x-dropdowns.context-menu>
-            </div>
-    
-        </div>
-    
-    </div>
-    @endforeach
-    </div>
+            
+            @endforeach
+        </tbody>
+    </table>
     <div class="pt-5">
         {{ $logsData->links('vendor.pagination.default') }}
     </div>
 </div>
 @push('modals')
-    @livewire('admin.edit-log-errors');
+@livewire('admin.edit-log-errors');
 @endpush
-{{-- <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const showMoreLinks = document.querySelectorAll(".show-more-link");
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        border: none;
+    }
 
-        showMoreLinks.forEach(link => {
-            link.addEventListener("click", function (event) {
-                event.preventDefault();
-                const parentDiv = this.closest(".error-message-container");
-                const truncateDiv = parentDiv.querySelector(".truncate");
-                const fullMessageDiv = parentDiv.querySelector(".full-message");
+    th, td {
+        padding: 8px;
+        text-align: center;
+        border: none;
+    }
 
-                truncateDiv.classList.toggle("hidden");
-                fullMessageDiv.classList.toggle("hidden");
+    th {
+        /* background-color: #f2f2f2; */
+    }
 
-                if (truncateDiv.classList.contains("hidden")) {
-                    this.innerText = "Show Less";
-                } else {
-                    this.innerText = "Show More";
-                }
-            });
-        });
-    });
-</script> --}}
+    th:first-child,
+    td:first-child {
+        flex: 2; /* Set the width of the first column (Error Message) to double the others */
+        min-width: 200px; /* Set a minimum width to ensure responsiveness */
+    }
 
+    @media screen and (max-width: 600px) {
+        table, thead, tbody, th, td, tr {
+            display: block;
+        }
 
+        thead tr {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+        }
 
+        tr { border: 1px solid #ccc; }
 
-   
+        td {
+            border: none;
+            border-bottom: 1px solid #eee;
+            position: relative;
+            padding-left: 50%;
+        }
 
+        td:before {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            width: 45%;
+            padding-right: 10px;
+            white-space: nowrap;
+        }
 
+        td:nth-of-type(1):before { content: "Error Message"; }
+        td:nth-of-type(2):before { content: "Date Occurred"; }
+        td:nth-of-type(3):before { content: "Last Date Occurred"; }
+        td:nth-of-type(4):before { content: "Times Occurred"; }
+        td:nth-of-type(5):before { content: "Completed Date"; }
+        td:nth-of-type(6):before { content: "Status"; }
+        td:nth-of-type(7):before { content: "Action"; }
+    }
+</style>

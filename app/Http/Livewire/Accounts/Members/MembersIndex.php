@@ -135,6 +135,7 @@ class MembersIndex extends Component
         if($invitationRecord){
             $invitationRecord->delete();
         }
+        $this->toast("User is moved to trash");
        
     }
     }
@@ -156,6 +157,7 @@ class MembersIndex extends Component
         ->where('account_id',  $this->account->id)
         ->update(['deleted_at' => NULL]);
         DB::table('users')->where('id', $userId)->update(['deleted_at' => NULL]);
+        $this->toast("User is restored");
     }
     public function memberPermanentDelete($userId)
     {
@@ -178,6 +180,7 @@ class MembersIndex extends Component
             $this->account->users()->detach($userId);
             DB::table('users')->where('id', $userId)->delete();
         }
+        $this->toast("User is deleted permanently");
     }
 
     public function copyInvitation(AccountInvitation $accountInvitation)

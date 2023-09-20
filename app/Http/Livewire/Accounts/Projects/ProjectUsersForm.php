@@ -24,16 +24,17 @@ class ProjectUsersForm extends Component
 		return redirect('/projects/'.$this->projectId);
     }
 
-    public function remove($userId)
-    {
-        $this->project->removeMemeber($userId);
-        $this->project->tasks()->where('user_id', $userId)->update(['user_id' => null]);
+    // public function remove($userId)
+    // {
+    // 
+        // $this->project->removeMemeber($userId);
+        // $this->project->tasks()->where('user_id', $userId)->update(['user_id' => null]);
 
-        $this->emit('tasksUpdate');
-        $this->reset(['userId']);
+        // $this->emit('tasksUpdate');
+        // $this->reset(['userId']);
 		
-		return redirect('/projects/'.$this->projectId);
-    }
+		// return redirect('/projects/'.$this->projectId);
+    // }
 
     public function render()
     {

@@ -28,7 +28,7 @@
             <x-members.compact
                 :user="$user"
                 :key="$user->id"
-                wire:click="remove({{$user->id}})"
+                wire:click="$emit('remove', {{$user->id}},{{$usersIn}},{{$projectId}})"
                 class="p-2 my-2 rounded-md cursor-default hover:bg-gray-100"
             />
         @endforeach

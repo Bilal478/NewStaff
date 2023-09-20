@@ -19,6 +19,7 @@ use App\Http\Livewire\Traits\Notifications;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Date;
 use App\Models\Plans;
 use App\Providers\RouteServiceProvider;
 
@@ -105,22 +106,81 @@ class MembersIndex extends Component
         }
         else{
         $user->activities()->delete();
-        $user->tasks()->update(['user_id' => null]);
-        $user->projects()->detach();
+        $user->tasks()->where('account_id', $this->account->id)->update(['user_id' => null]);
+        // $user->projects()->syncWithoutDetaching([$user->id => ['deleted_at' => now()]]);
+        DB::table('project_user')
+        ->join('projects', 'project_user.project_id', '=', 'projects.id')
+        ->where('project_user.user_id', $user->id)
+        ->where('projects.account_id', $this->account->id)
+        ->update(['project_user.deleted_at' => now()]);
+        // $user->departments()->syncWithoutDetaching([$user->id => ['deleted_at' => now()]]);
+        DB::table('department_user')
+        ->join('departments', 'department_user.department_id', '=', 'departments.id')
+        ->where('department_user.user_id', $user->id)
+        ->where('departments.account_id', $this->account->id)
+        ->update(['department_user.deleted_at' => now()]);
 
+        // $user->projects()->detach();
+        // $user->departments()->detach();
         if ($user->belongsToManyAccounts()) {
-            $this->account->users()->syncWithoutDetaching([$user->id => ['role' => 'removed']]);
-        } else {
+            $this->account->users()->syncWithoutDetaching([$user->id => ['deleted_at' => now()]]);
+            // DB::table('account_user')->where('user_id', $user->id)->update(['deleted_at' => now()]);
+        } 
+        else {
             $this->account->removeMember($user);
-            $user->forceDelete();
+            $user->delete();
         }
         $invitationRecord=AccountInvitation::where('email',$user->email)
         ->where('account_id',$this->account->id)->first();
         if($invitationRecord){
             $invitationRecord->delete();
         }
+        $this->toast("User is moved to trash");
        
     }
+    }
+
+    public function memberRestore($userId)
+    {
+        DB::table('project_user')
+        ->join('projects', 'project_user.project_id', '=', 'projects.id')
+        ->where('project_user.user_id', $userId)
+        ->where('projects.account_id', $this->account->id)
+        ->update(['project_user.deleted_at' => NULL]);
+        DB::table('department_user')
+        ->join('departments', 'department_user.department_id', '=', 'departments.id')
+        ->where('department_user.user_id', $userId)
+        ->where('departments.account_id', $this->account->id)
+        ->update(['department_user.deleted_at' => NULL]);
+        DB::table('account_user')
+        ->where('user_id', $userId)
+        ->where('account_id',  $this->account->id)
+        ->update(['deleted_at' => NULL]);
+        DB::table('users')->where('id', $userId)->update(['deleted_at' => NULL]);
+        $this->toast("User is restored");
+    }
+    public function memberPermanentDelete($userId)
+    {
+        DB::table('project_user')
+        ->join('projects', 'project_user.project_id', '=', 'projects.id')
+        ->where('project_user.user_id', $userId)
+        ->where('projects.account_id', $this->account->id)
+        ->delete();
+        DB::table('department_user')
+        ->join('departments', 'department_user.department_id', '=', 'departments.id')
+        ->where('department_user.user_id', $userId)
+        ->where('departments.account_id', $this->account->id)
+        ->delete();
+        $totalUser= DB::table('account_user')->where('user_id', $userId)->get();
+
+        if (count($totalUser)>1) {
+            $this->account->users()->detach($userId);
+        } 
+        else {
+            $this->account->users()->detach($userId);
+            DB::table('users')->where('id', $userId)->delete();
+        }
+        $this->toast("User is deleted permanently");
     }
 
     public function copyInvitation(AccountInvitation $accountInvitation)
@@ -162,9 +222,16 @@ class MembersIndex extends Component
 
     public function users()
     {
-        return $this->filter == 'members'
-            ? $this->members()
-            : $this->invites();
+        // return $this->filter == 'members'
+        //     ? $this->members()
+        //     : $this->invites();
+        if ($this->filter == 'members') {
+            return $this->members();
+        } elseif ($this->filter == 'invites') {
+            return $this->invites();
+        } else {
+            return $this->trashedUsers();
+        }
     }
 	
 	public function create2()
@@ -177,7 +244,7 @@ class MembersIndex extends Component
     {
         return $this->account
             ->usersWithRole()
-            ->where('role', '!=', 'removed')
+            ->whereNull('account_user.deleted_at')
             ->where('invitation_accept', '!=', 'true')
             ->latest()
             ->where(function (Builder $query) {
@@ -191,6 +258,21 @@ class MembersIndex extends Component
     {
         return AccountInvitation::where('invitation_accept', '!=', 'true')->latest()
             ->where('email', 'like', '%' . $this->search . '%')
+            ->paginate(8);
+    }
+
+    public function trashedUsers()
+    {
+        return $this->account
+            ->usersWithRole()
+            ->withTrashed()
+            ->whereNotNull('account_user.deleted_at')
+            ->where('invitation_accept', '!=', 'true')
+            ->latest()
+            ->where(function (Builder $query) {
+                return $query->where('firstname', 'like', '%' . $this->search . '%')
+                    ->orWhere('lastname', 'like', '%' . $this->search . '%');
+            })
             ->paginate(8);
     }
 	

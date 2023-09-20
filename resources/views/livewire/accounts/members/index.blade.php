@@ -39,6 +39,7 @@
             <x-inputs.select-without-label wire:model="filter" name="filter" class="w-full md:w-40 mt-4 md:mt-0">
                 <option value="members">Members</option>
                 <option value="invites">Invites</option>
+                <option value="trashed">Trashed Users</option>
             </x-inputs.select-without-label>
         </div>
 
@@ -123,18 +124,23 @@
                 @foreach ($users as $user)
                     <x-members.row :user="$user" :key="$user->id" />
                 @endforeach
-            @else
+            @elseif($filter == 'invites')
                 <x-invites.headings />
                 @foreach ($users as $user)
                     <x-invites.row :user="$user" :key="$user->id" />
                 @endforeach
+            @else 
+                <x-trashed.headings />
+                @foreach ($users as $user)
+                    <x-trashed.row :user="$user" :key="$user->id" />
+                @endforeach   
             @endif
         </div>
         <div class="pt-5">
             {{ $users->links('vendor.pagination.default') }}
         </div>
     @else
-        <x-states.empty-data message="There are no pending invites." />
+        <x-states.empty-data message="There are no records to show." />
     @endif
 
     @push('modals')

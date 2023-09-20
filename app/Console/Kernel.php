@@ -16,6 +16,7 @@ class Kernel extends ConsoleKernel
         Commands\ClearWeeklyLog::class,
         Commands\SendDailyWorkSummary::class,
         Commands\SaveDailyLog::class,
+        Commands\PermanentDeleteUsers::class,
     ];
 
     /**
@@ -26,6 +27,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        $schedule->command('permanent:deleteusers')
+        ->daily();
         $schedule->command('save:dailylog')
         ->daily();
         $schedule->command('clear:weeklylog')

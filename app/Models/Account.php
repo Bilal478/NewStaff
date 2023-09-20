@@ -79,7 +79,7 @@ class Account extends Model
 
     public function removeMember(User $user): void
     {
-        $this->users()->detach([$user->id]);
+        $this->users()->syncWithoutDetaching([$user->id => ['deleted_at' => now()]]);
     }
 
     public function addOwner(User $user): void

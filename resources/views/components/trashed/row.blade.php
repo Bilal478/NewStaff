@@ -74,8 +74,8 @@
        
         <div class="w-20 px-3 flex justify-end">
             <x-dropdowns.context-menu>
-                <x-dropdowns.context-menu-item wire:click.stop="$emit('memberEdit', {{$user->id}})" name="Edit" svg="svgs.edit"/>
-                <x-dropdowns.context-menu-item wire:click.stop="memberDelete({{$user->id}})" name="Move to Trash" svg="svgs.trash"/>
+              <x-dropdowns.context-menu-item wire:click.stop="memberRestore({{$user->id}})" name="Restore" svg="svgs.edit"/>
+                <x-dropdowns.context-menu-item wire:click.stop="memberPermanentDelete({{$user->id}})" name="Delete" svg="svgs.x-circle"/>
             </x-dropdowns.context-menu>
         </div>
     </div>

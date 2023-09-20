@@ -39,4 +39,8 @@ use App\Models\Department;
             </div>
         </div>
     </div>
+    @push('modals')
+@livewire('accounts.tasks.delete-task-modal')
+@endpush
+
 </div>

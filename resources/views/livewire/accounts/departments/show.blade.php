@@ -57,6 +57,9 @@
 @push('modals')
 @livewire('create-admin-modal')    
 @endpush
+@push('modals')
+@livewire('accounts.tasks.delete-task-modal')
+@endpush
 <style>
     #btn-admin{
         margin-left: 170px;

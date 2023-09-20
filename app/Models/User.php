@@ -147,7 +147,7 @@ class User extends Authenticatable
     public function scopeInDepartment($query, $departmentId)
     {
         return $query->whereHas('departments', function ($query) use ($departmentId) {
-            $query->where('department_id', $departmentId);
+            $query->where('department_id', $departmentId)->whereNull('department_user.deleted_at');
         });
     }
 

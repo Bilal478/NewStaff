@@ -35,6 +35,7 @@
 			$users_in_project = DB::table('users')
 				->join('project_user', 'users.id', '=', 'project_user.user_id')
 				->where('project_user.project_id', $project_id)
+				->whereNull('project_user.deleted_at')
 				->select('users.*')
 				->get();
 			

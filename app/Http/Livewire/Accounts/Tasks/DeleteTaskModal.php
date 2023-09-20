@@ -13,7 +13,7 @@ class DeleteTaskModal extends Component
     use Notifications;
     public $userId;
     public $users;
-    public $selectedOption;
+    public $selectedOption='firstOption';
     public $userFirstName;
     public $userFullName;
     public $selectedUserId;

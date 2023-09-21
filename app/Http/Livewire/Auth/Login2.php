@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Auth;
 
+use App\Mail\AcceptedNotification;
 use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Support\Facades\Request;
@@ -12,6 +13,7 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 
 class Login2 extends Component
@@ -80,6 +82,8 @@ class Login2 extends Component
          $inviteUser=User::where('id',$getUser->user_id)->first();
          $invitation= DB::table('account_invitations')->where('email',$inviteUser->email)
          ->where('account_id',$getUser->account_id)->first();
+         $ownerUser=User::where('id',$invitation->user_id)->first();
+      	 Mail::to($ownerUser->email)->send(new AcceptedNotification($inviteUser->email));
         if(!$invitation){
         $deleteInvitation=DB::table('verify_invitations')->where('verification_id', $this->randomid)->first();
             if ($deleteInvitation) {

@@ -10,6 +10,7 @@ use App\Providers\RouteServiceProvider;
 use App\Http\Livewire\Traits\Notifications;
 use App\Models\User;
 use App\Models\Plans;
+use App\Models\Subscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -31,12 +32,20 @@ class PlansandPayment extends Component
     $plan = Plans::where('identifier', $request->plan)->first();
 
 	if($temp > 0){
-		
 		$request->user()->newSubscription($request->plan, $plan->stripe_id)
 			->quantity($request->selectseats)
 			->create($request->token, ['email' => $user->email]);
+
+			$subscription=Subscription::where('user_id',$user->id)->first();
+			DB::table('transaction_log')->insert([
+                'user_id' => $user->id,
+                'subscription_id' => $subscription->id,
+                'action' => 'subscription_user',
+                'quantity' => $request->selectseats,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
 	}else{
-		
 		$request->user()->newSubscription($request->plan, $plan->stripe_id)
 			->trialDays(15)
 			->quantity($request->selectseats)
@@ -44,6 +53,16 @@ class PlansandPayment extends Component
 			[
 				'email' => $user->email
 			]);	
+
+			$subscription=Subscription::where('user_id',$user->id)->first();
+			DB::table('transaction_log')->insert([
+                'user_id' => $user->id,
+                'subscription_id' => $subscription->id,
+                'action' => 'subscription_user',
+                'quantity' => $request->selectseats,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
 	}
 		
 		return redirect()->intended('/sendmail');

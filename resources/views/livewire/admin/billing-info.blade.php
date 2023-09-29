@@ -93,7 +93,15 @@
             <tr style="font-size:13px;" class="bg-white border border-gray-200 text-gray-500 ">
                 <td style="padding: 10px;">{{ $data['userName'] }}</td>
                 <td style="padding: 10px;">${{ $data['amount'] }}.00</td>
-                <td style="padding: 10px;">{{ $data['action'] }}</td>
+                @if ($data['action']=='cancel_subscription')
+                <td style="padding: 10px;">Cancel Subscription</td>
+                @elseif ($data['action']=='buy_seats')
+                <td style="padding: 10px;">Buy Seats</td>
+                @elseif ($data['action']=='subscription_user')
+                <td style="padding: 10px;">User Subscription</td>
+                @else
+                <td style="padding: 10px;">Delete Seats</td>
+                @endif
                 <td style="padding: 10px;">{{ $data['created_at'] }}</td>
             </tr>
             <tr style="background-color: transparent;">

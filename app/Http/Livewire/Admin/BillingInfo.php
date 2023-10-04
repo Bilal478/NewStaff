@@ -17,17 +17,15 @@ class BillingInfo extends Component
     {
         $accounts = Account::whereNull('deleted_at')->get();
         $activeMembers=Subscription::where('stripe_status' , 'active')->get();
-        $lastActiveMember = DB::table('transaction_log')
-        ->orderBy('created_at', 'desc') // Assuming there's a created_at timestamp
+        $lastTransaction = DB::table('transaction_log')
+        ->orderBy('created_at', 'desc')
         ->first();
-        // dd( $lastActiveMember );
 
         $currentDayAmount = $this->currentDayBilledAmount();
         $currentMonthAmount = $this->currentMonthBilledAmount();
         $currentMonthCanceledAmount = $this->currentMonthCanceledAmount();
         $transactionsData = $this->transactionsData();
-        // dd($this->transactionHistory());
-        return view('livewire.admin.billing-info', compact('accounts', 'activeMembers', 'lastActiveMember', 'currentDayAmount', 'currentMonthAmount', 'currentMonthCanceledAmount', 'transactionsData'))
+        return view('livewire.admin.billing-info', compact('accounts', 'activeMembers', 'lastTransaction', 'currentDayAmount', 'currentMonthAmount', 'currentMonthCanceledAmount', 'transactionsData'))
             ->layout('layouts.admin', ['title' => 'Billing Info']);
     }
 
@@ -36,13 +34,14 @@ class BillingInfo extends Component
         $firstDayOfMonth = Carbon::now()->startOfMonth();
         $lastDayOfMonth = Carbon::now()->endOfMonth();
 
-        $subscriptions = Subscription::whereBetween('created_at', [$firstDayOfMonth, $lastDayOfMonth])
-        ->where('stripe_status', '!=', 'canceled')
+        $currentMonthTransactions = DB::table('transaction_log')->whereBetween('created_at', [$firstDayOfMonth, $lastDayOfMonth])
+        ->whereIn('action', ['subscription_user', 'buy_seats'])
         ->get();
 
         $totalAmount = 0;
 
-        foreach ($subscriptions as $subscription) {
+        foreach ($currentMonthTransactions as $transaction) {
+          $subscription=Subscription::where('id',$transaction->subscription_id)->first();
           $priceId = $subscription->stripe_price;
     
           // Retrieve price details from Stripe
@@ -50,8 +49,8 @@ class BillingInfo extends Component
           $amount = $price->unit_amount / 100; // Convert cents to dollars
 
           // If quantity is greater than 1, multiply by quantity
-           if ($subscription->quantity > 1) {
-              $amount *= $subscription->quantity;
+           if ($transaction->quantity > 1) {
+              $amount *= $transaction->quantity;
             }
 
           $totalAmount += $amount;
@@ -62,22 +61,24 @@ class BillingInfo extends Component
     public function currentDayBilledAmount(){
         Stripe::setApiKey(config('services.stripe.secret'));
         $currentDay = Carbon::now()->toDateString();
-        $subscriptions = Subscription::whereDate('created_at', $currentDay)
-        ->where('stripe_status', '!=', 'canceled')
+        $currentDayTransactions = DB::table('transaction_log')->whereDate('created_at', $currentDay)
+        ->whereIn('action', ['subscription_user', 'buy_seats'])
         ->get();
 
         $totalAmount = 0;
 
-        foreach ($subscriptions as $subscription) {
+        foreach ($currentDayTransactions as $transaction) {
+          $subscription=Subscription::where('id',$transaction->subscription_id)->first();
           $priceId = $subscription->stripe_price;
+          // dd($priceId);
     
           // Retrieve price details from Stripe
           $price = Price::retrieve($priceId);
           $amount = $price->unit_amount / 100; // Convert cents to dollars
 
           // If quantity is greater than 1, multiply by quantity
-           if ($subscription->quantity > 1) {
-              $amount *= $subscription->quantity;
+           if ($transaction->quantity > 1) {
+              $amount *= $transaction->quantity;
             }
 
           $totalAmount += $amount;
@@ -89,13 +90,14 @@ class BillingInfo extends Component
     $firstDayOfMonth = Carbon::now()->startOfMonth();
     $lastDayOfMonth = Carbon::now()->endOfMonth();
 
-    $subscriptions = Subscription::whereBetween('created_at', [$firstDayOfMonth, $lastDayOfMonth])
-    ->where('stripe_status', '=', 'canceled')
+    $currentMonthCanceledTransactions = DB::table('transaction_log')->whereBetween('created_at', [$firstDayOfMonth, $lastDayOfMonth])
+    ->whereIn('action', ['cancel_subscription', 'delete_seats'])
     ->get();
 
     $totalAmount = 0;
 
-    foreach ($subscriptions as $subscription) {
+    foreach ($currentMonthCanceledTransactions as $transaction) {
+      $subscription=Subscription::where('id',$transaction->subscription_id)->first();
       $priceId = $subscription->stripe_price;
 
       // Retrieve price details from Stripe
@@ -103,8 +105,8 @@ class BillingInfo extends Component
       $amount = $price->unit_amount / 100; // Convert cents to dollars
 
       // If quantity is greater than 1, multiply by quantity
-       if ($subscription->quantity > 1) {
-          $amount *= $subscription->quantity;
+       if ($transaction->quantity > 1) {
+          $amount *= $transaction->quantity;
         }
 
       $totalAmount += $amount;
@@ -115,15 +117,14 @@ class BillingInfo extends Component
 public function transactionsData(){
   Stripe::setApiKey(config('services.stripe.secret'));
 
-  $transactionRecords = DB::table('transaction_log')->orderBy('id','desc')->paginate(3);
+  $transactionRecords = DB::table('transaction_log')->orderBy('created_at','desc')->paginate(10);
   $allData=[]; // Initialize $allData as an empty array
 
   foreach ($transactionRecords as $record) {
     $totalAmount = 0;
-    $subscriptionId = $record->subscription_id;
     $subscription = Subscription::where('id', $record->subscription_id)->first();
     $user = DB::table('users')->where('id',$record->user_id)->first();
-    // dd($user->firstname);
+
     $userName = $user->firstname.' '.$user->lastname;
 
     // Retrieve price details from Stripe

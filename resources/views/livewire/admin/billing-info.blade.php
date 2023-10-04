@@ -34,8 +34,8 @@
                 <h3 class="text-sm text-blue-500 xl:tracking-widest uppercase mb-6">
                     LAST TRANSACTION DATE
                 </h3>
-                @if ($lastActiveMember)
-                <span class="text-2xl text-gray-800">{{ $lastActiveMember->created_at }}</span>
+                @if ($lastTransaction)
+                <span class="text-2xl text-gray-800">{{ $lastTransaction->created_at }}</span>
                 @endif
             </div>
         </div>

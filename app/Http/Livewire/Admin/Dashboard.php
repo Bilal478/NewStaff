@@ -43,7 +43,7 @@ class Dashboard extends Component
             });
         })->withCount(['users', 'projects', 'tasks', 'activities'])
             ->orderBy('name') ->with('users')
-            ->paginate(24, ['*'], 'taskPage');
+            ->paginate(10, ['*'], 'taskPage');
             
             foreach($accounts->items() as $index=>$item){
                 

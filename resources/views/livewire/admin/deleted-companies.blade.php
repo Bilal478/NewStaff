@@ -1,7 +1,7 @@
 <div>
     <div class="pb-12">
         <h1 class="font-montserrat text-xl font-semibold text-gray-700">
-            Deleted Companies
+            Accounts
         </h1>
     </div>
     <div class="md:flex items-center justify-between pb-8">
@@ -36,8 +36,8 @@
         </div>
         <div class="w-32 px-3">
         Storage
-        </div>  
-        <div class="w-32 px-3">
+        </div>
+        <div class="w-32">
         Entry Date
         </div>  
         <div class="w-20 px-3">
@@ -104,14 +104,12 @@
         <div class="text-right w-32 px-3 text-xs text-gray-500">
             {{ $accountStorage[$index] }}
         </div>
-
         <div class="text-right w-32 px-3 text-xs text-gray-500">
             {{ $account->created_at->format('Y-M-d')}}
             <br>
             {{ $account->created_at->format('g:i: a')}}
-        </div>
-       
-        <div class="text-center w-32 px-3 flex justify-end">
+        </div> 
+        <div class="text-center w-32 flex justify-end">
         <x-dropdowns.context-menu>
             <a href="#miModal"><x-dropdowns.context-menu-item wire:click="confirmDelete({{ $account->id }})" name="Delete" svg="svgs.x-circle"/></a>
         </x-dropdowns.context-menu>
@@ -121,15 +119,6 @@
 </div>
 @endforeach
 </div>
-<div id="miModal" class="modal pt-7">
-    <div class="modal-contenido">
-        <p class="mb-5 mt-5 ml-5">Are you sure to delete the account permanently?</p>
-        <a href="#"><button type="button"  class="sm_button float-left ml-96 h-10 text-sm flex items-center rounded-md bg-blue-600 text-white pl-3 pr-3 hover:bg-blue-500 focus:outline-none active:bg-blue-700 transition duration-150 ease-in-out">No
-         </button></a>
-         <a href="#"><button type="button" id="cancel_button" wire:click.stop="permanent_delete_company()" class="sm_button float-left ml-5 h-10 text-sm flex items-center rounded-md bg-red-600 text-white pl-3 pr-3 hover:bg-red-500 focus:outline-none active:bg-blue-700 transition duration-150 ease-in-out">Yes, Delete
-        </button></a>
-    </div>
-</div>
 <div class="pt-5">
             {{ $accounts->links('vendor.pagination.default') }}
 </div>
@@ -138,10 +127,19 @@
     <div class="loading-overlay">
     <div  class="loading-animation">
         <!-- Add your loading animation here -->
-        
+
     </div>
     </div>
 
+</div>
+<div id="miModal" class="modal pt-7">
+    <div class="modal-contenido">
+        <p class="mb-5 mt-5 ml-5">Are you sure to delete the account permanently?</p>
+        <a href="#"><button type="button"  class="sm_button float-left ml-96 h-10 text-sm flex items-center rounded-md bg-blue-600 text-white pl-3 pr-3 hover:bg-blue-500 focus:outline-none active:bg-blue-700 transition duration-150 ease-in-out">No
+         </button></a>
+         <a href="#"><button type="button" id="cancel_button" wire:click.stop="permanent_delete_company()" class="sm_button float-left ml-5 h-10 text-sm flex items-center rounded-md bg-red-600 text-white pl-3 pr-3 hover:bg-red-500 focus:outline-none active:bg-blue-700 transition duration-150 ease-in-out">Yes, Delete
+        </button></a>
+    </div>
 </div>
 @push('modals')
         @livewire('admin.accounts.accounts-update')
@@ -168,10 +166,58 @@
     height: 40px;
     animation: spin 2s linear infinite;
 }
-
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+.flex-1{
+	flex: 3 3 20% !important;
+}
+.text-center {
+    text-align: center;
+}
+.text-right {
+    text-align: right;
+}
+
+    .pl-3 {
+    padding-left: 0.75rem;
+}
+
+.pr-3 {
+    padding-right: 0.75rem;
+}
+.ml-96 {
+    margin-left: 24rem;
+}
+.text-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+.h-10 {
+    height: 2.5rem;
+}
+
+.float-left {
+    float: left;
+}
+.items-center {
+    align-items: center;
+}
+/* .flex {
+    display: flex;
+} */
+    .pt-7 {
+    padding-top: 1.75rem;
+}
+.ml-5 {
+    margin-left: 1.25rem;
+}
+.mb-5 {
+    margin-bottom: 1.25rem;
+}
+.mt-5 {
+    margin-top: 1.25rem;
 }
 .flex-1{
 	flex: 3 3 20% !important;
@@ -224,7 +270,5 @@
         #cancel_button{
             margin-left: 5px;
         }
-}
+    }
 </style>
-   
-

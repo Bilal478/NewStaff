@@ -1,10 +1,19 @@
 @php
     $user_role=[];
+    $user_ids=[];
+    $account_users=[];
     $user_login = auth()->id();
     $role=DB::select('SELECT * FROM department_admin where user_id='.$user_login );
     foreach($role as $val){
                 $user_role[]=$val->department_id;
-            }    
+            } 
+ 
+    $account_users[]=DB::table('account_user')->whereNotNull('deleted_at')->get();
+    foreach ($account_users as $users) {
+        foreach ($users as $user){
+        $user_ids[]=$user->user_id;
+    }
+    }  
 @endphp
 <div class="w-full">
     @role(['owner', 'manager'])
@@ -13,9 +22,11 @@
                 <x-inputs.select-without-label wire:model.lazy="userId" name="userId" class="flex-1">
                     <option value="">Select member</option>
                     @foreach ($usersOut as $user)
+                    @if (!in_array($user->id, $user_ids))
                         <option value="{{ $user->id }}">
                             {{ $user->full_name }}
                         </option>
+                        @endif
                     @endforeach
                 </x-inputs.select-without-label>
                 @if ($userId)

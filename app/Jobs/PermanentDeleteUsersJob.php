@@ -31,6 +31,8 @@ class PermanentDeleteUsersJob implements ShouldQueue
      */
     public function handle()
     {
+        $user=Auth::user();
+        $subscription=DB::table('subscriptions')->where('user_id',$user->id)->first();
         $thresholdDate = now()->subDays(30); 
         DB::table('project_user')
         ->whereNotNull('deleted_at')
@@ -48,5 +50,13 @@ class PermanentDeleteUsersJob implements ShouldQueue
         ->whereNotNull('deleted_at')
         ->where('deleted_at', '<', $thresholdDate)
         ->delete();
+        DB::table('transaction_log')->insert([
+            'user_id' => $user->id,
+            'subscription_id' => $subscription->id,
+            'action' => 'cancel_subscription',
+            'quantity' => 1,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 }

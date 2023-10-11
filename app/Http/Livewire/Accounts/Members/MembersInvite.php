@@ -90,6 +90,7 @@ class MembersInvite extends Component
             'name' => 'Annual',
             'stripe_id' =>  $stripe_id,
             'stripe_status' => 'active',
+            'created_at' => now(),
         ]);
         DB::table('account_user')->insert([
             'role' => $this->role,

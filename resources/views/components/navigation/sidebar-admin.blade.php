@@ -30,6 +30,9 @@
                     <x-navigation.sidebar-item route="admin.summary_logs" img="svgs.logs-error">
                         Summary Logs
                     </x-navigation.sidebar-item>
+                    <x-navigation.sidebar-item route="admin.billing_info" img="svgs.logs-error">
+                        Billing Info
+                    </x-navigation.sidebar-item>
                 </ul>
             </div>
         </div>

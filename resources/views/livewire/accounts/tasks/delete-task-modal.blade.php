@@ -8,9 +8,9 @@
         What would you like to do with this user's assignment?
     </p>
     <br>
-    <input type="radio" wire:model="selectedOption" value="firstOption" selected="selected"> <span style="font-size: 13px; font-weight:500; margin-botto:2px;">Just remove this user and make his/her task unassigned</span>
+    <input type="radio" wire:model="selectedOption" value="firstOption" name="selectedOption" checked> <span style="font-size: 13px; font-weight:500; margin-botto:2px;">Just remove this user and make his/her task unassigned</span>
     <br>
-    <input type="radio" wire:model="selectedOption" value="secondOption"> <span style="font-size: 13px; font-weight:500; margin-botto:2px;">Assign this user's task to another person</span>
+    <input type="radio" wire:model="selectedOption" value="secondOption" name="selectedOption"> <span style="font-size: 13px; font-weight:500; margin-botto:2px;">Assign this user's task to another person</span>
     <br><br>
     @if($selectedOption === 'secondOption')
     <div class="mb-6"> 

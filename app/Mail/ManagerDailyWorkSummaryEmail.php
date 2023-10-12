@@ -13,17 +13,23 @@ class ManagerDailyWorkSummaryEmail extends Mailable
     public $accountName='';
     public $userName='';
     public $data='';
+    public $totalTime;
+    public $totalUsers;
+    public $averageActivity;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($Data,$accountName,$userName)
+    public function __construct($Data,$accountName,$userName,$totalTime,$totalUsers,$averageActivity)
     {
         $this->accountName = $accountName;
         $this->userName = $userName;
         $this->data = $Data;
+        $this->totalTime = $totalTime;
+        $this->totalUsers = $totalUsers;
+        $this->averageActivity = $averageActivity;
     }
 
     /**
@@ -34,6 +40,14 @@ class ManagerDailyWorkSummaryEmail extends Mailable
     public function build()
     {
         return $this->subject(' Daily Team Work Summary for '.$this->accountName)
-        ->view('emails.manager-daily-work-summary.manager-daily-work-summary',['data' => $this->data,'accountName'=>$this->accountName,'userName'=>$this->userName]);
+        ->view('emails.manager-daily-work-summary.manager-daily-work-summary',
+        [
+            'data' => $this->data,
+            'accountName'=>$this->accountName,
+            'userName'=>$this->userName,
+            'totalTime'=>$this->totalTime,
+            'totalUsers'=>$this->totalUsers,
+            'averageActivity'=>$this->averageActivity,
+        ]);
     }
 }

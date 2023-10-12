@@ -97,6 +97,21 @@ class DailyWorkSummaryJob implements ShouldQueue
 
                     }
                     }
+                    $totalTime = 0;
+                    $totalActivity = 0;
+                    $totalUsers = count($managerUsers);
+
+                    foreach ($managerUsers as $userData) {
+                       $totalTime += strtotime($userData['total_duration']) - strtotime('00:00:00');
+                       $totalActivity += $userData['total_productivity'];
+                    }
+                    if ($totalUsers > 0) {
+                        $averageActivity = $totalActivity / $totalUsers;
+                    } else {
+                        $averageActivity = 0;
+                    }
+                    $totalTime=gmdate('H:i:s', $totalTime);
+                    
                     $top5Members = [];
                     usort($managerUsers, function ($a, $b) {
                         $durationA = strtotime($a['total_duration']);
@@ -108,7 +123,7 @@ class DailyWorkSummaryJob implements ShouldQueue
                     $accountName= $account->name;
                     $user=User::where('id',$managerId)->first();
                     $userName=$user->firstname.' '.$user->lastname;
-                    Mail::to($user->email)->send(new ManagerDailyWorkSummaryEmail($top5Members,$accountName,$userName));
+                    Mail::to($user->email)->send(new ManagerDailyWorkSummaryEmail($top5Members,$accountName,$userName,$totalTime,$totalUsers,$averageActivity));
                     $total_emails_sent++;
                 }
               }

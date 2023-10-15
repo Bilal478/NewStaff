@@ -123,11 +123,13 @@ class MembersIndex extends Component
         // $user->projects()->detach();
         // $user->departments()->detach();
         if ($user->belongsToManyAccounts()) {
-            $this->account->users()->syncWithoutDetaching([$user->id => ['deleted_at' => now()]]);
+            $this->account->users()
+            ->syncWithoutDetaching([$user->id => ['deleted_at' => now(),'deleted_by_user_id' => $loggedUser->id,'deleted_by_account_id' => $this->account->id]]);
             // DB::table('account_user')->where('user_id', $user->id)->update(['deleted_at' => now()]);
         } 
         else {
-            $this->account->removeMember($user);
+            $this->account->users()
+            ->syncWithoutDetaching([$user->id => ['deleted_at' => now(),'deleted_by_user_id' => $loggedUser->id,'deleted_by_account_id' => $this->account->id]]);
             $user->delete();
         }
         $invitationRecord=AccountInvitation::where('email',$user->email)
@@ -155,7 +157,7 @@ class MembersIndex extends Component
         DB::table('account_user')
         ->where('user_id', $userId)
         ->where('account_id',  $this->account->id)
-        ->update(['deleted_at' => NULL]);
+        ->update(['deleted_at' => NULL,'deleted_by_user_id' => NULL,'deleted_by_account_id' => NULL]);
         DB::table('users')->where('id', $userId)->update(['deleted_at' => NULL]);
         $this->toast("User is restored");
     }
@@ -184,6 +186,7 @@ class MembersIndex extends Component
         }
         DB::table('transaction_log')->insert([
             'user_id' => $user->id,
+            'account_id' => $this->account->id,
             'subscription_id' => $subscription->id,
             'action' => 'cancel_subscription',
             'quantity' => 1,
@@ -297,6 +300,7 @@ class MembersIndex extends Component
 				->incrementQuantity($request->selectseats);	
                 DB::table('transaction_log')->insert([
                     'user_id' => $user->id,
+                    'account_id' => $this->account->id,
                     'subscription_id' => $subscription->id,
                     'action' => 'buy_seats',
                     'quantity' => $request->selectseats,

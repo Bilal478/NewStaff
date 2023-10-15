@@ -33,6 +33,9 @@
                     <x-navigation.sidebar-item route="admin.billing_info" img="svgs.logs-error">
                         Billing Info
                     </x-navigation.sidebar-item>
+                    <x-navigation.sidebar-item route="admin.transaction_history" img="svgs.logs-error">
+                        Transaction History
+                    </x-navigation.sidebar-item>
                 </ul>
             </div>
         </div>

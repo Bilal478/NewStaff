@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+{{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> --}}
 <div>
     <div class="pb-12">
         <h1 class="font-montserrat text-xl font-semibold text-gray-700 float-left mr-20">
@@ -102,6 +102,39 @@
             </div>
         </div>
     </div>
+    @if (session()->get('account_role') === 'manager')
+    <div class="flex flex-wrap -mx-4">
+        <div class="w-full xl:w-1/2">
+            <div class="bg-white rounded-md border p-6 mx-4 mb-8 h-84">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="inline-block text-sm text-blue-500 xl:tracking-widest uppercase">
+                        Manager
+                    </h3>
+                    <h3 class="inline-block text-sm text-blue-500 xl:tracking-widest uppercase">
+                        {{ $authUserName }}
+                    </h3>
+                </div>
+
+                <div class="w-full">
+                    <div class="flex items-center text-gray-700 text-xs font-semibold border-b">
+                        <div class="flex-1 px-2 py-4">User Id</div>
+                        <div class="w-32 px-2 py-4">User Name</div>
+                    </div>
+
+                    @foreach ($userRecords as $record)
+                        <div class="flex items-center text-gray-500 text-sm {{ $loop->last ? '' : 'border-b' }}">
+                            <div class="flex-1 px-2 py-4 truncate">{{ $record->id }}</div>
+                            <div class="w-32 px-2 py-4">{{ $record->firstname }} {{$record->lastname}}</div>
+                        </div>
+                    @endforeach
+                </div>
+                <div class="pt-5">
+                    {{ $userRecords->links('vendor.pagination.default') }}
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 
 </div>
 <style>

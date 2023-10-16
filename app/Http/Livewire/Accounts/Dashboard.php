@@ -11,10 +11,13 @@ use Carbon\Carbon;
 use Livewire\Component;
 use App\Models\Activity;
 use Carbon\CarbonInterval;
+use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class Dashboard extends Component
 {
+    use WithPagination;
     public $timeCount;
     public $projectsCount;
     public $tasksCount;
@@ -68,7 +71,28 @@ class Dashboard extends Component
 
     public function render()
     {
-		return view('livewire.accounts.dashboard')
+        if (session()->get('account_role') === 'manager'){
+          $userId=Auth::user()->id;
+          $authUserName=Auth::user()->firstname.' '.Auth::user()->lastname;
+          $userDepartment=DB::table('department_admin')->where('user_id',$userId)->get();
+            $departmentIds=[];
+            foreach($userDepartment as $department){
+                $departmentIds[]=$department->department_id;
+            }
+            $uniqueDepartmentIds = array_unique($departmentIds);
+            $userIds=[];
+            foreach($uniqueDepartmentIds as $id){
+            $usersOfDepartment=DB::table('department_user')->where('department_id',$id)->get();
+            foreach($usersOfDepartment as $user){
+                $userIds[]=$user->user_id;
+            }
+        }
+        $uniqueUserIds = array_unique($userIds);
+        $userRecords = DB::table('users')
+        ->whereIn('id', $uniqueUserIds)
+        ->paginate(5);
+        }
+		return view('livewire.accounts.dashboard',compact('userRecords','authUserName'))
          ->layout('layouts.app', ['title' => 'Dashboard']);
 		
     }

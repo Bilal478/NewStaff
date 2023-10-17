@@ -33,9 +33,14 @@ class TransactionHistory extends Component
         $query = DB::table('transaction_log')
         ->join('users', 'users.id', '=', 'transaction_log.user_id')
         ->join('accounts', 'accounts.id', '=', 'transaction_log.account_id')
+        ->select('transaction_log.*', 'users.firstname', 'users.lastname', 'accounts.name')
         ->orderBy('transaction_log.created_at', 'desc');
         if ($startDate && $endDate) {
+          if($startDate===$endDate){
+            $query->whereDate('transaction_log.created_at', $startDate);
+          }else{
             $query->whereBetween('transaction_log.created_at', [$startDate, $endDate]);
+          }
         } elseif ($startDate) {
             $query->whereDate('transaction_log.created_at', '=', $startDate);
         } elseif ($endDate) {
@@ -53,6 +58,7 @@ class TransactionHistory extends Component
        
     
         $transactionRecords = $query->paginate(10);
+        // dd($transactionRecords);
         $allData=[]; // Initialize $allData as an empty array
       
         foreach ($transactionRecords as $record) {

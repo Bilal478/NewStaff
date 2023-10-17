@@ -21,19 +21,19 @@
                     <x-navigation.sidebar-item route="admin.getsetupversion" img="svgs.download">
                         Desktop Application
                     </x-navigation.sidebar-item>
-                    <x-navigation.sidebar-item route="admin.deletedcompanies" img="svgs.x-circle">
+                    <x-navigation.sidebar-item route="admin.deletedcompanies" img="svgs.trash">
                         Deleted Accounts
                     </x-navigation.sidebar-item>
-                    <x-navigation.sidebar-item route="admin.logerrors" img="svgs.logs-error">
+                    <x-navigation.sidebar-item route="admin.logerrors" img="svgs.x">
                         Log Errors
                     </x-navigation.sidebar-item>
-                    <x-navigation.sidebar-item route="admin.summary_logs" img="svgs.logs-error">
+                    <x-navigation.sidebar-item route="admin.summary_logs" img="svgs.report">
                         Summary Logs
                     </x-navigation.sidebar-item>
-                    <x-navigation.sidebar-item route="admin.billing_info" img="svgs.logs-error">
+                    <x-navigation.sidebar-item route="admin.billing_info" img="svgs.edit">
                         Billing Info
                     </x-navigation.sidebar-item>
-                    <x-navigation.sidebar-item route="admin.transaction_history" img="svgs.logs-error">
+                    <x-navigation.sidebar-item route="admin.transaction_history" img="svgs.transaction-history">
                         Transaction History
                     </x-navigation.sidebar-item>
                 </ul>

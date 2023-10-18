@@ -1,13 +1,8 @@
 {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> --}}
 <div>
-    <div class="pb-12">
-        <h1 class="font-montserrat text-xl font-semibold text-gray-700 float-left mr-20">
-            Dashboard
-        </h1>
-        
-    
-    
-    </div>
+    <x-page.title svg="svgs.chart">
+        Dashboard
+    </x-page.title>
     <div class="mb-6 border-b w-full xl:w-1/4" >
         <h1 class="text-blue-500  text-xl" style="font-size: 30px">{{date('F d')}}</h1>
         <h4 class="text-blue-500  text-xl" style="font-size: 18px">showing data from {{ $dashWeek }}</h4>
@@ -116,15 +111,15 @@
                 </div>
 
                 <div class="w-full">
-                    <div class="flex items-center text-gray-700 text-xs font-semibold border-b">
-                        <div class="flex-1 px-2 py-4">User Id</div>
-                        <div class="w-32 px-2 py-4">User Name</div>
+                    <div class="flex items-center text-gray-700 text-xm font-semibold border-b">
+                        {{-- <div class="flex-1 px-2 py-4">User Id</div> --}}
+                        <div class="flex-1 px-2 py-4">Users</div>
                     </div>
 
                     @foreach ($userRecords as $record)
-                        <div class="flex items-center text-gray-500 text-sm {{ $loop->last ? '' : 'border-b' }}">
-                            <div class="flex-1 px-2 py-4 truncate">{{ $record->id }}</div>
-                            <div class="w-32 px-2 py-4">{{ $record->firstname }} {{$record->lastname}}</div>
+                        <div class="flex items-center text-gray-500 text-sm border-b">
+                            {{-- <div class="flex-1 px-2 py-4 truncate">{{ $record->id }}</div> --}}
+                            <div class="flex-1 px-2 py-4">{{ $record->firstname }} {{$record->lastname}}</div>
                         </div>
                     @endforeach
                 </div>

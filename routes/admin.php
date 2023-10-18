@@ -31,11 +31,11 @@ Route::middleware('auth:admin')->group(function () {
     Route::get('password/confirm', Confirm::class)->name('password.confirm');
     Route::post('logout', LogoutController::class)->name('logout');
 
-    Route::get('dashboard', Dashboard::class)->name('dashboard');
+    Route::get('accounts', Dashboard::class)->name('accounts');
     Route::get('deletedcompanies', DeletedCompanies::class)->name('deletedcompanies');
     Route::get('logerrors', LogErrors::class)->name('logerrors');
     Route::get('summary_logs', SummaryLogs::class)->name('summary_logs');
-    Route::get('billing_info', BillingInfo::class)->name('billing_info');
+    Route::get('dashboard', BillingInfo::class)->name('dashboard');
     Route::get('transaction_history', TransactionHistory::class)->name('transaction_history');
     Route::get('members', MembersIndex::class)->name('members');
     Route::get('settings', SettingsIndex::class)->name('settings');

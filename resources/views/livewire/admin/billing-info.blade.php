@@ -1,8 +1,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <div>
     <div>
-        <x-page.title svg="svgs.logs-error">
-            Billing Information
+        <x-page.title svg="svgs.chart">
+            Dashboard
         </x-page.title>
     </div>
    

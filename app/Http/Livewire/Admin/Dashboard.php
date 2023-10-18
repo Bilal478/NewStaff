@@ -29,7 +29,7 @@ class Dashboard extends Component
     {
         return view('livewire.admin.dashboard', [
             'accounts' => $this->getAccounts()
-        ])->layout('layouts.admin', ['title' => 'Admin Dashboard']);
+        ])->layout('layouts.admin', ['title' => 'Accounts']);
     }
 
     public function getAccounts()

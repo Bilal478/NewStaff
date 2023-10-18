@@ -1,5 +1,17 @@
 <?php 
 $user_login = auth()->id();
+$totalTime = Carbon\CarbonInterval::createFromDateString('00:00:00');
+foreach ($users as $userName => $activity) {
+    $time = $activity['total'];
+    $timeParts = explode(':', $time);
+    $hours = (int) $timeParts[0];
+    $minutes = (int) $timeParts[1];
+    $seconds = (int) $timeParts[2];
+    $totalTime = $totalTime->addHours($hours)
+                           ->addMinutes($minutes)
+                           ->addSeconds($seconds);
+}
+$totalTimeFormatted = $totalTime->format('%H:%I:%S');
 ?>
 <div>
     <x-page.title svg="svgs.report">
@@ -52,8 +64,11 @@ $user_login = auth()->id();
             Download PDF
         </button>
         {{-- @endif --}}
+        
     </div>
-
+    <div style="float: right">
+        <b>Total Hours = {{$totalTimeFormatted}}</b>
+    </div>
     
     <div class="w-full overflow-x-auto rounded-md border">
         <table class="w-full bg-white">

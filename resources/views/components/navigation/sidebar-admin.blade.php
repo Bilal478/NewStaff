@@ -9,7 +9,10 @@
 
             <div class="pt-6">
                 <ul>
-                    <x-navigation.sidebar-item route="admin.dashboard" img="svgs.office-building">
+                    <x-navigation.sidebar-item route="admin.dashboard" img="svgs.chart">
+                        Dashboard
+                    </x-navigation.sidebar-item>
+                    <x-navigation.sidebar-item route="admin.accounts" img="svgs.office-building">
                         Accounts
                     </x-navigation.sidebar-item>
                     <x-navigation.sidebar-item route="admin.members" img="svgs.users">
@@ -27,13 +30,10 @@
                     <x-navigation.sidebar-item route="admin.logerrors" img="svgs.x">
                         Log Errors
                     </x-navigation.sidebar-item>
-                    <x-navigation.sidebar-item route="admin.summary_logs" img="svgs.report">
+                    <x-navigation.sidebar-item route="admin.summary_logs" img="svgs.logs-error">
                         Summary Logs
                     </x-navigation.sidebar-item>
-                    <x-navigation.sidebar-item route="admin.billing_info" img="svgs.edit">
-                        Billing Info
-                    </x-navigation.sidebar-item>
-                    <x-navigation.sidebar-item route="admin.transaction_history" img="svgs.transaction-history">
+                    <x-navigation.sidebar-item route="admin.transaction_history" img="svgs.report">
                         Transaction History
                     </x-navigation.sidebar-item>
                 </ul>

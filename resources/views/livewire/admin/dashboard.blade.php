@@ -1,8 +1,8 @@
 <div>
-    <div class="pb-12">
-        <h1 class="font-montserrat text-xl font-semibold text-gray-700">
+    <div>
+        <x-page.title svg="svgs.office-building">
             Accounts
-        </h1>
+        </x-page.title>
     </div>
     <div class="md:flex items-center justify-between pb-8">
         <div class="md:flex items-center md:space-x-4">

@@ -26,7 +26,7 @@ class BillingInfo extends Component
         $currentMonthAmount = $this->currentMonthBilledAmount();
         $currentMonthCanceledAmount = $this->currentMonthCanceledAmount();
         return view('livewire.admin.billing-info', compact('accounts', 'activeMembers', 'lastTransaction', 'currentDayAmount', 'currentMonthAmount', 'currentMonthCanceledAmount'))
-            ->layout('layouts.admin', ['title' => 'Billing Info']);
+            ->layout('layouts.admin', ['title' => 'Dashboard']);
     }
 
     public function currentMonthBilledAmount(){

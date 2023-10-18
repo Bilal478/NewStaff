@@ -1,5 +1,5 @@
 <div style="overflow-x: auto;">
-    <x-page.title svg="svgs.logs-error">
+    <x-page.title svg="svgs.x">
         Log Errors
     </x-page.title>
     <table>

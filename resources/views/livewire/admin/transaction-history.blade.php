@@ -4,7 +4,7 @@
 @endphp
 <div>
     <div>
-        <x-page.title svg="svgs.logs-error">
+        <x-page.title svg="svgs.report">
             Transaction History
         </x-page.title>
     </div>

@@ -40,7 +40,7 @@ $totalTimeFormatted = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
                     <x-svgs.arrow-right class="h-4 w-4" />
                 </button>
                 <div class="flex-1">
-                    <x-inputs.datepicker-week-without-label wire:model="week" faux-date="date" class="w-72"
+                    <x-inputs.datepicker-week-without-label wire:model="week" faux-date="date" class="w-60 sm:w-72"
                         name="date" type="text" :clear-button="false" />
                 </div>
 		

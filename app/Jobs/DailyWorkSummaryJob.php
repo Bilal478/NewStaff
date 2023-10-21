@@ -45,7 +45,7 @@ class DailyWorkSummaryJob implements ShouldQueue
         $accountData= [];
         // $this->date = Carbon::now()->subDay()->format('Y-m-d');
         $this->date = '2023-07-31';
-        $records=$this->getUsersReport();
+        $ownersRecords=$this->getUsersReport();
         $membersRecords = $this->getMemberUsersReport();
         $managersRecords = $this->getManagerUsersReport();
 
@@ -106,7 +106,7 @@ class DailyWorkSummaryJob implements ShouldQueue
                        $totalActivity += $userData['total_productivity'];
                     }
                     if ($totalUsers > 0) {
-                        $averageActivity = $totalActivity / $totalUsers;
+                        $averageActivity = ($totalActivity / $totalUsers) - floor($totalActivity / $totalUsers) >= 0.5 ? ceil($totalActivity / $totalUsers) : floor($totalActivity / $totalUsers);
                     } else {
                         $averageActivity = 0;
                     }
@@ -119,11 +119,18 @@ class DailyWorkSummaryJob implements ShouldQueue
                         return $durationB - $durationA;
                     });  
                     $top5Members = array_slice($managerUsers, 0, 5);
+                    $bottom5Members = [];
+                    usort($managerUsers, function ($a, $b) {
+                        $durationA = strtotime($a['total_duration']);
+                        $durationB = strtotime($b['total_duration']);
+                        return $durationA - $durationB; // Compare in ascending order
+                    });
+                    $bottom5Members = array_slice($managerUsers, 0, 5);
                     $account=Account::where('id',$accountId)->first();
                     $accountName= $account->name;
                     $user=User::where('id',$managerId)->first();
                     $userName=$user->firstname.' '.$user->lastname;
-                    Mail::to($user->email)->send(new ManagerDailyWorkSummaryEmail($top5Members,$accountName,$userName,$totalTime,$totalUsers,$averageActivity));
+                    Mail::to('huzaifach508@gmail.com')->send(new ManagerDailyWorkSummaryEmail($top5Members,$accountName,$userName,$totalTime,$totalUsers,$averageActivity,$bottom5Members));
                     $total_emails_sent++;
                 }
               }
@@ -180,7 +187,7 @@ class DailyWorkSummaryJob implements ShouldQueue
         $userId=[];
         $total_productivity=0;
         $count=0;
-        foreach ($records as $accountId => $data) {
+        foreach ($ownersRecords as $accountId => $data) {
           if($data){
             foreach ($data as $record) {
             $topProjects = collect($data)

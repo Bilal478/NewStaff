@@ -16,13 +16,14 @@ class ManagerDailyWorkSummaryEmail extends Mailable
     public $totalTime;
     public $totalUsers;
     public $averageActivity;
+    public $bottom5Members;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($Data,$accountName,$userName,$totalTime,$totalUsers,$averageActivity)
+    public function __construct($Data,$accountName,$userName,$totalTime,$totalUsers,$averageActivity,$bottom5Members)
     {
         $this->accountName = $accountName;
         $this->userName = $userName;
@@ -30,6 +31,7 @@ class ManagerDailyWorkSummaryEmail extends Mailable
         $this->totalTime = $totalTime;
         $this->totalUsers = $totalUsers;
         $this->averageActivity = $averageActivity;
+        $this->bottom5Members = $bottom5Members;
     }
 
     /**
@@ -48,6 +50,7 @@ class ManagerDailyWorkSummaryEmail extends Mailable
             'totalTime'=>$this->totalTime,
             'totalUsers'=>$this->totalUsers,
             'averageActivity'=>$this->averageActivity,
+            'bottom5Members'=>$this->bottom5Members,
         ]);
     }
 }

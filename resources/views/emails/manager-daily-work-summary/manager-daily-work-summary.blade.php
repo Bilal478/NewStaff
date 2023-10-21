@@ -46,6 +46,21 @@
                 </tr>
             @endforeach
         </table>
+        <h2 style="margin-top: 20px;">Low Activity</h2>
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <th style="background-color: #f3f3f3; padding: 10px; text-align: left;">Member</th>
+                <th style="background-color: #f3f3f3; padding: 10px; text-align: left;">Hours Worked</th>
+                <th style="background-color: #f3f3f3; padding: 10px; text-align: left;">Activity</th>
+            </tr>
+            @foreach ($bottom5Members as $member)
+                <tr>
+                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{$member['member_name']}}</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{$member['total_duration']}} total</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{$member['total_productivity']}}% active</td>
+                </tr>
+            @endforeach
+        </table>
     </div>
 </body>
 </html>

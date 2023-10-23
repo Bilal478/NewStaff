@@ -97,20 +97,31 @@ class DailyWorkSummaryJob implements ShouldQueue
 
                     }
                     }
-                    $totalTime = 0;
+                    $totalTimeSeconds = 0;
                     $totalActivity = 0;
                     $totalUsers = count($managerUsers);
 
                     foreach ($managerUsers as $userData) {
-                       $totalTime += strtotime($userData['total_duration']) - strtotime('00:00:00');
+                    //    $totalTime += strtotime($userData['total_duration']) - strtotime('00:00:00');
+                       $time = $userData['total_duration'];
+                       $timeParts = explode(':', $time);
+                       $hours = (int) $timeParts[0];
+                       $minutes = (int) $timeParts[1];
+                       $seconds = (int) $timeParts[2];
+                       $totalTimeSeconds += $hours * 3600 + $minutes * 60 + $seconds;
                        $totalActivity += $userData['total_productivity'];
                     }
+                    $hours = floor($totalTimeSeconds / 3600);
+                    $minutes = floor(($totalTimeSeconds % 3600) / 60);
+                    $seconds = $totalTimeSeconds % 60;
+
+                    $totalTime = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
                     if ($totalUsers > 0) {
                         $averageActivity = ($totalActivity / $totalUsers) - floor($totalActivity / $totalUsers) >= 0.5 ? ceil($totalActivity / $totalUsers) : floor($totalActivity / $totalUsers);
                     } else {
                         $averageActivity = 0;
                     }
-                    $totalTime=gmdate('H:i:s', $totalTime);
+                    // $totalTime=gmdate('H:i:s', $totalTime);
                     
                     $top5Members = [];
                     usort($managerUsers, function ($a, $b) {

@@ -38,7 +38,31 @@
         </div>
 
     </div>
+    <div class="max-w-5xl">
+        <div class="flex items-start flex-wrap -mx-4">
+            <div class="w-full md:w-1/3">
+                <div class="mx-4 mb-4 md:mb-0">
+                    <h6 class="font-montserrat font-semibold text-sm text-gray-700 pb-3">Registration Emails</h6>
+                </div>
+            </div>
+            <div class="w-full md:w-2/3">
+                <article class="bg-white mx-4 mb-8 rounded-md border shadow-sm px-6 py-4">
+                    <form wire:submit.prevent="saveEmail">
+                            <div>
+                                <x-inputs.comment-log-textarea wire:model="emails" label="Emails"  name="emails" type="text" placeholder="Enter emails here" />
+                            </div>     
+                        <div class="flex justify-end mt-2">
+                            <x-buttons.blue-inline type="submit">
+                                Update
+                            </x-buttons.blue-inline>
+                        </div>
+                    </form>
+                </article>
+            </div>
+        </div>
+
+    </div>
 </div>
 @push('modals')
         @livewire('admin.settings.settings-create')
-    @endpush
+@endpush

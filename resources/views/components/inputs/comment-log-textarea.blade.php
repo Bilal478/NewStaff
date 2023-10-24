@@ -3,7 +3,7 @@
     'label',
     'type' => 'text',
     'placeholder' => '',
-    'height' => 'h-16',
+    'height' => 'h-20',
 ])
 
 <div class="pb-6 {{ $attributes->get('class') }}">

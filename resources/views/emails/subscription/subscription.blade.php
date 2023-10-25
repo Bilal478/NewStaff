@@ -8,6 +8,7 @@ $user = Auth::user();
 
 $user_firstname = $user->firstname;
 $user_email = $user->email;
+$ipAddress = $user->ipaddress;
 
 
 $paymentMethods = $user->paymentMethods();

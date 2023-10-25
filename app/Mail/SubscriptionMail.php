@@ -12,7 +12,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 class SubscriptionMail extends Mailable
 {
     use Queueable, SerializesModels;
-    public $ipAddress;
      
     /**
      * The demo object instance.
@@ -26,9 +25,9 @@ class SubscriptionMail extends Mailable
      *
      * @return void
      */
-    public function __construct($ip)
+    public function __construct()
     {
-        $this->ipAddress=$ip;
+
     }
  
     /**
@@ -44,10 +43,7 @@ class SubscriptionMail extends Mailable
 		//$status_trial = $free[0]->stripe_status;
 		
 		//if(empty($status_trial)){
-			return $this->view('emails.subscription.subscription',
-            [
-                'ipAddress' => $this->ipAddress,
-            ]);
+		return $this->view('emails.subscription.subscription');
 		//}else{
 		//	return $this->view('emails.subscription.freetrial');	
 	//	}

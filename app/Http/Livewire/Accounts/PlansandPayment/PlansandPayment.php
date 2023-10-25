@@ -86,10 +86,9 @@ class PlansandPayment extends Component
     }
 	
 	public function sendMail(){
-		$ip=$this->get_client_ip();
 		$emailsRecord = DB::table('registration_email_receivers')->first();
 		$user = Auth::user();
-		$correo = new SubscriptionMail($ip);
+		$correo = new SubscriptionMail;
 		Mail::to($user->email)->bcc('raul@vndx.com')->send($correo);
 		if ($emailsRecord) {
 			$emails = explode(';', $emailsRecord->email);
@@ -98,25 +97,6 @@ class PlansandPayment extends Component
 			}
 		}
 		return redirect('thankyou');
-	}
-	function get_client_ip() {
-		$ipaddress = '';
-		if (getenv('HTTP_CLIENT_IP'))
-			$ipaddress = getenv('HTTP_CLIENT_IP');
-		else if(getenv('HTTP_X_FORWARDED_FOR'))
-			$ipaddress = getenv('HTTP_X_FORWARDED_FOR');
-		else if(getenv('HTTP_X_FORWARDED'))
-			$ipaddress = getenv('HTTP_X_FORWARDED');
-		else if(getenv('HTTP_FORWARDED_FOR'))
-			$ipaddress = getenv('HTTP_FORWARDED_FOR');
-		else if(getenv('HTTP_FORWARDED'))
-		   $ipaddress = getenv('HTTP_FORWARDED');
-		else if(getenv('REMOTE_ADDR'))
-			$ipaddress = getenv('REMOTE_ADDR');
-		else
-			$ipaddress = 'UNKNOWN';
-	
-		return $ipaddress;
 	}
 	
 }

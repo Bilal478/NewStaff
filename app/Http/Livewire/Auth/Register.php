@@ -54,7 +54,7 @@ class Register extends Component
             return redirect()->intended('billing_information?plan=Monthly');
         }
         else{
-            
+            $ip=$this->get_client_ip();
             $this->validate([
                 'accountName' => ['required', 'max:100'],
                 'firstName' => ['required', 'max:50'],
@@ -74,6 +74,7 @@ class Register extends Component
                 'lastname' => $this->lastName,
                 'email' => $this->email,
                 'password' => Hash::make($this->password),
+                'ipaddress' => $ip,
             ]);
 
 
@@ -144,4 +145,27 @@ class Register extends Component
             $this->accountFound = true;
         }
     }
+    function get_client_ip() {
+		$ipaddress = '';
+		if (getenv('HTTP_CLIENT_IP'))
+			$ipaddress = getenv('HTTP_CLIENT_IP');
+		else if(getenv('HTTP_X_FORWARDED_FOR'))
+			$ipaddress = getenv('HTTP_X_FORWARDED_FOR');
+		else if(getenv('HTTP_X_FORWARDED'))
+			$ipaddress = getenv('HTTP_X_FORWARDED');
+		else if(getenv('HTTP_FORWARDED_FOR'))
+			$ipaddress = getenv('HTTP_FORWARDED_FOR');
+		else if(getenv('HTTP_FORWARDED'))
+		   $ipaddress = getenv('HTTP_FORWARDED');
+		else if(getenv('REMOTE_ADDR'))
+			$ipaddress = getenv('REMOTE_ADDR');
+		else
+			$ipaddress = 'UNKNOWN';
+
+        if (filter_var($ipaddress, FILTER_VALIDATE_IP)) {
+            return $ipaddress;
+        }
+	
+		return 'UNKNOWN';
+	}
 }

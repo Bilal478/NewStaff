@@ -22,6 +22,9 @@
         <div class=" w-60 px-3">
         Owner Email
         </div>
+        <div class=" w-32 px-3">
+        IpAddress
+        </div>
         <div class="text-center w-44 px-3">
         Total Active Users
         </div>
@@ -67,6 +70,9 @@
             </div>
             <div class="break-words w-60 px-3 text-gray-700 font-montserrat font-semibold">
                 {{ $user->email }}
+            </div>
+            <div class="break-words w-32 px-3 text-gray-700 font-montserrat font-semibold">
+                {{ $user->ipaddress }}
             </div>
             @php break @endphp
             @elseif($user->pivot->role != 'owner')

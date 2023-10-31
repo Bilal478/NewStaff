@@ -6,6 +6,9 @@
         <div class="w-56 px-3">
             Email
         </div>
+        <div class="w-56 px-3">
+            Status
+        </div>
         <div class="w-20 px-3">
             Actions
         </div>

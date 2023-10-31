@@ -1,11 +1,11 @@
 @props(['task','project'])
 
-<div wire:click.stop="$emit('taskShow', '{{$task->id}}','{{$task->user_id}}')" class="w-full bg-white py-5 rounded-md border mb-3 cursor-pointer hover:shadow-md">
+<div class="w-full bg-white py-5 rounded-md border mb-3 cursor-pointer hover:shadow-md">
     <div class="hidden md:flex items-center text-sm">
-        <div class="flex-1 px-3 text-gray-700 font-montserrat font-semibold">
+        <div wire:click.stop="$emit('taskShow', '{{$task->id}}','{{$task->user_id}}')" class="flex-1 px-3 text-gray-700 font-montserrat font-semibold">
             {{ $task->title }}
         </div>
-        <div class="w-44 px-3">
+        <div wire:click.stop="$emit('taskShow', '{{$task->id}}','{{$task->user_id}}')" class="w-44 px-3">
             <div class="flex items-center">
                 @if ($task->user)
                     <x-user.avatar />
@@ -16,12 +16,12 @@
             </div>
         </div>
 
-        <h4 class="w-32 px-3 text-xs text-gray-500">
+        <h4 wire:click.stop="$emit('taskShow', '{{$task->id}}','{{$task->user_id}}')" class="w-32 px-3 text-xs text-gray-500">
             {{ $task->project->title }}
         </h4>
 
 
-        <div class="w-32 px-3 text-xs text-gray-500">
+        <div wire:click.stop="$emit('taskShow', '{{$task->id}}','{{$task->user_id}}')" class="w-32 px-3 text-xs text-gray-500">
             @if ($task->due_date)
                 {{ $task->due_date->format('M d, Y') }}
             @else
@@ -29,10 +29,10 @@
             @endif
         </div>
         {{-- @dump($task) --}}
-        <div class="w-32 px-3 text-xs text-gray-500">
+        <div wire:click.stop="$emit('taskShow', '{{$task->id}}','{{$task->user_id}}')" class="w-32 px-3 text-xs text-gray-500">
              {{ gmdate("H:i:s", App\Models\Activity::where('project_id',$task->project_id)->where('task_id',$task->id)->sum('seconds'))}}
         </div>
-        <div class="w-32 px-3">
+        <div wire:click.stop="$emit('taskShow', '{{$task->id}}','{{$task->user_id}}')" class="w-32 px-3">
             <x-tasks.status-badge :status="$task->completed" />
         </div>
         <div class="w-20 px-3 flex justify-end">
@@ -42,7 +42,7 @@
         </div>
     </div>
 
-    <div class="text-sm block md:hidden">
+    {{-- <div class="text-sm block md:hidden">
         <div class="flex items-start justify-between">
             <div class="px-4 flex-1 truncate">
                 <div class="flex items-center justify-between mb-3">
@@ -62,5 +62,5 @@
             </div>
             <x-tasks.actions :task="$task" />
         </div>
-    </div>
+    </div> --}}
 </div>

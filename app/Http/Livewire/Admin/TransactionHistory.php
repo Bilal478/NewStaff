@@ -9,6 +9,7 @@ use App\Models\User;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Request;
 use Stripe\Price;
 use Stripe\Stripe;
 
@@ -24,7 +25,8 @@ class TransactionHistory extends Component
         return view('livewire.admin.transaction-history',compact('transactionsData'))
         ->layout('layouts.admin', ['title' => 'Transaction History']);
     }
-    public function transactionsData(){
+    public function transactionsData()
+    {
         Stripe::setApiKey(config('services.stripe.secret'));
 
         $startDate = $this->startDate ? Carbon::parse($this->startDate)->format('Y-m-d') : null;
@@ -46,17 +48,25 @@ class TransactionHistory extends Component
         } elseif ($endDate) {
             $query->whereDate('transaction_log.created_at', '=', $endDate);
         }
-
-        if($this->search){
-          $query->where(function($query) {
-          $query->where('users.firstname', 'like', '%' . $this->search . '%')
-          ->orWhere('users.lastname', 'like', '%' . $this->search . '%')
-          ->orWhere('transaction_log.action', 'like', '%' . $this->search . '%')
-          ->orWhere('accounts.name', 'like', '%' . $this->search . '%');
-          });
-        }
        
-    
+        if ($this->search) {
+          if (strpos($this->search, ',') !== false) {
+            $array = explode(',', $this->search);
+
+            $array = array_map(function($item) {
+                return str_replace(' ', '_', strtolower($item));
+            }, $array);
+            $query->whereIn('transaction_log.action', $array);
+        }
+        else{
+          $query->where(function($query) {
+              $query->where('users.firstname', 'like', '%' . $this->search . '%')
+                  ->orWhere('users.lastname', 'like', '%' . $this->search . '%')
+                  ->orWhere('transaction_log.action', 'like', '%' . $this->search . '%')
+                  ->orWhere('accounts.name', 'like', '%' . $this->search . '%');
+          });
+        }    
+      } 
         $transactionRecords = $query->paginate(10);
         // dd($transactionRecords);
         $allData=[]; // Initialize $allData as an empty array
@@ -90,5 +100,11 @@ class TransactionHistory extends Component
     public function updatedSearch()
     {
     $this->resetPage();
+    }
+    public function mount()
+    {
+    $this->startDate = Request::query('startDate');
+    $this->endDate = Request::query('endDate');
+    $this->search = Request::query('search');
     }
 }

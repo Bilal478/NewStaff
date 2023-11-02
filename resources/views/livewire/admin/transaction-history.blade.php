@@ -40,7 +40,7 @@
                 @elseif ($data['action']=='buy_seats')
                 <td style="padding: 10px;">Buy Seats</td>
                 @elseif ($data['action']=='subscription_user')
-                <td style="padding: 10px;">User Subscription</td>
+                <td style="padding: 10px;">Subscription User</td>
                 @else
                 <td style="padding: 10px;">Delete Seats</td>
                 @endif

@@ -12,11 +12,14 @@
                     <x-navigation.sidebar-item route="admin.dashboard" img="svgs.chart">
                         Dashboard
                     </x-navigation.sidebar-item>
-                    <x-navigation.sidebar-item route="admin.accounts" img="svgs.office-building">
-                        Accounts
-                    </x-navigation.sidebar-item>
                     <x-navigation.sidebar-item route="admin.members" img="svgs.users">
                         Super Admin Users
+                    </x-navigation.sidebar-item>
+                    <x-navigation.sidebar-item route="admin.companies" img="svgs.office-building">
+                        Companies
+                    </x-navigation.sidebar-item>
+                    <x-navigation.sidebar-item route="admin.active_members" img="svgs.user">
+                        Active Members
                     </x-navigation.sidebar-item>
                     <x-navigation.sidebar-item route="admin.settings" img="svgs.settings">
                         Settings

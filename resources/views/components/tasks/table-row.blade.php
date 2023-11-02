@@ -42,9 +42,9 @@
         </div>
     </div>
 
-    {{-- <div class="text-sm block md:hidden">
+    <div class="text-sm block md:hidden">
         <div class="flex items-start justify-between">
-            <div class="px-4 flex-1 truncate">
+            <div wire:click.stop="$emit('taskShow', '{{$task->id}}','{{$task->user_id}}')" class="px-4 flex-1 truncate">
                 <div class="flex items-center justify-between mb-3">
                     <x-tasks.status-badge :status="$task->completed" />
                     <span class="text-xs text-gray-500">
@@ -62,5 +62,5 @@
             </div>
             <x-tasks.actions :task="$task" />
         </div>
-    </div> --}}
+    </div>
 </div>

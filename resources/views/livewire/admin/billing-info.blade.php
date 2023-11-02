@@ -8,6 +8,7 @@
    
     <div class="flex justify-between">
         <div class="w-full sm:w-1/2 xl:w-1/4 text-center mx-4 mb-8">
+            <a href="{{ route('admin.companies') }}">
             <div class="bg-white rounded-md border p-6 h-full info-box">
                 <h3 class="text-sm text-blue-500 xl:tracking-widest uppercase mb-6">
                     TOTAL ACTIVE COMPANIES
@@ -15,19 +16,23 @@
                 <span class="text-2xl text-gray-800">{{ count($accounts) }}</span>
                 <div class="tooltip">This is total active companies</div>
             </div>
+            </a>
         </div>
     
         <div class="w-full sm:w-1/2 xl:w-1/4 text-center mx-4 mb-8">
+            <a href="{{ route('admin.active_members') }}">
             <div class="bg-white rounded-md border p-6 h-full info-box">
                 <h3 class="text-sm text-blue-500 xl:tracking-widest uppercase mb-6">
-                    ACTIVE PAID USERS
+                    ACTIVE PAID MEMBERS
                 </h3>
                 <span class="text-2xl text-gray-800">{{ count($activeMembers) }}</span>
                 <div class="tooltip">This is total active users</div>
             </div>
+            </a>
         </div>
     
         <div class="w-full sm:w-1/2 xl:w-1/4 text-center mx-4 mb-8">
+            <a href="{{ route('admin.transaction_history', ['startDate' => $lastTransaction]) }}">
             <div class="bg-white rounded-md border p-6 h-full info-box">
                 <h3 class="text-sm text-blue-500 xl:tracking-widest uppercase mb-6">
                     LAST TRANSACTION DATE
@@ -37,10 +42,12 @@
                 @endif
                 <div class="tooltip">This is last transaction date</div>
             </div>
+            </a>
         </div>
     </div>
     <div class="flex justify-between">
         <div class="w-full sm:w-1/2 xl:w-1/4 text-center mx-4 mb-8">
+            <a href="{{ route('admin.transaction_history', ['startDate' => date('Y-m-01'),'endDate' => date('Y-m-t'),'search' => 'Buy Seats,Subscription User']) }}">
             <div class="bg-white rounded-md border p-6 h-full info-box">
                 <h3 class="text-sm text-blue-500 xl:tracking-widest uppercase mb-6">
                     CURRENT MONTH BILLED AMOUNT
@@ -48,9 +55,11 @@
                 <span class="text-2xl text-gray-800">${{$currentMonthAmount}}.00</span>
                 <div class="tooltip">This is amount of current month of user subscriptions and buy seats</div>
             </div>
+            </a>
         </div>
     
         <div class="w-full sm:w-1/2 xl:w-1/4 text-center mx-4 mb-8">
+            <a href="{{ route('admin.transaction_history', ['startDate' => date('Y-m-01'),'search' => 'Buy Seats,Subscription User']) }}">
             <div class="bg-white rounded-md border p-6 h-full info-box">
                 <h3 class="text-sm text-blue-500 xl:tracking-widest uppercase mb-6">
                     TODAY BILLED AMOUNT
@@ -58,9 +67,11 @@
                 <span class="text-2xl text-gray-800">${{$currentDayAmount}}.00</span>
                 <div class="tooltip">This is amount of today of user subscriptions and buy seats </div>
             </div>
+            </a>
         </div>
     
         <div class="w-full sm:w-1/2 xl:w-1/4 text-center mx-4 mb-8">
+            <a href="{{ route('admin.transaction_history', ['startDate' => date('Y-m-01'),'endDate' => date('Y-m-t'),'search' => 'Delete Seats,Cancel Subscription']) }}">
             <div class="bg-white rounded-md border p-6 h-full info-box">
                 <h3 class="text-sm text-blue-500 xl:tracking-widest uppercase mb-6">
                     CURRENT MONTH CANCELATION AMOUNT
@@ -68,6 +79,7 @@
                 <span class="text-2xl text-gray-800">${{$currentMonthCanceledAmount}}.00</span>
                 <div class="tooltip">This is amount of current month of cancel subscriptions and delete seats</div>
             </div>
+            </a>
         </div>
     </div>
 </div>

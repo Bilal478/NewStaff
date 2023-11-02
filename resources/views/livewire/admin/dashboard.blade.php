@@ -1,7 +1,7 @@
 <div>
     <div>
         <x-page.title svg="svgs.office-building">
-            Accounts
+            Companies
         </x-page.title>
     </div>
     <div class="md:flex items-center justify-between pb-8">

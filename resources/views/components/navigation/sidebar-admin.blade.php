@@ -28,7 +28,7 @@
                         Desktop Application
                     </x-navigation.sidebar-item>
                     <x-navigation.sidebar-item route="admin.deletedcompanies" img="svgs.trash">
-                        Deleted Accounts
+                        Deleted Companies
                     </x-navigation.sidebar-item>
                     <x-navigation.sidebar-item route="admin.logerrors" img="svgs.x">
                         Log Errors

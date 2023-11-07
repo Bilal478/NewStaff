@@ -88,6 +88,7 @@ class TransactionHistory extends Component
             }
           $totalAmount += $amount;
           $allData[] = [
+            'id' =>  $record->id,
             'userName' =>  $userName,
             'accountName' =>  $accountName,
             'amount'   =>  $totalAmount,

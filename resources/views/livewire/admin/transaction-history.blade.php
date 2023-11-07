@@ -19,6 +19,7 @@
     <table>
         <thead>
             <tr class="text-gray-400 text-xs" style="font-size: 0.85rem; text-align:left;">
+                <th>Transaction Id</th>
                 <th>User Name</th>
                 <th>Company Name</th>
                 <th>Transaction Amount</th>
@@ -31,7 +32,8 @@
         </thead>
         <tbody>
             @foreach ($transactions as $key=>$data)
-            <tr style="font-size:13px;" class="bg-white border border-gray-200 text-gray-500 ">
+            <tr wire:click.stop="$emit('transactionShow','{{ $data['id']}}','{{ $data['amount'] }}')" style="font-size:13px; cursor: pointer;" class="bg-white border border-gray-200 text-gray-500 ">
+                <td style="padding: 10px;">{{ $data['id'] }}</td>
                 <td style="padding: 10px;">{{ $data['userName'] }}</td>
                 <td style="padding: 10px;">{{ $data['accountName'] }}</td>
                 <td style="padding: 10px;">${{ $data['amount'] }}.00</td>
@@ -66,6 +68,9 @@
 
     </div>
 </div>
+@push('modals')
+    @livewire('admin.transaction-history.transactions-show')
+@endpush
 <style>
      .loading-overlay {
         position: fixed;

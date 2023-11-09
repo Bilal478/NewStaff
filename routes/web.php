@@ -50,10 +50,12 @@ use App\Http\Livewire\Accounts\PlansandPayment\PlansandPayment;
 use App\Http\Livewire\Accounts\SummaryLogs\SummaryLogs;
 use App\Http\Livewire\SelectPlan;
 use App\Jobs\DailyWorkSummaryJob;
+use App\Http\Livewire\ManagerSection;
 
 //Route::view('/', 'welcome')->name('home');
 
 //Route::get('/', WelcomeController::class)->name('home');
+Route::get('/manager-section', ManagerSection::class);
 Route::get('work-summary-email', function(){
   
          DailyWorkSummaryJob::dispatch();

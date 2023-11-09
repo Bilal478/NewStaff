@@ -17,16 +17,16 @@ class BillingInfo extends Component
     {
         $accounts = Account::whereNull('deleted_at')->get();
         $activeMembers=Subscription::where('stripe_status' , 'active')->get();
-        $lastTransaction = DB::table('transaction_log')
+        $lastTransactionRecord = DB::table('transaction_log')
         ->orderBy('created_at', 'desc')
         ->first();
+        $lastTransaction=date('Y-m-d', strtotime($lastTransactionRecord->created_at));
 
         $currentDayAmount = $this->currentDayBilledAmount();
         $currentMonthAmount = $this->currentMonthBilledAmount();
         $currentMonthCanceledAmount = $this->currentMonthCanceledAmount();
-        $transactionsData = $this->transactionsData();
-        return view('livewire.admin.billing-info', compact('accounts', 'activeMembers', 'lastTransaction', 'currentDayAmount', 'currentMonthAmount', 'currentMonthCanceledAmount', 'transactionsData'))
-            ->layout('layouts.admin', ['title' => 'Billing Info']);
+        return view('livewire.admin.billing-info', compact('accounts', 'activeMembers', 'lastTransaction', 'currentDayAmount', 'currentMonthAmount', 'currentMonthCanceledAmount'))
+            ->layout('layouts.admin', ['title' => 'Dashboard']);
     }
 
     public function currentMonthBilledAmount(){
@@ -112,43 +112,6 @@ class BillingInfo extends Component
       $totalAmount += $amount;
     }
     return $totalAmount;
-} 
-
-public function transactionsData(){
-  Stripe::setApiKey(config('services.stripe.secret'));
-
-  $transactionRecords = DB::table('transaction_log')->orderBy('created_at','desc')->paginate(10);
-  $allData=[]; // Initialize $allData as an empty array
-
-  foreach ($transactionRecords as $record) {
-    $totalAmount = 0;
-    $subscription = Subscription::where('id', $record->subscription_id)->first();
-    $user = DB::table('users')->where('id',$record->user_id)->first();
-
-    $userName = $user->firstname.' '.$user->lastname;
-
-    // Retrieve price details from Stripe
-    $price = Price::retrieve($subscription->stripe_price);
-    $amount = $price->unit_amount / 100; // Convert cents to dollars
-
-    // If quantity is greater than 1, multiply by quantity
-     if ($record->quantity > 1) {
-        $amount *= $record->quantity;
-      }
-
-    $totalAmount += $amount;
-    
-    // Add this record to $allData
-    $allData[] = [
-      'userName' =>  $userName,
-      'amount'   =>  $totalAmount,
-      'action'   =>  $record->action,
-      'created_at'   =>  $record->created_at
-    ];
-  }
-
-  return [$allData, $transactionRecords];
-  // return $allData;
 } 
 
 }

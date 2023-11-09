@@ -19,6 +19,11 @@ class PlansandPayment extends Component
 {
 	public $search = '';
     public $filter = 'members';
+
+	public function getAccountProperty()
+    {
+        return Account::find(session()->get('account_id'));
+    }
 	
     public function payandcontinue(Request $request){
 		
@@ -39,6 +44,7 @@ class PlansandPayment extends Component
 			$subscription=Subscription::where('user_id',$user->id)->first();
 			DB::table('transaction_log')->insert([
                 'user_id' => $user->id,
+				'account_id' => $this->account->id,
                 'subscription_id' => $subscription->id,
                 'action' => 'subscription_user',
                 'quantity' => $request->selectseats,
@@ -57,6 +63,7 @@ class PlansandPayment extends Component
 			$subscription=Subscription::where('user_id',$user->id)->first();
 			DB::table('transaction_log')->insert([
                 'user_id' => $user->id,
+				'account_id' => $this->account->id,
                 'subscription_id' => $subscription->id,
                 'action' => 'subscription_user',
                 'quantity' => $request->selectseats,
@@ -79,10 +86,17 @@ class PlansandPayment extends Component
     }
 	
 	public function sendMail(){
-		
+		$emailsRecord = DB::table('registration_email_receivers')->first();
 		$user = Auth::user();
 		$correo = new SubscriptionMail;
 		Mail::to($user->email)->bcc('raul@vndx.com')->send($correo);
+		if ($emailsRecord) {
+			$emails = explode(';', $emailsRecord->email);
+			foreach ($emails as $email) {
+				Mail::to($email)->send($correo);
+			}
+		}
 		return redirect('thankyou');
 	}
+	
 }

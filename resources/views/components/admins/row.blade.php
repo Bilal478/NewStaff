@@ -11,15 +11,24 @@
         <div class="w-56 px-3 text-xs text-gray-500">
             {{ $user->email }}
         </div>
+        <div class="w-56 px-3 text-xs text-gray-500">
+        @if ($user->is_disabled == 0)
+            Active
+        @else
+            Disable    
+        @endif
+        </div>
         <div class="w-20 px-3 flex justify-end">
             <x-dropdowns.context-menu>
                 <x-dropdowns.context-menu-item wire:click.stop="updateAdmin({{$user->id}})" name="Edit" svg="svgs.edit"/>
+                @if ($user->id!==Auth::user()->id)   
                 <x-dropdowns.context-menu-item wire:click.stop="adminDelete({{$user->id}})" name="Remove" svg="svgs.x-circle"/>
                 @if($user->is_disabled == 0)
                 <x-dropdowns.context-menu-item wire:click.stop="adminDisable({{$user->id}})" name="Disable" svg="svgs.settings"/>
                 @else
                 <x-dropdowns.context-menu-item wire:click.stop="adminEnable({{$user->id}})" name="Enable" svg="svgs.settings"/>
                 @endif
+                @endif 
             </x-dropdowns.context-menu>
         </div>
     </div>

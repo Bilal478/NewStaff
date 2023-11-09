@@ -8,6 +8,7 @@ $user = Auth::user();
 
 $user_firstname = $user->firstname;
 $user_email = $user->email;
+$ipAddress = $user->ipaddress;
 
 
 $paymentMethods = $user->paymentMethods();
@@ -51,6 +52,7 @@ elseif($user_subscriptions[0]->name =='Monthly'){
 		  <tr>
 			<td colspan="2" style="padding:15px 15px 15px 0px;border-bottom: 1px solid #ddd;">
 				<p style="font-size:14px;margin:0 0 6px 0;"><span style="color:#436D9E;font-weight:bold;display:inline-block;min-width:100px;">Your account: </span><?php echo $user_email;?></p>
+				<p style="font-size:14px;margin:0 0 6px 0;"><span style="color:#436D9E;font-weight:bold;display:inline-block;min-width:100px;">IP Address: </span>{{$ipAddress}}</p>
 				<p style="font-size:14px;margin:0 0 0 0;"><span style="color:#436D9E;font-weight:bold;display:inline-block; min-width:85px;">Billing date: </span><?php echo $date_at; ?></p>  
 			</td>
 		  </tr>

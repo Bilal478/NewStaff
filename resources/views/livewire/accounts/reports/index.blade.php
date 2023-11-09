@@ -1,5 +1,21 @@
 <?php 
 $user_login = auth()->id();
+$totalTimeInSeconds = 0;
+
+foreach ($users as $userName => $activity) {
+    $time = $activity['total'];
+    $timeParts = explode(':', $time);
+    $hours = (int) $timeParts[0];
+    $minutes = (int) $timeParts[1];
+    $seconds = (int) $timeParts[2];
+    $totalTimeInSeconds += $hours * 3600 + $minutes * 60 + $seconds;
+}
+
+$hours = floor($totalTimeInSeconds / 3600);
+$minutes = floor(($totalTimeInSeconds % 3600) / 60);
+$seconds = $totalTimeInSeconds % 60;
+
+$totalTimeFormatted = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
 ?>
 <div>
     <x-page.title svg="svgs.report">
@@ -24,7 +40,7 @@ $user_login = auth()->id();
                     <x-svgs.arrow-right class="h-4 w-4" />
                 </button>
                 <div class="flex-1">
-                    <x-inputs.datepicker-week-without-label wire:model="week" faux-date="date" class="w-56 sm:w-60"
+                    <x-inputs.datepicker-week-without-label wire:model="week" faux-date="date" class="w-60 sm:w-72"
                         name="date" type="text" :clear-button="false" />
                 </div>
 		
@@ -52,8 +68,11 @@ $user_login = auth()->id();
             Download PDF
         </button>
         {{-- @endif --}}
+        
     </div>
-
+    <div style="float: right">
+        <b>Total Hours = {{$totalTimeFormatted}}</b>
+    </div>
     
     <div class="w-full overflow-x-auto rounded-md border">
         <table class="w-full bg-white">

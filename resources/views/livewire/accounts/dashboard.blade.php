@@ -1,13 +1,8 @@
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+{{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> --}}
 <div>
-    <div class="pb-12">
-        <h1 class="font-montserrat text-xl font-semibold text-gray-700 float-left mr-20">
-            Dashboard
-        </h1>
-        
-    
-    
-    </div>
+    <x-page.title svg="svgs.chart">
+        Dashboard
+    </x-page.title>
     <div class="mb-6 border-b w-full xl:w-1/4" >
         <h1 class="text-blue-500  text-xl" style="font-size: 30px">{{date('F d')}}</h1>
         <h4 class="text-blue-500  text-xl" style="font-size: 18px">showing data from {{ $dashWeek }}</h4>
@@ -102,6 +97,9 @@
             </div>
         </div>
     </div>
+    @if (session()->get('account_role') === 'manager')
+    @livewire('manager-section')
+    @endif
 
 </div>
 <style>

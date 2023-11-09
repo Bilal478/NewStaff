@@ -46,6 +46,7 @@ class BillingInfo extends Component
 		$cancel_subscription  = $user->subscription($_GET['planname'])->cancelNow();
 		DB::table('transaction_log')->insert([
 			'user_id' => $user->id,
+			'account_id' => $this->account->id,
 			'subscription_id' => $subscription->id,
 			'action' => 'cancel_subscription',
 			'quantity' => $subscription->quantity,
@@ -67,6 +68,7 @@ class BillingInfo extends Component
 			$user->subscription($_POST['planname'])->decrementQuantity(1);
 			DB::table('transaction_log')->insert([
 				'user_id' => $user->id,
+				'account_id' => $this->account->id,
 				'subscription_id' => $subscription->id,
 				'action' => 'delete_seats',
 				'quantity' => 1,
@@ -78,6 +80,7 @@ class BillingInfo extends Component
 			$user->subscription($_POST['planname'])->decrementQuantity($number_seats);
 			DB::table('transaction_log')->insert([
 				'user_id' => $user->id,
+				'account_id' => $this->account->id,
 				'subscription_id' => $subscription->id,
 				'action' => 'delete_seats',
 				'quantity' => $number_seats,
@@ -112,6 +115,10 @@ class BillingInfo extends Component
         return AccountInvitation::latest()
             ->where('email', 'like', '%' . $this->search . '%');
     }
+	public function getAccountProperty()
+    {
+        return Account::find(session()->get('account_id'));
+    }
 	public function payandcontinue(Request $request){
 		
 		$user = Auth::user();
@@ -124,6 +131,7 @@ class BillingInfo extends Component
 				->incrementQuantity($request->selectseats);
 				DB::table('transaction_log')->insert([
                     'user_id' => $user->id,
+                    'account_id' => $this->account->id,
                     'subscription_id' => $subscription->id,
                     'action' => 'buy_seats',
                     'quantity' => $request->selectseats,

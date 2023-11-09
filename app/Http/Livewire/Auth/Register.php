@@ -9,6 +9,7 @@ use App\Models\Task;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -54,7 +55,7 @@ class Register extends Component
             return redirect()->intended('billing_information?plan=Monthly');
         }
         else{
-            
+            $ip = request()->ip();
             $this->validate([
                 'accountName' => ['required', 'max:100'],
                 'firstName' => ['required', 'max:50'],
@@ -74,6 +75,7 @@ class Register extends Component
                 'lastname' => $this->lastName,
                 'email' => $this->email,
                 'password' => Hash::make($this->password),
+                'ipaddress' => $ip,
             ]);
 
 

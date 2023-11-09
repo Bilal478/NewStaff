@@ -1,8 +1,8 @@
 <div>
-    <div class="pb-12">
-        <h1 class="font-montserrat text-xl font-semibold text-gray-700">
-            Accounts
-        </h1>
+    <div>
+        <x-page.title svg="svgs.office-building">
+            Companies
+        </x-page.title>
     </div>
     <div class="md:flex items-center justify-between pb-8">
         <div class="md:flex items-center md:space-x-4">
@@ -13,14 +13,14 @@
     </div>
     <div class="w-full pb-4">
     <div class="uppercase text-xs text-gray-400 font-medium hidden md:flex items-center">
+        <div class="w-12 px-3">
+        
+        </div>
         <div class="w-44 px-3">
         Company Name
         </div>
         <div class=" w-44 px-3">
         Owner Name
-        </div>
-        <div class=" w-60 px-3">
-        Owner Email
         </div>
         <div class="text-center w-44 px-3">
         Total Active Users
@@ -54,19 +54,25 @@
 
 <div  class="w-full bg-white py-5 rounded-md border mb-3 cursor-pointer hover:shadow-md">
     <div class="hidden md:flex items-center text-sm">
+        <div class="w-12 px-1 text-gray-700 flex font-montserrat font-semibold">
+            <button wire:click="toggleRow({{ $index }})">
+                @if (isset($expandedRows[$index]))
+                <x-svgs.minus class="w-6 h-6 text-blue-600 mr-3" />
+                @else
+                <x-svgs.plus class="w-6 h-6 text-blue-600 mr-3" />
+                @endif
+            </button>
+        </div>
         <div class="w-44 px-3 text-gray-700 flex font-montserrat font-semibold">
         
-                    <x-svgs.office-building class="w-6 h-6 text-blue-600 mr-3" />
-                    {{ $account->name }}
-               
+            <x-svgs.office-building class="w-6 h-6 text-blue-600 mr-3" />
+            {{ $account->name }}
         </div>
         @foreach ($account->users as $user)
             @if($user->pivot->role == 'owner')
             <div class="w-44 px-3 text-gray-700 font-montserrat font-semibold">
-                {{ $user->firstname }} {{ $user->firstname }} {{count($account->users)}}
-            </div>
-            <div class="break-words w-60 px-3 text-gray-700 font-montserrat font-semibold">
-                {{ $user->email }}
+                {{-- {{ $user->firstname }} {{ $user->firstname }} {{count($account->users)}} --}}
+                {{ $user->firstname }} {{ $user->lastname }} 
             </div>
             @php break @endphp
             @elseif($user->pivot->role != 'owner')
@@ -118,6 +124,29 @@
         </x-dropdowns.context-menu>
         </div>
     </div>
+    @if (isset($expandedRows[$index]))
+    <div class="text-xs mt-5 text-gray-400 font-medium hidden md:flex items-center">
+        <div class="w-12 px-3">
+        
+        </div>
+        <div class="w-44 px-3" style="font-size: 13px;">
+        EMAIL
+        </div>
+        <div class="w-44 text-gray-700" style="font-size: 13px;">
+        {{$user->email}}
+        </div>
+    </div>
+    <div class="text-xs mt-5 text-gray-700 font-medium hidden md:flex items-center">
+        <div class="w-12 px-3">
+        </div>
+        <div class="w-44 px-3 text-gray-400" style="font-size: 13px;">
+        IP ADDRESS
+        </div>
+        <div class="w-44" style="font-size: 13px;">
+        {{$user->ipaddress}}
+        </div>
+    </div>
+@endif
 
 </div>
 @endforeach

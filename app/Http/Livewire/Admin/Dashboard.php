@@ -13,6 +13,8 @@ class Dashboard extends Component
     use WithPagination, Notifications;
     public $search = '';
     public $accountStorage = [];
+    public $selectedRow;
+    public $expandedRows=[];
     protected $listeners = [
         'accountEdit' => 'accountEdit',
         'accountsRefresh' => '$refresh',
@@ -29,7 +31,7 @@ class Dashboard extends Component
     {
         return view('livewire.admin.dashboard', [
             'accounts' => $this->getAccounts()
-        ])->layout('layouts.admin', ['title' => 'Admin Dashboard']);
+        ])->layout('layouts.admin', ['title' => 'Companies']);
     }
 
     public function getAccounts()
@@ -98,5 +100,13 @@ class Dashboard extends Component
         $this->reset();
         $this->emit('accountsRefresh');
         
+    }
+    public function toggleRow($key)
+    {
+        if (isset($this->expandedRows[$key])) {
+            unset($this->expandedRows[$key]);
+        } else {
+            $this->expandedRows[$key] = true;
+        }
     }
 }

@@ -1,10 +1,11 @@
 <div style="overflow-x: auto;">
-    <x-page.title svg="svgs.logs-error">
+    <x-page.title svg="svgs.x">
         Log Errors
     </x-page.title>
     <table>
         <thead>
             <tr class="text-gray-400 text-xs" style="font-size: 0.85rem;">
+                <th style="text-align: left">Ticket Id</th>
                 <th style="text-align: left">Error Message</th>
                 <th>Date Occurred</th>
                 <th>Last Date Occurred</th>
@@ -20,6 +21,7 @@
         <tbody>
             @foreach ($logsData as $data)
             <tr style="font-size:13px;" class="bg-white border border-gray-200 text-gray-500 ">
+                <td style="padding: 10px; text-align: left;">{{ $data->id }}</td>
                 <td style="text-align: left; padding: 10px;">{{ Str::limit($data->message, 50) }}</td>
                 <td style="padding: 10px;">{{ $data->timestamp }}</td>
                 <td style="padding: 10px;">{{ $data->last_date_ocurred }}</td>
@@ -75,11 +77,11 @@
         /* background-color: #f2f2f2; */
     }
 
-    th:first-child,
+    /* th:first-child,
     td:first-child {
         flex: 2; /* Set the width of the first column (Error Message) to double the others */
         min-width: 200px; /* Set a minimum width to ensure responsiveness */
-    }
+    } */
 
     @media screen and (max-width: 600px) {
         table, thead, tbody, th, td, tr {

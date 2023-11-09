@@ -45,7 +45,7 @@
                     Admin
                 </h4>
                  <ul>
-                     <li class="px-2 py-1">
+                    {{-- <li class="px-2 py-1">
                         <a href="{{ url('/departments') }}"
                             class="px-3 py-2 text-sm rounded-md flex items-center  text-gray-500 hover:bg-gray-100 hover:text-blue-600">
                             <svg   id="Capa_1"   class="w-5 h-5 mr-2"   viewBox="0 0 512 512"   xmlns="http://www.w3.org/2000/svg">
@@ -54,7 +54,11 @@
                             </svg>
                             Departments
                         </a>
-                    </li> 
+                    </li> --}} 
+                    <x-navigation.sidebar-item route="accounts.departments" img="svgs.departments">
+                        Departments
+                    </x-navigation.sidebar-item>
+                    
                     {{-- <x-navigation.sidebar-item route="accounts.teams" img="svgs.team">
                         Teams
                     </x-navigation.sidebar-item> --}}
@@ -92,7 +96,7 @@
                 if(in_array('departments', $permissions)){
                 @endphp
                     
-                        <li class="px-2 py-1">
+                        {{-- <li class="px-2 py-1">
                                     <a href="{{ url('/departments') }}"
                                         class="px-3 py-2 text-sm rounded-md flex items-center  text-gray-500 hover:bg-gray-100 hover:text-blue-600">
                                         <svg   id="Capa_1"   class="w-5 h-5 mr-2"   viewBox="0 0 512 512"   xmlns="http://www.w3.org/2000/svg">
@@ -101,7 +105,11 @@
                                         </svg>
                                         Departments
                                     </a>
-                        </li>
+                        </li> --}}
+
+                        <x-navigation.sidebar-item route="accounts.departments" img="svgs.departments">
+                        Departments
+                        </x-navigation.sidebar-item>
                     
                 @php
                 }

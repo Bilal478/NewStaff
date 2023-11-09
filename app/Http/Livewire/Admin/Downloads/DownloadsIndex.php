@@ -36,7 +36,7 @@ class DownloadsIndex extends Component
     {
 
         return view('livewire.admin.downloads.index', [
-        ])->layout('layouts.admin', ['title' => 'Settings']);
+        ])->layout('layouts.admin', ['title' => 'Desktop App']);
     }
 
     public function refreshSettings(){

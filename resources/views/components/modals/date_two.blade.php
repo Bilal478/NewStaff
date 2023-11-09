@@ -2,7 +2,7 @@
     <div
         x-show="open"
         x-cloak
-        x-on:click="open = false"
+        x-on:click="open = true"
         class="fixed inset-0 bg-red-200 z-20 p-4 md:p-10"
         style="background-color: rgba(0, 0, 0, 0.5); overflow:scroll;"
     >

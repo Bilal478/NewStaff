@@ -9,11 +9,17 @@
 
             <div class="pt-6">
                 <ul>
-                    <x-navigation.sidebar-item route="admin.dashboard" img="svgs.office-building">
-                        Accounts
+                    <x-navigation.sidebar-item route="admin.dashboard" img="svgs.chart">
+                        Dashboard
                     </x-navigation.sidebar-item>
                     <x-navigation.sidebar-item route="admin.members" img="svgs.users">
                         Super Admin Users
+                    </x-navigation.sidebar-item>
+                    <x-navigation.sidebar-item route="admin.companies" img="svgs.office-building">
+                        Companies
+                    </x-navigation.sidebar-item>
+                    <x-navigation.sidebar-item route="admin.active_members" img="svgs.user">
+                        Active Members
                     </x-navigation.sidebar-item>
                     <x-navigation.sidebar-item route="admin.settings" img="svgs.settings">
                         Settings
@@ -21,17 +27,17 @@
                     <x-navigation.sidebar-item route="admin.getsetupversion" img="svgs.download">
                         Desktop Application
                     </x-navigation.sidebar-item>
-                    <x-navigation.sidebar-item route="admin.deletedcompanies" img="svgs.x-circle">
-                        Deleted Accounts
+                    <x-navigation.sidebar-item route="admin.deletedcompanies" img="svgs.trash">
+                        Deleted Companies
                     </x-navigation.sidebar-item>
-                    <x-navigation.sidebar-item route="admin.logerrors" img="svgs.logs-error">
+                    <x-navigation.sidebar-item route="admin.logerrors" img="svgs.x">
                         Log Errors
                     </x-navigation.sidebar-item>
                     <x-navigation.sidebar-item route="admin.summary_logs" img="svgs.logs-error">
                         Summary Logs
                     </x-navigation.sidebar-item>
-                    <x-navigation.sidebar-item route="admin.billing_info" img="svgs.logs-error">
-                        Billing Info
+                    <x-navigation.sidebar-item route="admin.transaction_history" img="svgs.report">
+                        Transaction History
                     </x-navigation.sidebar-item>
                 </ul>
             </div>

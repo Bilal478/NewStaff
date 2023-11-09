@@ -31,7 +31,7 @@ $account_user = DB::table('account_user')
                     <x-svgs.arrow-right class="h-4 w-4" />
                 </button>
                 <div class="flex-1">
-                    <x-inputs.datepicker-week-without-label wire:model="week" faux-date="date" class="w-56 sm:w-60"
+                    <x-inputs.datepicker-week-without-label wire:model="week" faux-date="date" class="w-60 sm:w-72"
                         name="date" type="text" :clear-button="false" />
                 </div>
 		

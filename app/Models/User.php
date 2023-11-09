@@ -29,6 +29,7 @@ class User extends Authenticatable
         'department',
         'punchin_pin_code',
         'punchin_pin_code_active',
+        'ipaddress',
     ];
 
     protected $hidden = [

@@ -52,15 +52,15 @@
 <div>
 @foreach ($accounts as $index=>$account)
 
-<div  class="w-full bg-white py-5 rounded-md border mb-3 cursor-pointer hover:shadow-md">
+<div x-data="{ expanded: false }"  class="w-full bg-white py-5 rounded-md border mb-3 cursor-pointer hover:shadow-md">
     <div class="hidden md:flex items-center text-sm">
         <div class="w-12 px-1 text-gray-700 flex font-montserrat font-semibold">
-            <button wire:click="toggleRow({{ $index }})">
-                @if (isset($expandedRows[$index]))
-                <x-svgs.minus class="w-6 h-6 text-blue-600 mr-3" />
-                @else
-                <x-svgs.plus class="w-6 h-6 text-blue-600 mr-3" />
-                @endif
+            <button  @click="expanded = !expanded">
+               
+                <x-svgs.minus x-show="expanded" class="w-6 h-6 text-blue-600 mr-3" />
+                
+                <x-svgs.plus x-show="!expanded" class="w-6 h-6 text-blue-600 mr-3" />
+                
             </button>
         </div>
         <div class="w-44 px-3 text-gray-700 flex font-montserrat font-semibold">
@@ -124,8 +124,9 @@
         </x-dropdowns.context-menu>
         </div>
     </div>
-    @if (isset($expandedRows[$index]))
-    <div class="text-xs mt-5 text-gray-400 font-medium hidden md:flex items-center">
+    <div class="" x-show="expanded">
+    <hr>
+    <div class="text-xs mt-5 text-gray-400 hidden font-medium  md:flex items-center extra_record_{{$index}}">
         <div class="w-12 px-3">
         
         </div>
@@ -133,20 +134,20 @@
         EMAIL
         </div>
         <div class="w-44 text-gray-700" style="font-size: 13px;">
-        {{$user->email}}
+        {{isset($user) ? $user->email :""}}
         </div>
     </div>
-    <div class="text-xs mt-5 text-gray-700 font-medium hidden md:flex items-center">
+    <div class="text-xs mt-5 text-gray-700 font-medium md:flex items-center">
         <div class="w-12 px-3">
         </div>
         <div class="w-44 px-3 text-gray-400" style="font-size: 13px;">
         IP ADDRESS
         </div>
         <div class="w-44" style="font-size: 13px;">
-        {{$user->ipaddress}}
+        {{isset($user) ? $user->ipaddress:""}}
         </div>
     </div>
-@endif
+    </div>
 
 </div>
 @endforeach

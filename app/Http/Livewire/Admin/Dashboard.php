@@ -101,12 +101,4 @@ class Dashboard extends Component
         $this->emit('accountsRefresh');
         
     }
-    public function toggleRow($key)
-    {
-        if (isset($this->expandedRows[$key])) {
-            unset($this->expandedRows[$key]);
-        } else {
-            $this->expandedRows[$key] = true;
-        }
-    }
 }

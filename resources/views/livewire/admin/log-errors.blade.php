@@ -4,31 +4,38 @@
     </x-page.title>
     <table>
         <thead>
-            <tr class="text-gray-400 text-xs" style="font-size: 0.85rem;">
-                <th style="text-align: left">Ticket Id</th>
-                <th style="text-align: left">Error Message</th>
-                <th>Date Occurred</th>
-                <th>Last Date Occurred</th>
-                <th>Times Occurred</th>
-                <th>Completed Date</th>
-                <th>Status</th>
-                <th>Action</th>
+            <tr class="uppercase font-medium text-gray-400 text-xs">
+                <td style="text-align: left">Ticket Id</td>
+                <td style="text-align: left">Error Message</td>
+                <td>Date Occurred</td>
+                <td>Last Date Occurred</td>
+                <td>Times Occurred</td>
+                <td>Completed Date</td>
+                <td>Status</td>
+                <td>Action</td>
             </tr>
-            <tr style="background-color: transparent;">
+            {{-- <tr style="background-color: transparent;">
                 <th style="height: 10px;"></th>
-            </tr>
+            </tr> --}}
         </thead>
         <tbody>
             @foreach ($logsData as $data)
             <tr style="font-size:13px;" class="bg-white border border-gray-200 text-gray-500 ">
-                <td style="padding: 10px; text-align: left;">{{ $data->id }}</td>
+                <td style="padding: 10px; text-align: left;">
+                    <div class="flex items-center">
+                        <x-user.error />
+                        <span class="ml-3 block text-left font-montserrat text-xs font-semibold text-gray-500">
+                            {{ $data->id }}
+                        </span>
+                    </div>
+                </td>
                 <td style="text-align: left; padding: 10px;">{{ Str::limit($data->message, 50) }}</td>
-                <td style="padding: 10px;">{{ $data->timestamp }}</td>
-                <td style="padding: 10px;">{{ $data->last_date_ocurred }}</td>
-                <td style="padding: 10px;">{{ $data->times_ocurred }}</td>
-                <td style="padding: 10px;">{{ $data->completed_date }}</td>
-                <td style="padding: 10px;">{{ $data->status }}</td>
-                <td style="padding: 10px;">
+                <td style="padding: 19px;">{{ $data->timestamp }}</td>
+                <td style="padding: 19px;">{{ $data->last_date_ocurred }}</td>
+                <td style="padding: 19px;">{{ $data->times_ocurred }}</td>
+                <td style="padding: 19px;">{{ $data->completed_date }}</td>
+                <td style="padding: 19px;">{{ $data->status }}</td>
+                <td style="padding: 19px;">
                     <x-dropdowns.context-menu>
                         <x-dropdowns.context-menu-item  name="Edit" wire:click.stop="$emit('logErrorsEdit', {{$data->id}})" svg="svgs.edit"/>
                     </x-dropdowns.context-menu>

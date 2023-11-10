@@ -14,9 +14,9 @@
                 <td>Status</td>
                 <td>Action</td>
             </tr>
-            {{-- <tr style="background-color: transparent;">
+            <tr style="background-color: transparent;">
                 <th style="height: 10px;"></th>
-            </tr> --}}
+            </tr>
         </thead>
         <tbody>
             @foreach ($logsData as $data)
@@ -30,12 +30,12 @@
                     </div>
                 </td>
                 <td style="text-align: left; padding: 10px;">{{ Str::limit($data->message, 50) }}</td>
-                <td style="padding: 19px;">{{ $data->timestamp }}</td>
-                <td style="padding: 19px;">{{ $data->last_date_ocurred }}</td>
-                <td style="padding: 19px;">{{ $data->times_ocurred }}</td>
-                <td style="padding: 19px;">{{ $data->completed_date }}</td>
-                <td style="padding: 19px;">{{ $data->status }}</td>
-                <td style="padding: 19px;">
+                <td style="padding: 20px;">{{ $data->timestamp }}</td>
+                <td style="padding: 20px;">{{ $data->last_date_ocurred }}</td>
+                <td style="padding: 20px;">{{ $data->times_ocurred }}</td>
+                <td style="padding: 20px;">{{ $data->completed_date }}</td>
+                <td style="padding: 20px;">{{ $data->status }}</td>
+                <td style="padding: 20px;">
                     <x-dropdowns.context-menu>
                         <x-dropdowns.context-menu-item  name="Edit" wire:click.stop="$emit('logErrorsEdit', {{$data->id}})" svg="svgs.edit"/>
                     </x-dropdowns.context-menu>

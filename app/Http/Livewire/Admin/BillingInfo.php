@@ -10,6 +10,10 @@ use Livewire\Component;
 use Carbon\Carbon;
 use Stripe\Price;
 use Stripe\Stripe;
+// use Stripe\Invoice;
+// use Stripe\SetupIntent;
+// use Stripe\PaymentIntent;
+// use Stripe\Subscription as StripeSubscription;
 
 class BillingInfo extends Component
 {
@@ -39,15 +43,19 @@ class BillingInfo extends Component
         ->get();
 
         $totalAmount = 0;
-
+        // $price = StripeSubscription::retrieve('sub_1OC6V1AdgPnFPgwGGRIZDXO8');
+        // dd($price);
+        // $price = PaymentIntent::retrieve('pi_3OCzm0AdgPnFPgwG0XUcCzqK');
+        // dd($price);
         foreach ($currentMonthTransactions as $transaction) {
           $subscription=Subscription::where('id',$transaction->subscription_id)->first();
+          if($subscription){
           $priceId = $subscription->stripe_price;
     
           // Retrieve price details from Stripe
           $price = Price::retrieve($priceId);
           $amount = $price->unit_amount / 100; // Convert cents to dollars
-
+          }
           // If quantity is greater than 1, multiply by quantity
            if ($transaction->quantity > 1) {
               $amount *= $transaction->quantity;
@@ -98,12 +106,13 @@ class BillingInfo extends Component
 
     foreach ($currentMonthCanceledTransactions as $transaction) {
       $subscription=Subscription::where('id',$transaction->subscription_id)->first();
-      $priceId = $subscription->stripe_price;
-
-      // Retrieve price details from Stripe
-      $price = Price::retrieve($priceId);
-      $amount = $price->unit_amount / 100; // Convert cents to dollars
-
+      if($subscription){
+        $priceId = $subscription->stripe_price;
+  
+        // Retrieve price details from Stripe
+        $price = Price::retrieve($priceId);
+        $amount = $price->unit_amount / 100; // Convert cents to dollars
+        }
       // If quantity is greater than 1, multiply by quantity
        if ($transaction->quantity > 1) {
           $amount *= $transaction->quantity;

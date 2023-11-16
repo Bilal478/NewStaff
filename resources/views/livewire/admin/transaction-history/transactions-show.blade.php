@@ -29,11 +29,9 @@
                 <span>Date:</span>
                 <span>{{ $transactionRecord->created_at }}</span>
             </div>
-            @endif
-            @if ($stripeId)
             <div class="flex justify-between mb-2">
-                <span>Stripe ID:</span>
-                <a href="https://stripe.com/dashboard/payments/{{ $stripeId }}" target="_blank" class="text-blue-500">{{ $stripeId }}</a>
+                <span>Payment ID:</span>
+                <a href="https://stripe.com/dashboard/payments/{{  $transactionRecord->payment_intent_id }}" target="_blank" class="text-blue-500">{{ $transactionRecord->payment_intent_id }}</a>
             </div>
             </div>
             @endif

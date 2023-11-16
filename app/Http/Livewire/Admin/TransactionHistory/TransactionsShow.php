@@ -16,20 +16,20 @@ class TransactionsShow extends Component
     public function render()
 {
     $record = DB::table('transaction_log')->where('id', $this->transactionId)->first();
-    $subscription = null;
-    $stripeId = null;
+    // $subscription = null;
+    // $stripeId = null;
 
-    if ($record) {
-        $subscription = Subscription::find($record->subscription_id);
-        if ($subscription) {
-            $stripeId = $subscription->stripe_id;
-        }
-    }
+    // if ($record) {
+    //     $subscription = Subscription::find($record->subscription_id);
+    //     if ($subscription) {
+    //         $stripeId = $subscription->stripe_id;
+    //     }
+    // }
 
     return view('livewire.admin.transaction-history.transactions-show', [
         'transactionRecord' => $record,
         'transactionAmount' => $this->transactionAmount,
-        'stripeId' => $stripeId,
+        
     ]);
 }
 

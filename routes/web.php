@@ -14,6 +14,8 @@ use App\Http\Livewire\Accounts\Billing\BillingInfo;
 use App\Http\Livewire\Accounts\Account\AccountCreate;
 use App\Http\Livewire\Accounts\Account\AccountEdit;
 use App\Http\Livewire\Accounts\Activities\ActivitiesIndex;
+use App\Http\Livewire\Accounts\BillingPage\BillingPage;
+use App\Http\Livewire\Accounts\BuySubscription\BuySubscription;
 use App\Http\Livewire\Accounts\Companies\CompaniesIndex;
 use App\Http\Livewire\Accounts\Companies\CompaniesShow;
 use App\Http\Livewire\Accounts\Welcome\Welcome;
@@ -100,7 +102,14 @@ Route::middleware(['auth:web', 'account.verify'])->group(function () {
     Route::get('password/confirm', Confirm::class)->name('password.confirm');
     Route::post('logout', LogoutController::class)->name('logout');
     Route::post('logout2', Logout2Controller::class)->name('logout2');
+
+    // routes/web.php
+
+
 	
+Route::get('/buy_subscription',BuySubscription::class)->name('buy_subscription');
+Route::get('/billing_page',BillingPage::class)->name('billing_page');
+Route::post('/billing_page',[BillingPage::class, 'payandcontinue']);
 	
 	Route::get('/billing_information', [PlansandPayment::class, 'index'])->name('billing_information');
 	Route::post('/billing_information', [PlansandPayment::class, 'payandcontinue']);

@@ -20,19 +20,22 @@
             <div class="w-56 px-3">
                 Transaction Id
             </div>
-            <div class="w-56 px-3 text-center">
+            <div class="w-60 px-3 ">
+                Stripe Id
+            </div>
+            <div class="w-56  text-center">
                 User Name
             </div>
             <div class="w-56 px-3 text-center">
                 Company Name
             </div>
-            <div class="w-56 px-3 text-center">
-                Transaction Amount
+            <div class="w-44 px-3 text-center">
+                Amount
             </div>
-            <div class="w-56 px-3 text-center">
-                Transaction Detail
+            <div class="w-44 px-3 text-center">
+                Details
             </div>
-            <div class="w-56 px-3 text-center">
+            <div class="w-44 px-3 text-center">
                 DateTime
             </div>
         </div>
@@ -48,27 +51,32 @@
                     </span>
                 </div>
             </div>
-            <div class="w-56 px-3 text-xs text-gray-500 text-center">
+            <div class="w-60  text-xs text-gray-500 text-center">
+                {{-- {{ $data['payment_intent_id'] }} --}}
+                
+pi_3OD2twAdgPnFPgwG1MwovEmB
+            </div>
+            <div class="w-56 text-xs text-gray-500 text-center">
                 {{ $data['userName'] }}
             </div>
             <div class="w-56 px-3 text-xs text-gray-500 text-center">
                 {{ $data['accountName'] }}
             </div>
-            <div class="w-56 px-3 text-xs text-gray-500 text-center">
+            <div class="w-44 px-3 text-xs text-gray-500 text-center">
                 ${{ $data['amount'] }}.00
             </div>
-            <div class="w-56 px-3 text-xs text-gray-500 text-center">
-                @if ($data['action']=='cancel_subscription')
+            <div class="w-44 px-3 text-xs text-gray-500 text-center">
+                @if ($data['action']=='CANCEL_SUBSCRIPTION')
                 <td style="padding: 10px;">Cancel Subscription</td>
-                @elseif ($data['action']=='buy_seats')
-                <td style="padding: 10px;">Buy Seats</td>
-                @elseif ($data['action']=='subscription_user')
+                @elseif ($data['action']=='DELETE_SEATS')
+                <td style="padding: 10px;">Delete Seats</td>
+                @elseif ($data['action']=='SUBSCRIPTION_USER')
                 <td style="padding: 10px;">Subscription User</td>
                 @else
-                <td style="padding: 10px;">Delete Seats</td>
+                <td style="padding: 10px;">Buy Seats</td>
                 @endif
-            </div>
-            <div class="w-56 px-3 text-xs text-gray-500 text-center">
+               </div>
+            <div class="w-44 px-3 text-xs text-gray-500 text-center">
                 {{ $data['created_at'] }}
             </div>
         </div>  
@@ -84,13 +92,13 @@
         </div>
     <div class="pt-5">
         {{ $transactionRecords->links() }}
-    </div> 
+    </div>
 </div>
 @push('modals')
     @livewire('admin.transaction-history.transactions-show')
 @endpush
 <style>
-    .loading-overlay {
+     .loading-overlay {
         position: fixed;
         top: 0;
         left: 0;
@@ -104,15 +112,15 @@
     }
     .loading-animation {
     /* Add your styles for the loading animation */
-        border: 4px solid #f3f3f3;
-        border-top: 4px solid #3498db;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        animation: spin 2s linear infinite;
-    }
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 2s linear infinite;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
 </style>

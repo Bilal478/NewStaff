@@ -10,25 +10,46 @@
     </div>
     <div class="w-full pb-4">
         <div class="uppercase text-xs text-gray-400 font-medium flex items-center">
-            <div class="flex-1 px-3">
+            <div class="w-12 px-3">
+        
+            </div>
+            <div class="w-60" style="padding-left: 27px">
                 User Name
             </div>
-            <div class="w-56 px-3">
+            <div class="w-44 px-3">
                 Companies
             </div>
-            <div class="w-56 px-3">
+            <div class="w-60 px-3">
                 Email
             </div>
-            <div class="w-56 px-3">
+            <div class="w-44 px-3">
                 Registration Date
+            </div>
+            <div class="w-44 px-3 text-center">
+                Puchin Pin Code
+            </div>
+            <div class="w-44 px-3 text-center">
+                Last Login At
+            </div>
+            <div class="w-20 px-3">
+                Actions
             </div>
         </div>
     </div>
     @foreach ($userData as $data)
     @if($data['user_data'])
-    <div wire:click.stop="$emit('memberShow','{{ $data['user_data']->id }}')" class="w-full bg-white py-5 rounded-md border mb-3" style="cursor: pointer;">
+    <div x-data="{ expanded: false }" class="w-full bg-white py-5 rounded-md border mb-3" style="cursor: pointer;">
         <div class="flex items-center text-sm">
-            <div class="flex-1 px-3 truncate">
+            <div class="w-12 px-1 text-gray-700 flex font-montserrat font-semibold">
+                <button  @click="expanded = !expanded">
+                   
+                    <x-svgs.minus x-show="expanded" class="w-6 h-6 text-blue-600 mr-3" />
+                    
+                    <x-svgs.plus x-show="!expanded" class="w-6 h-6 text-blue-600 mr-3" />
+                    
+                </button>
+            </div>
+            <div wire:click.stop="$emit('memberShow','{{ $data['user_data']->id }}')" class="w-60 px-3 truncate">
                 <div class="flex items-center">
                     <x-user.avatar />
                     <span class="ml-3 block text-left font-montserrat text-xs font-semibold text-gray-500">
@@ -36,42 +57,78 @@
                     </span>
                 </div>
             </div>
-            <div class="w-56 px-3 text-xs text-gray-500">
+            <div wire:click.stop="$emit('memberShow','{{ $data['user_data']->id }}')" class="w-44 px-3 text-xs text-gray-500">
                 @if ($data['accounts_data']->isNotEmpty())
                 @foreach($data['accounts_data'] as $index => $account) 
                     {{ $account->name }}
                     @if ($index < $data['accounts_data']->count() - 1)
                         ,
                     @endif
-                @endforeach
-                @else
-                No Company
-                @endif
-            </div>
-            <div class="w-56 px-3 text-xs text-gray-500">
-                {{ $data['user_data']->email }}
-            </div>
-            <div class="w-56 px-3 text-xs text-gray-500">
-                {{ $data['user_data']->created_at }}
-            </div>
-        </div>  
-    </div>
-    @endif   
-    @endforeach
-        <div wire:loading>
-            <!-- Show the loading animation -->
-            <div class="loading-overlay">
-            <div  class="loading-animation">
-                <!-- Add your loading animation here -->  
-            </div>
-            </div>
+                    @endforeach
+                    @else
+                    No Company
+                    @endif
+                </div>
+                <div wire:click.stop="$emit('memberShow','{{ $data['user_data']->id }}')" class="w-60 px-3 text-xs text-gray-500">
+                    {{ $data['user_data']->email }}
+                </div>
+                <div wire:click.stop="$emit('memberShow','{{ $data['user_data']->id }}')" class="w-44 px-3 text-xs text-gray-500">
+                    {{ $data['user_data']->created_at }}
+                </div>
+                <div wire:click.stop="$emit('memberShow','{{ $data['user_data']->id }}')" class="w-44 px-3 text-xs text-gray-500 text-center">
+                    {{ $data['user_data']->punchin_pin_code }}
+                </div> 
+                <div wire:click.stop="$emit('memberShow','{{ $data['user_data']->id }}')" class="w-44 px-3 text-xs text-gray-500 text-center">
+                    {{ $data['user_data']->last_login_at }}
+                </div>
+                <div class="text-center w-20 px-3 flex justify-end">
+                    <x-dropdowns.context-menu>
+                        <x-dropdowns.context-menu-item wire:click.stop="$emit('resetPassword', {{$data['user_data']->id}})"  name="Reset Password" svg="svgs.edit"/>
+                    </x-dropdowns.context-menu>
+                </div>
+            </div> 
+            <div class="" x-show="expanded">
+                <hr>
+                <div class="text-xs mt-5 text-gray-400 hidden font-medium  md:flex items-center">
+                    <div class="w-12 px-3">
+                    
+                    </div>
+                    <div class="w-44 px-3" style="font-size: 13px;">
+                    PERMISSIONS
+                    </div>
+                    <div class="w-44 text-gray-700" style="font-size: 13px;">
+                    {{isset($data['user_data']) ? $data['user_data']->permissions :""}}
+                    </div>
+                </div>
+                <div class="text-xs mt-5 text-gray-700 font-medium md:flex items-center">
+                    <div class="w-12 px-3">
+                    </div>
+                    <div class="w-44 px-3 text-gray-400" style="font-size: 13px;">
+                    IP ADDRESS
+                    </div>
+                    <div class="w-44" style="font-size: 13px;">
+                    {{isset($data['user_data']) ? $data['user_data']->ipaddress :""}}
+                    </div>
+                </div>
+            </div>   
         </div>
+        @endif   
+        @endforeach
+            <div wire:loading>
+                <!-- Show the loading animation -->
+                <div class="loading-overlay">
+                <div  class="loading-animation">
+                    <!-- Add your loading animation here -->  
+                </div>
+                </div>
+            </div>
     <div class="pt-5">
         {{ $activeMembers->links() }}
     </div> 
 </div>
 @push('modals')
     @livewire('admin.active-members.members-show')
+    @livewire('admin.active-members.reset-password')
 @endpush
 <style>
     .loading-overlay {
@@ -100,4 +157,3 @@
         100% { transform: rotate(360deg); }
     }
 </style>
-

@@ -30,6 +30,7 @@ class User extends Authenticatable
         'punchin_pin_code',
         'punchin_pin_code_active',
         'ipaddress',
+        'password_reset_by',
     ];
 
     protected $hidden = [

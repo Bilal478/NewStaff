@@ -11,6 +11,7 @@ class Login extends Component
     public $email = '';
     public $password = '';
     public $remember = false;
+    public $subscriptionExpired = false;
 
     protected $rules = [
         'email' => ['required', 'email'],

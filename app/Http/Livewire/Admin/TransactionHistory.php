@@ -81,8 +81,10 @@ class TransactionHistory extends Component
           $accountName = $account->name;
       
           // Retrieve price details from Stripe
+          if($subscription){
           $price = Price::retrieve($subscription->stripe_price);
           $amount = $price->unit_amount / 100; // Convert cents to dollars
+          }
            if ($record->quantity > 1) {
               $amount *= $record->quantity;
             }
@@ -93,7 +95,8 @@ class TransactionHistory extends Component
             'accountName' =>  $accountName,
             'amount'   =>  $totalAmount,
             'action'   =>  $record->action,
-            'created_at'   =>  $record->created_at
+            'created_at'   =>  $record->created_at,
+            'payment_intent_id'   =>  $record->payment_intent_id
           ];
         }
         return [$allData, $transactionRecords];

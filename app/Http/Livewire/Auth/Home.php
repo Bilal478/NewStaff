@@ -38,7 +38,7 @@ class Home extends Component
             return;
         }
     
-        if (!Auth::guard('web')->attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
+        if (!Auth::guard('web')->attempt(['email' => $this->email, 'password' => $this->password])) {
             $this->addError('email', trans('auth.failed'));
             return;
         }

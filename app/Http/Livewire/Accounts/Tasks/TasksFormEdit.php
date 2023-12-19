@@ -140,7 +140,7 @@ class TasksFormEdit extends Component
         : Task::create($validated);
 
         $this->emit('tasksUpdate');
-        $this->dispatchBrowserEvent('close-task-form-modal');
+        $this->dispatchBrowserEvent('close-task-form-edit-modal');
 
         $this->isEditing
         ? $this->toast('Task Updated', "Task has been updated.")

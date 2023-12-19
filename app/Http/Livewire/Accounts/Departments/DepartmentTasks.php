@@ -2,13 +2,14 @@
 
 namespace App\Http\Livewire\Accounts\Departments;
 
+use App\Http\Livewire\Traits\Notifications;
 use App\Models\Task;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class DepartmentTasks extends Component
 {
-    use WithPagination;
+    use WithPagination,Notifications;
 
     public $department;
 
@@ -17,6 +18,12 @@ class DepartmentTasks extends Component
     public function taskComplete(Task $task)
     {
         $task->update(['completed' => true]);
+        $this->toast('Task Complete', "Task has been updated.");
+    }
+    public function taskProcessing(Task $task)
+    {
+        $task->update(['completed' => false]);
+        $this->toast('Task In progress', "Task has been updated.");
     }
 
     public function taskDelete(Task $task)

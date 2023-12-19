@@ -196,12 +196,23 @@
 				</div>
 
 				<label for="end_time" style="padding-top: 15px !important;" class="block text-sm  text-gray-500 leading-5">
-					End Time  
+					End Time (Current Day) 
 				</label>
 				<div class="mt-1 rounded-md shadow-sm">
                 <input name="seconds_two" id="seconds_two" type="text" step='1' min="12:00:00" max="24:00:00"
-                    wire:model="seconds_two" required="required"
+                    wire:model="seconds_two" 
+                    x-bind:disabled="document.getElementById('next_day_seconds').value !== ''"
                     class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 text-gray-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out text-sm leading-5 timepicker_two">
+				</div>
+                <label for="start_time" class="block mt-4 text-sm text-gray-500 leading-5">
+					End Time (Next Day) 
+					
+				</label>
+				<div class="mt-1 rounded-md shadow-sm">
+                <input name="next_day_seconds" id="next_day_seconds" type="text" step='1' min="00:00:00" max="24:00:00"
+                    wire:model="next_day_seconds"
+                    x-bind:disabled="document.getElementById('seconds_two').value !== ''"
+                    class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 text-gray-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out text-sm leading-5 timepicker_next">
 				</div>
 			<?php if( count(App\Models\Task::where('user_id', $user_id)->get()) > 0 ){ ?>
             <div class="flex justify-end mt-2">
@@ -290,6 +301,31 @@
 					change: tmTotalHrsOnSite_two
 				});		
 				$('.timepicker_two').timepicker('option', 'minTime', new Date(0, 0, 0, block_time[0], start_t, 0));
+        }
+         $('.timepicker_next').timepicker({
+
+            timeFormat: 'HH:mm:ss a',
+            interval: 30,
+            dynamic: false,
+	
+            dropdown: true,
+            scrollbar: true,
+            change: tmTotalHrsOnSite_next
+
+        });
+        function tmTotalHrsOnSite_next () {
+            var x = $(".timepicker_next").val();
+			
+			
+            let elementName = $(".timepicker_next").attr('id');
+            var data = $(".timepicker_next").val();
+            @this.set(elementName, data);
+			
+				var block_time = x.split(':');
+				
+				var start_t = parseInt(block_time[1])+parseInt(30);
+				
+				if(start_t == 60){	start_t = '00';	block_time[0] = parseInt(block_time[0])+parseInt(1);	}
         }
         function tmTotalHrsOnSite_two () {
             var x = $(".timepicker_two").val();

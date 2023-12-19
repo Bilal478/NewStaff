@@ -13,6 +13,7 @@ use App\Models\Project;
 use App\Models\Task;
 use App\Models\Team;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
@@ -28,6 +29,7 @@ class TasksForm extends Component
     public $end_datetime;
     public $seconds;
     public $seconds_two;
+    public $next_day_seconds;
     public $teams;
     public $departments;
     public $users = [];
@@ -182,7 +184,9 @@ class TasksForm extends Component
     }
     public function create_activity(Task $task)
     {
-
+        if($this->next_day_seconds){
+            $this->seconds_two=$this->next_day_seconds;
+        }
         $temp = substr($this->seconds, 0, 8);
         $temp_two = substr($this->seconds_two, 0, 8);
 
@@ -195,9 +199,91 @@ class TasksForm extends Component
         $start_datetime = $this->datetimerange . ' ' . $this->seconds;
         $end_datetime = $this->datetimerange . ' ' . $this->seconds_two;
         $time =  ($hour_in_seconds_two - $hour_in_seconds) / 600;
+        
 
         $temp_activities = Activity::where('user_id', $this->task->user_id)->where('date', $this->datetimerange)->get();
+        if($hour_in_seconds > $hour_in_seconds_two){
+            if($hour_in_seconds_two==0){
+                $time =  (86400 - $hour_in_seconds) / 600;
+            }
+            else{
+            $time =  ((86400 - $hour_in_seconds) / 600) + ($hour_in_seconds_two/600);
+            }
+        for ($i = 0; $i < $time; $i++) {
 
+        $temp = strtotime('+' . $i . '0 minutes ', strtotime(substr($start_datetime, 0, 19)));
+        $new_start_time = date('Y-m-d H:i:s', $temp);
+        $new_start_time_two = date('H:i:s', $temp);
+        if ($new_start_time_two == '00:00:00') {
+            $carbonDate = Carbon::parse($this->datetimerange);
+            $carbonDate->addDay();
+            $this->datetimerange = $carbonDate->toDateTimeString(); // Update the string value
+        }
+
+        $temp_two = strtotime('+' . $i . '0 minutes ', strtotime(substr($start_datetime, 0, 19)));
+        $new_end_time = date('Y-m-d H:i:s', $temp_two);
+        $temp_two_final = strtotime('+10 minutes ', strtotime($new_end_time));
+        $end_time = date('Y-m-d H:i:s', $temp_two_final);
+
+        //Find if there is a activity in the period of time
+        $data = DB::table('activities')
+            ->where('start_datetime', '>=', $new_start_time)
+            ->where('end_datetime', '<=', $end_time)
+            ->where('user_id', '=', $this->task->user_id)
+            // ->where('project_id', '=', $this->task->project_id)
+            ->where('account_id', '=', $this->task->account_id)
+            // ->where('task_id', '=', $this->task->id)
+            ->whereNull('deleted_at')
+            ->get();
+
+        //Count rows finded in the period of time
+        $rows = count($data);
+
+        if($rows>0)
+        {
+            $this->toast('Activity can not be created', "There is an activity in this period of time TimeStart: " . $new_start_time .
+            " - End time: " . $end_time,'error',15000);
+            return false;  
+        }
+
+        if ($rows == 0) {
+            DB::table('activities')->insert([
+                'from' => 621,
+                'to' => 1200,
+                'seconds' => 600, //$hour_in_seconds_two - $hour_in_seconds,
+                'start_datetime' => $new_start_time, // substr($start_datetime,0,19),
+                'date' => $this->datetimerange,
+                'keyboard_count' => 100,
+                'mouse_count' => 40,
+                'total_activity' => 100,
+                'total_activity_percentage' => 100,
+                'task_id' => $this->task_id,
+                'end_datetime' => $end_time, //substr($end_datetime,0,19),
+                'user_id' => $this->task->user_id,
+                'project_id' => $this->task->project_id,
+                'account_id' => $this->task->account_id,
+                'created_at' =>  $new_start_time, //substr($start_datetime,0,19), 
+                'updated_at' =>  $new_start_time, //substr($start_datetime,0,19)
+            ]);
+
+            $temp = DB::table('activities')->select('id')
+                ->orderBy('id', 'DESC')
+                ->take(5)
+                ->get();
+
+            $id_activity = $temp[0]->id;
+
+            DB::table('screenshots')->insert([
+                'path' => '00/1234567890.png',
+                'activity_id' => $id_activity,
+                'account_id' => $this->task->account_id,
+                'created_at' => $this->datetimerange,
+                'updated_at' => $this->datetimerange
+            ]);
+        }
+    }
+}
+else{
         for ($i = 0; $i < $time; $i++) {
 
             $temp = strtotime('+' . $i . '0 minutes ', strtotime(substr($start_datetime, 0, 19)));
@@ -264,6 +350,7 @@ class TasksForm extends Component
                 ]);
             }
         }
+    }
 
         $this->dispatchBrowserEvent('close-activities-form-modal');
 

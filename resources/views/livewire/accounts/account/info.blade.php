@@ -13,7 +13,7 @@
         </div>
     </button>
 
-    <div x-show="open" x-transition:enter="transition ease-out duration-150"
+    {{-- <div x-show="open" x-transition:enter="transition ease-out duration-150"
         x-transition:enter-start="opacity-0 transform scale-90" x-transition:enter-end="opacity-100 transform scale-100"
         x-on:click.away="open = false" x-cloak class="absolute bg-white inset-x-0 mx-2 mt-1 border shadow-md rounded-md"
         style="top: 100%;">
@@ -42,5 +42,5 @@
                 </li>
             @endrole
         </ul>
-    </div>
+    </div> --}}
 </div>

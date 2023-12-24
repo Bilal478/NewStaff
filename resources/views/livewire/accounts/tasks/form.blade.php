@@ -150,7 +150,7 @@
 			
 			 @if (!$inProject) 
             <x-inputs.select_two wire:model.lazy="user_id" label="Assignee" name="user_id" id="user_id" required>
-                <option value="">Select a Assignee</option>
+                {{-- <option value="">Select a Assignee</option> --}}
                 @foreach ($users as $user)
                 <option value="{{ $user->id }}">
                     {{ $user->firstname }} {{ $user->lastname }}
@@ -195,25 +195,31 @@
                     class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 text-gray-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out text-sm leading-5 timepicker">
 				</div>
 
-				<label for="end_time" style="padding-top: 15px !important;" class="block text-sm  text-gray-500 leading-5">
-					End Time (Current Day) 
-				</label>
-				<div class="mt-1 rounded-md shadow-sm">
-                <input name="seconds_two" id="seconds_two" type="text" step='1' min="12:00:00" max="24:00:00"
-                    wire:model="seconds_two" 
-                    x-bind:disabled="document.getElementById('next_day_seconds').value !== ''"
-                    class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 text-gray-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out text-sm leading-5 timepicker_two">
-				</div>
-                <label for="start_time" class="block mt-4 text-sm text-gray-500 leading-5">
-					End Time (Next Day) 
-					
-				</label>
-				<div class="mt-1 rounded-md shadow-sm">
-                <input name="next_day_seconds" id="next_day_seconds" type="text" step='1' min="00:00:00" max="24:00:00"
-                    wire:model="next_day_seconds"
-                    x-bind:disabled="document.getElementById('seconds_two').value !== ''"
-                    class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 text-gray-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out text-sm leading-5 timepicker_next">
-				</div>
+				<label for="start_time" class="block mt-4 text-sm text-gray-500 leading-5"
+                wire:model="seconds_two" @if($addTimeNextDay) style="display: none;" @endif>
+                    End Time (Current Day)
+                </label>
+                <div class="mt-1 rounded-md shadow-sm">
+                    <input name="seconds_two" id="seconds_two" type="text" step='1' min="12:00:00" max="24:00:00"
+                           wire:model="seconds_two" @if($addTimeNextDay) style="display: none;" @endif
+                           @if(!$addTimeNextDay) required @endif
+                           class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 text-gray-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out text-sm leading-5 timepicker_two">
+                        </div>
+                <br>
+        
+                <input type="checkbox" wire:model.lazy="addTimeNextDay" class="h-5 w-5">
+                <span class="text-sm text-gray-500 leading-5">Add time in next day</span>
+        
+                <label for="start_time" class="block mt-4 text-sm text-gray-500 leading-5"
+                wire:model="next_day_seconds" @unless($addTimeNextDay) style="display: none;" @endunless>
+                    End Time (Next Day)
+                </label>
+                <div class="mt-1 rounded-md shadow-sm">
+                    <input name="next_day_seconds" id="next_day_seconds" type="text" step='1' min="00:00:00" max="24:00:00"
+                           wire:model="next_day_seconds" @unless($addTimeNextDay) style="display: none;" @endunless
+                           @if($addTimeNextDay) required @endif
+                           class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 text-gray-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out text-sm leading-5 timepicker_next">
+                        </div>
 			<?php if( count(App\Models\Task::where('user_id', $user_id)->get()) > 0 ){ ?>
             <div class="flex justify-end mt-2">
                 <x-buttons.blue-inline type="submit">

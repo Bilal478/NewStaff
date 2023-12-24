@@ -37,6 +37,7 @@ class TasksForm extends Component
     public $inProject = false;
     public $inTeam = false;
     public $inDepartment = false;
+    public $addTimeNextDay;
 
     public $title = '';
     public $description = '';
@@ -60,6 +61,8 @@ class TasksForm extends Component
         'taskCreate' => 'create',
         'tasksUpdate' => '$refresh',
         'activityUpdate' => '$refresh',
+        'activityCreate' => 'create2',
+
     ];
 
     protected $rules = [
@@ -377,6 +380,12 @@ else{
     public function render()
     {
         return view('livewire.accounts.tasks.form', ['usersIn' => User::inProject($this->project_id)->get(), 'project' => $this->project]);
+    }
+    public function create2($date,$userId)
+    {
+        $this->datetimerange = date('Y-m-d', strtotime($date));
+        $this->user_id=$userId;
+        $this->dispatchBrowserEvent('open-activities-form-modal');
     }
 
 }

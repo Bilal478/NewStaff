@@ -31,7 +31,7 @@ class ActivitiesIndex extends Component
 
     protected $listeners = [
         'activityUpdate' => '$refresh',
-        'activityCreate' => 'create',
+        // 'activityCreate' => 'create',
         'showPopUp' => 'openModal',
         'activityDelete' => 'delete',
         
@@ -224,10 +224,10 @@ class ActivitiesIndex extends Component
         }
     }
 
-    public function create()
-    {
-        $this->dispatchBrowserEvent('open-activities-form-modal');
-    }
+    // public function create()
+    // {
+    //     $this->dispatchBrowserEvent('open-activities-form-modal');
+    // }
 
     public function delete()
     {

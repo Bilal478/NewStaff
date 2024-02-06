@@ -8,6 +8,7 @@ use App\Models\Subscription;
 
 use App\Models\Activity;
 use App\Models\User;
+use App\Models\Account;
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
 use Carbon\CarbonPeriod;
@@ -196,13 +197,19 @@ class DailyReportsIndex extends Component
         $arrayData = [];
         $seconds_sum_of_day = 0;
         $seconds_sum = 0;
+        $total_productivity=0;
+        $count=0; 
         $start_time_index=0;
         $i=0;
         $j=0;
         foreach($results as $index=>$result){
             // dd($result);
+            $account=Account::where('id',$result->account_id)->first();
+            $accountName=$account->name;
             $startDateTime = Carbon::parse($result->end_datetime);
             $seconds_sum_of_day += $result->seconds;
+            $total_productivity += $result->total_activity_percentage;
+            $count++;
             if(isset($results[$index+1])){
                 if($seconds_sum == 0){
                     $start_time_index = $index;
@@ -225,17 +232,21 @@ class DailyReportsIndex extends Component
                         'date' => $result->date->format('Y-m-d'),
                         'duration'=> CarbonInterval::seconds($seconds_sum)->cascade()->format('%H:%I:%S'),
                         'minutes'=> $seconds_sum/60,
-                        'productivity' => intval($result->productivity),
+                        // 'productivity' => intval($result->productivity),
+                        'productivity' => intval(round(($total_productivity/$count),0)),
                         'project_id' => $result->project_id,
                         'project_title' => $result->project_title,
                         'task_id' => $result->task_id,
                         'account_id' => $result->account_id,
                         'task_title' =>  isset($result->task_id)  ? $result->task_title : 'No to-do',
-                        
+                        'account_name' =>  $accountName,
+                        'is_manual_time' =>  $result->is_manual_time,
                     ];
                     
                     
                     $seconds_sum = 0;
+                    $total_productivity=0;
+                    $count=0; 
                     
                 }
             }
@@ -265,12 +276,15 @@ class DailyReportsIndex extends Component
                 'date' => $lastResult->date->format('Y-m-d'),
                 'duration' => CarbonInterval::seconds($seconds_sum+600)->cascade()->format('%H:%I:%S'),
                 'minutes' => $seconds_sum / 60,
-                'productivity' => intval($lastResult->productivity),
+                // 'productivity' => intval($lastResult->productivity),
+                'productivity' => intval(round(($total_productivity/$count),0)),
                 'project_id' => $lastResult->project_id,
                 'project_title' => $lastResult->project_title,
                 'task_id' => $lastResult->task_id,
                 'account_id' => $lastResult->account_id,
                 'task_title' => isset($lastResult->task_id) ? $lastResult->task_title : 'No to-do',
+                'account_name' =>  $accountName,
+                'is_manual_time' =>  $result->is_manual_time,
             ];
     }
         

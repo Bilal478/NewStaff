@@ -282,32 +282,40 @@
             change: tmTotalHrsOnSite
 
         });
+        function tmTotalHrsOnSite() {
+    var x = $(".timepicker").val();
+    document.getElementById('seconds_two').value = '';
+    let elementName = $(".timepicker").attr('id');
+    var data = $(".timepicker").val();
+    @this.set(elementName, data);
 
-        function tmTotalHrsOnSite () {
-            var x = $(".timepicker").val();
-			
-			document.getElementById('seconds_two').value = '';
-			
-            let elementName = $(".timepicker").attr('id');
-            var data = $(".timepicker").val();
-            @this.set(elementName, data);
-			
-				var block_time = x.split(':');
-				
-				var start_t = parseInt(block_time[1])+parseInt(30);
-				
-				if(start_t == 60){	start_t = '00';	block_time[0] = parseInt(block_time[0])+parseInt(1);	}
-				
-				$('.timepicker_two').timepicker({
-					timeFormat: 'HH:mm:ss a',
-					interval: 30,
-					dynamic: false,
-					dropdown: true,
-					scrollbar: true,
-					change: tmTotalHrsOnSite_two
-				});		
-				$('.timepicker_two').timepicker('option', 'minTime', new Date(0, 0, 0, block_time[0], start_t, 0));
-        }
+    var block_time = x.split(':');
+    var start_t = parseInt(block_time[1]) + parseInt(30);
+
+    if (start_t == 60) {
+        start_t = '00';
+        block_time[0] = parseInt(block_time[0]) + 1;
+    }
+
+    // Initialize timepicker
+    $('.timepicker_two').timepicker({
+        timeFormat: 'HH:mm:ss a',
+        interval: 30,
+        dynamic: false,
+        dropdown: true,
+        scrollbar: true,
+        change: tmTotalHrsOnSite_two
+    });
+
+    // Set the minTime and maxTime options for the end time (current day)
+    if (block_time[0] == 24 && block_time[1] == '30') {
+        $('.timepicker_two').timepicker('option', 'minTime', new Date(0, 0, 0, 0, 0, 0));
+        $('.timepicker_two').timepicker('option', 'maxTime', new Date(0, 0, 0, 0, 0, 0));
+    } else {
+        $('.timepicker_two').timepicker('option', 'minTime', new Date(0, 0, 0, block_time[0], start_t, 0));
+        $('.timepicker_two').timepicker('option', 'maxTime', new Date(0, 0, 0, 23, 30, 0));
+    }
+}
          $('.timepicker_next').timepicker({
 
             timeFormat: 'HH:mm:ss a',

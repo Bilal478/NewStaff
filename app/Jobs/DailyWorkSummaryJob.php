@@ -128,14 +128,20 @@ class DailyWorkSummaryJob implements ShouldQueue
                         $durationA = strtotime($a['total_duration']);
                         $durationB = strtotime($b['total_duration']);
                         return $durationB - $durationA;
-                    });  
+                    }); 
+                    // usort($managerUsers, function ($a, $b) {
+                    //     return $b['total_productivity'] - $a['total_productivity'];
+                    // });  
                     $top5Members = array_slice($managerUsers, 0, 5);
                     $bottom5Members = [];
+                    // usort($managerUsers, function ($a, $b) {
+                    //     $durationA = strtotime($a['total_duration']);
+                    //     $durationB = strtotime($b['total_duration']);
+                    //     return $durationA - $durationB; // Compare in ascending order
+                    // });
                     usort($managerUsers, function ($a, $b) {
-                        $durationA = strtotime($a['total_duration']);
-                        $durationB = strtotime($b['total_duration']);
-                        return $durationA - $durationB; // Compare in ascending order
-                    });
+                        return $a['total_productivity'] - $b['total_productivity']; // Compare in ascending order
+                    });                  
                     $bottom5Members = array_slice($managerUsers, 0, 5);
                     $account=Account::where('id',$accountId)->first();
                     $accountName= $account->name;
@@ -249,7 +255,7 @@ class DailyWorkSummaryJob implements ShouldQueue
                 return $mergedData;
             })
             ->flatten(1)
-            ->sortBy('minutes')
+            ->sortBy('productivity')
             ->take(2);
             $topMembersRecord=[];
             foreach ($topMembers as $value) {

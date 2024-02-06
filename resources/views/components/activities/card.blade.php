@@ -5,7 +5,10 @@
 $account_user = DB::table('account_user')
     ->where('user_id', auth()->user()->id)
     ->first();
-    
+$seconds = $activity->seconds;
+$minutes = floor($seconds / 60);
+$remainingSeconds = $seconds % 60;
+$formattedTime = sprintf('%d:%02d', $minutes, $remainingSeconds);
 @endphp
 <div class="w-full sm:w-1/2 md:w-1/3 xl:w-1/6">
     <article class="bg-white mx-4 mb-8 rounded-md border shadow-sm hover:shadow-md article">
@@ -37,7 +40,11 @@ $account_user = DB::table('account_user')
                         <img class="img_placeholder" src="2.png">
                     @endif
                 @else
+                @if($activity->is_manual_time==0)
+                <img class="img_placeholder" src="image_short.png">
+                @else
                 <img class="img_placeholder" src="2.png">
+                @endif
                 @endif
             </div>
 
@@ -151,6 +158,11 @@ $account_user = DB::table('account_user')
                     <div class="flex items-center">
                         <x-svgs.computer class="w-4 h-4 text-blue-500 mr-1" />
                         <span class="text-xs text-gray-500">{{ $activity->total_activity_percentage }}%</span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-center space-x-2 mt-2">
+                    <div class="flex items-center">
+                        <span class="text-xs text-gray-500">{{ $activity->total_activity_percentage }}% of {{$formattedTime}} min</span>
                     </div>
                 </div>
             </div>

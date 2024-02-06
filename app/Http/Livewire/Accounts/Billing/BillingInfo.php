@@ -123,45 +123,86 @@ class BillingInfo extends Component
         return Account::find(session()->get('account_id'));
     }
 
-	public function payandcontinue(Request $request) {
-		Stripe::setApiKey(config('services.stripe.secret'));
-        $user = Auth::user();
-        $subscription = $user->subscription($request->plan);
-	    $price = \Stripe\Price::retrieve($subscription->stripe_price);
-	    $amount = $price->unit_amount * $request->selectseats;
-	
-		if ($user->hasDefaultPaymentMethod()) {
-			try {
-				$paymentIntent = PaymentIntent::create([
-					'payment_method' => $user->defaultPaymentMethod()->id,
-					'amount' => $amount,
-					'currency' => 'usd', // replace with your currency code (e.g., USD)
-					'customer' => $user->stripe_id,
-					'off_session' => true,
-					'confirm' => true,
-				]);
+// 	public function payandcontinue(Request $request) {
+// 		Stripe::setApiKey(config('services.stripe.secret'));
+//         $user = Auth::user();
+//         $subscription = $user->subscription($request->plan);
+// 	    $price = \Stripe\Price::retrieve($subscription->stripe_price);
+// 	    // $amount = $price->unit_amount * $request->selectseats;
+// 		$amountPerSeat = $price->unit_amount;
+// // dd($user->subscribed($request->plan));
+// 		// Check if the user is still in the trial period
+// 		if ($user->subscribed($request->plan)) {
+// 			// dd('if');
 
-				$user->subscription($request->plan)->incrementQuantity($request->selectseats);
+// 			// Calculate the remaining days in the trial period
+// 			$remainingTrialDays =  $subscription->trial_ends_at->diffInDays(now());
+
+// 			// Calculate the monthly amount per seat
+// 			$monthlyAmountPerSeat = $amountPerSeat / 30; // Assuming 30 days in a month
 	
-				// Log the payment information or perform additional actions as needed
-				DB::table('transaction_log')->insert([
-					'user_id' => $user->id,
-					'account_id' => $this->account->id,
-					'subscription_id' => $subscription->id,
-					'payment_intent_id' => $paymentIntent->id,
-					'action' => 'buy_seats',
-					'quantity' => $request->selectseats,
-					'created_at' => now(),
-					'updated_at' => now(),
-				]);
+// 			// Calculate the amount based on the remaining trial days
+// 			$amount = $monthlyAmountPerSeat * $remainingTrialDays * $request->selectseats;
+// 	dd( $amount);
+
+// 		} else {
+// 			dd('else');
+// 			// User is not in the trial period, use the regular calculation
+// 			$amount = $amountPerSeat * $request->selectseats;
+// 		}
+// 	dd('ddd');
+// 		if ($user->hasDefaultPaymentMethod()) {
+// 			try {
+// 				$paymentIntent = PaymentIntent::create([
+// 					'payment_method' => $user->defaultPaymentMethod()->id,
+// 					'amount' => $amount,
+// 					'currency' => 'usd', // replace with your currency code (e.g., USD)
+// 					'customer' => $user->stripe_id,
+// 					'off_session' => true,
+// 					'confirm' => true,
+// 				]);
+
+// 				$user->subscription($request->plan)->incrementQuantity($request->selectseats);
 	
-				// Redirect with a success message or to a specific page
-				return redirect()->intended("/billing?buy_more_seats=" . $request->selectseats);
-			} catch (\Exception $e) {
-				// Handle the payment error
-				return redirect()->back()->with('error', $e->getMessage());
-			}
+// 				// Log the payment information or perform additional actions as needed
+// 				DB::table('transaction_log')->insert([
+// 					'user_id' => $user->id,
+// 					'account_id' => $this->account->id,
+// 					'subscription_id' => $subscription->id,
+// 					'payment_intent_id' => $paymentIntent->id,
+// 					'action' => 'buy_seats',
+// 					'quantity' => $request->selectseats,
+// 					'created_at' => now(),
+// 					'updated_at' => now(),
+// 				]);
+	
+// 				// Redirect with a success message or to a specific page
+// 				return redirect()->intended("/billing?buy_more_seats=" . $request->selectseats);
+// 			} catch (\Exception $e) {
+// 				// Handle the payment error
+// 				return redirect()->back()->with('error', $e->getMessage());
+// 			}
+// 		}
+// 	}
+    public function payandcontinue(Request $request){
+
+	    $user = Auth::user();
+	    $subscription=$user->subscription($request->plan);
+	    if ($user->hasDefaultPaymentMethod()) {
+
+		    $user->subscription($request->plan)
+			->incrementQuantity($request->selectseats);
+			DB::table('transaction_log')->insert([
+				'user_id' => $user->id,
+				'account_id' => $this->account->id,
+				'subscription_id' => $subscription->id,
+				'action' => 'buy_seats',
+				'quantity' => $request->selectseats,
+				'created_at' => now(),
+				'updated_at' => now(),
+			]);
 		}
+		return redirect()->intended("/billing?buy_more_seats="."$request->selectseats");	
 	}
 	
 

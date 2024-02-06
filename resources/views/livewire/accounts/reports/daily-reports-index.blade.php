@@ -1,4 +1,5 @@
 <?php 
+use Carbon\Carbon;
 $user_login = auth()->id();
 ?>
 @php
@@ -77,55 +78,98 @@ $account_user = DB::table('account_user')
        
             </div>
             @foreach ($dates as $date)
+                <?php
+                $totalDuration = collect($users)
+                ->where('date', $date->format('Y-m-d'))
+                ->sum(function ($item) {
+                // Convert duration to seconds and sum them up
+                return strtotime($item['duration']) - strtotime('00:00:00');
+                });
+
+                // Convert total seconds back to HH:MM:SS format
+                $totalDurationFormatted = gmdate('H:i:s', $totalDuration);
+                ?>
                 <?php $inner_count = 0; ?>
-            <tr class="text-left uppercase text-xs text-gray-700 font-medium border-b-2">
+            <tr class="text-left  text-xs text-gray-700 font-medium border-b-2">
             <th class="px-4 py-4">
-                {{ $date->format('M d, Y') }} 
+                {{ $date->format('D, M d, Y') }}
+                @if ($totalDurationFormatted != '00:00:00')
+                    {{ $totalDurationFormatted }} hrs
+                @endif
             </th>
             </tr>
-            
             @foreach ($users as $day)
-               
                 @if($date->format('Y-m-d') == $day['date'])
                     @if($inner_count==0)
                    
-                    <tr class="text-left font-extrabold uppercase text-xs text-gray-700 font-medium border-b-2">
+                    <tr class="text-left font-extrabold text-xs text-gray-700 font-medium border-b-2">
+
+                    <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+                            Organization
+                    </td>
                     
                     <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
                             Project
                     </td>
-                   
+
                     <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
-                            Duration
+                            Task
                     </td>
+                   
                     <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
                             Activity
                     </td>
+
                     <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
-                            Time
+                            Idle
+                    </td>
+                      
+                     <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+                            Manual
+                    </td>
+
+                    <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+                            Duration
+                    </td>
+                     <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+                            Start
+                    </td>
+                     <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+                            Stop
+                    </td>
+                     <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+                            Type
+                    </td>
+                     <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+                            Payment Type
                     </td>
                 </tr>
                 @endif
                 <?php $inner_count = 1; ?>
-                <tr class="text-left uppercase text-xs text-gray-700 font-medium border-b-2">
+                <tr class="text-left text-xs text-gray-700 font-medium border-b-2 @if($loop->odd) bg-gray-200 @endif">
                    
-                    <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
-                    {{ $day['project_title'] }}
-                        <p><span class="taskTitle"> {{ $day['task_title'] }}</span></p>
+                    <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5 @if($loop->odd) bg-gray-200 @endif">
+                    
+                        <p><span class="taskTitle">{{ $day['account_name'] }}</span></p>
                         
                     </td>
-                    <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+                    <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5 @if($loop->odd) bg-gray-200 @endif">
                    
-                   <p><span class="taskTitle"> {{ $day['duration'] }}</span></p>
+                   <p><span class="taskTitle"> {{ $day['project_title'] }}</span></p>
                    
                </td>
-               <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+               <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5 @if($loop->odd) bg-gray-200 @endif">
               
-                   <p><span class="taskTitle"> {{ $day['productivity'] }}</span></p>
+                   <p><span class="taskTitle">  {{ $day['task_title'] }}</span></p>
+                   
+               </td>
+                <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5 @if($loop->odd) bg-gray-200 @endif">
+              
+                   <p><span class="taskTitle">  {{ $day['productivity'] }}%</span></p>
                    
                </td>
                
-               <td  style="cursor: pointer;"  class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+              <!--  <td  style="cursor: pointer;"  class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
               
                    <p style="display: inline;"><span class="taskTitle"> {{ $day['start_time'] }} - {{ $day['end_time'] }}</span></p>
                    @if($account_user->allow_edit_time == 1)
@@ -144,6 +188,49 @@ $account_user = DB::table('account_user')
                         </svg>
                     </button>
                     @endif
+               </td> -->
+                <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5 @if($loop->odd) bg-gray-200 @endif">
+              
+                   <p><span class="taskTitle"> {{ $day['productivity'] }}</span></p>
+                   
+               </td> 
+               <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5 @if($loop->odd) bg-gray-200 @endif">
+              
+                   <p><span class="taskTitle">
+                   @if ($day['is_manual_time'] == 1)
+                   100%
+                   @else
+                   0%
+                   @endif  
+                   </span></p>
+                   
+               </td> 
+               <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5 @if($loop->odd) bg-gray-200 @endif">
+              
+                   <p><span class="taskTitle"> {{ $day['duration'] }}</span></p>
+                   
+               </td> 
+               <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5 @if($loop->odd) bg-gray-200 @endif">
+              
+                   <p><span class="taskTitle"> {{ $date->format('D, M d, Y') }} {{ Carbon::createFromFormat('h:i A', $day['start_time'])->format('g:i a') }}
+
+                   </span></p>
+                   
+               </td> 
+               <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5 @if($loop->odd) bg-gray-200 @endif">
+              
+                   <p><span class="taskTitle"> {{ $date->format('D, M d, Y') }} {{ Carbon::createFromFormat('h:i A', $day['end_time'])->format('g:i a') }}</span></p>
+                   
+               </td> 
+               <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5 @if($loop->odd) bg-gray-200 @endif">
+              
+                   <p><span class="taskTitle"> Time Entry</span></p>
+                   
+               </td> 
+               <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5 @if($loop->odd) bg-gray-200 @endif">
+              
+                   <p><span class="taskTitle"> Billable</span></p>
+                   
                </td>
                    
                 </tr>
@@ -164,6 +251,10 @@ $account_user = DB::table('account_user')
 
 @push('style')
 <style>
+    .bg-gray-200 {
+    background-color: #edf2f7; /* Set your desired background color */
+}
+
     .activityTimeShow::-webkit-scrollbar {
         width: 10px;
     }

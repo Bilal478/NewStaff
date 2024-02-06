@@ -53,6 +53,7 @@ use App\Http\Livewire\Accounts\SummaryLogs\SummaryLogs;
 use App\Http\Livewire\SelectPlan;
 use App\Jobs\DailyWorkSummaryJob;
 use App\Http\Livewire\ManagerSection;
+use App\Http\Controllers\StripeWebhookController;
 
 //Route::view('/', 'welcome')->name('home');
 
@@ -64,6 +65,7 @@ Route::get('work-summary-email', function(){
 
         echo 'Emails sent successfully';
 });
+Route::post('/update-subscription', [StripeWebhookController::class, 'handleSubscriptionUpdated']);
 Route::view('/download', 'download')->name('download');
 Route::get('accept-invitation/{randomID}', Login2::class)->name('accept-invitation');
 

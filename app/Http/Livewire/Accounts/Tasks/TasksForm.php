@@ -71,6 +71,7 @@ class TasksForm extends Component
         'due_date' => 'date_format:"M d, Y"|nullable',
         'project_id' => 'required',
         'user_id' => 'required',
+        'task_id' => 'required',
         // 'team_id' => 'required',
         // 'department_id' => 'required',
         'completed' => 'nullable',
@@ -187,6 +188,10 @@ class TasksForm extends Component
     }
     public function create_activity(Task $task)
     {
+        if (empty($this->task_id)) {
+            $this->toast('Task Not Selected', 'Please select a task before creating an activity.', 'error');
+            return;
+        }
         if($this->next_day_seconds){
             $this->seconds_two=$this->next_day_seconds;
         }
@@ -267,6 +272,7 @@ class TasksForm extends Component
                 'account_id' => $this->task->account_id,
                 'created_at' =>  $new_start_time, //substr($start_datetime,0,19), 
                 'updated_at' =>  $new_start_time, //substr($start_datetime,0,19)
+                'is_manual_time' =>  1,
             ]);
 
             $temp = DB::table('activities')->select('id')
@@ -335,6 +341,7 @@ else{
                     'account_id' => $this->task->account_id,
                     'created_at' =>  $new_start_time, //substr($start_datetime,0,19), 
                     'updated_at' =>  $new_start_time, //substr($start_datetime,0,19)
+                    'is_manual_time' =>  1,
                 ]);
 
                 $temp = DB::table('activities')->select('id')
@@ -384,6 +391,8 @@ else{
     public function create2($date,$userId)
     {
         $this->datetimerange = date('Y-m-d', strtotime($date));
+        $this->tasksDropdownOptions = Task::where('user_id', $userId)->get();
+        $this->emit('tasksUpdated',json_encode($this->tasksDropdownOptions));
         $this->user_id=$userId;
         $this->dispatchBrowserEvent('open-activities-form-modal');
     }

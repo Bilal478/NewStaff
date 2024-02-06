@@ -22,37 +22,60 @@ class Login extends Component
         'password' => ['required'],
     ];
 
+    // public function authenticate()
+    // {
+    //     $this->validate();
+    
+    //     $user = User::where('email', $this->email)->first();
+    
+    //     if (!$user || !password_verify($this->password, $user->password)) {
+    //         $this->addError('email', trans('auth.failed'));
+    //         return;
+    //     }
+    
+    //     $user_subscriptions = $user->subscriptions()->active()->get();
+    
+    //     if (!empty($user_subscriptions) && isset($user_subscriptions[0]) && $user_subscriptions[0]->trial_ends_at < now()) {
+    //         // $this->addError('email', trans('Subscription Period Ended'));
+    //         $this->subscriptionExpired = true;
+    //         return;
+    //     }
+    
+    //     if (!Auth::guard('web')->attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
+    //         $this->addError('email', trans('auth.failed'));
+    //         return;
+    //     }
+    
+    //     $user = Auth::user();
+    
+    //     $user->last_login_at = now();
+    //     $user->last_login_ip = request()->ip();
+    //     $user->save();
+    
+    //     return redirect()->intended(route(RouteServiceProvider::HOME));
+    // }
     public function authenticate()
     {
         $this->validate();
-    
-        $user = User::where('email', $this->email)->first();
-    
-        if (!$user || !password_verify($this->password, $user->password)) {
-            $this->addError('email', trans('auth.failed'));
-            return;
-        }
-    
-        $user_subscriptions = $user->subscriptions()->active()->get();
-    
-        if (!empty($user_subscriptions) && isset($user_subscriptions[0]) && $user_subscriptions[0]->trial_ends_at < now()) {
-            // $this->addError('email', trans('Subscription Period Ended'));
-            $this->subscriptionExpired = true;
-            return;
-        }
-    
+
         if (!Auth::guard('web')->attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
             $this->addError('email', trans('auth.failed'));
+
             return;
         }
-    
-        $user = Auth::user();
-    
-        $user->last_login_at = now();
-        $user->last_login_ip = request()->ip();
-        $user->save();
-    
-        return redirect()->intended(route(RouteServiceProvider::HOME));
+		$user = Auth::user();
+		$user_subscriptions = $user->subscriptions()->active()->get();
+
+		if(empty($user_subscriptions)){
+			return redirect()->intended('step2');
+		}
+		else {
+            $user->last_login_at = now();
+            $user->last_login_ip = request()->ip();
+            $user->save();
+			return redirect()
+            ->intended(route(RouteServiceProvider::HOME));
+		}
     }
     
     public function render()

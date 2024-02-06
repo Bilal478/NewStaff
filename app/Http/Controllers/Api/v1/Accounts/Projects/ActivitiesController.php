@@ -60,6 +60,57 @@ class ActivitiesController extends Controller
         
       
     }
+    public function store1(StoreProjectActivityRequest $request, Account $account, Project $project)
+    {
+        // dd('qqq');
+        if (Gate::denies('store-project-activity', $project)) {
+            return api_response_unauthorized();
+        }
+        $from = CarbonInterval::seconds($request->from)->cascade()->format('%H:%I:%S');
+        $to = CarbonInterval::seconds($request->to)->cascade()->format('%H:%I:%S');
+        $date = Carbon::parse($request->date);
+        $findFrom = floor($request->from / 600) * 600;
+        $findTo = ceil($request->to / 600) * 600;
+        
+        // Convert $findFrom and $findTo to the same format as $start_datetime and $end_datetime
+        $findFrom = Carbon::parse($date->format('Y-m-d') . ' ' . gmdate('H:i:s', $findFrom))->toDateTimeString();
+        $findTo = Carbon::parse($date->format('Y-m-d') . ' ' . gmdate('H:i:s', $findTo))->toDateTimeString();
+        
+        $start_datetime = Carbon::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') . ' ' . $from)->toDateTimeString();
+        $end_datetime = Carbon::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') . ' ' . $to)->toDateTimeString(); 
+    
+        // Find record in the 10-minute slot
+        $existingActivity = $project->activities()
+        ->whereBetween('start_datetime', [$findFrom,$findTo])
+        ->whereBetween('end_datetime', [$findFrom,$findTo])
+        ->first();
+            if ($existingActivity) {
+            // Update the existing record
+            $secondsToAdd = $request->to - $request->from;
+            $existingActivity->update([
+                // Update other fields as needed
+                'to' => $request->to,
+                'seconds' => $existingActivity->seconds+$secondsToAdd,
+                'end_datetime' => $request->end_datetime ?: $end_datetime,
+            ]);
+            $this->storeScreenshots($request, $account, $existingActivity);
+    
+            return api_response([
+                'message' => 'The activity has been updated.',
+                'activity' => new ActivityResource($existingActivity->refresh())
+            ], 200);
+            } else {
+            // Create a new record
+            $activity = $project->activities()->create($request->validated());
+            Cache::put('last_activity_id', $activity->id);
+            $this->storeScreenshots($request, $account, $activity);
+    
+            return api_response([
+                'message' => 'The activity has been saved.',
+                'activity' => new ActivityResource($activity->refresh())
+            ], 200);
+        }
+    }
 
     public function storeScreenshots(StoreProjectActivityRequest $request, Account $account, Activity $activity): void
     {

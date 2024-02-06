@@ -36,8 +36,10 @@ Route::prefix('v1')->group(function () {
             Route::post('accounts/{account}/tasks/{task}/complete', 'v1\Accounts\TasksController@complete');
             
 			Route::post('accounts/{account}/tasks/{task}/activities', 'v1\Accounts\Tasks\ActivitiesController@store');
+            Route::post('accounts/{account}/tasks/{task}/short_activities', 'v1\Accounts\Tasks\ActivitiesController@store1');
            
 			Route::post('accounts/{account}/projects/{project}/activities', 'v1\Accounts\Projects\ActivitiesController@store');
+			Route::post('accounts/{account}/projects/{project}/short_activities', 'v1\Accounts\Projects\ActivitiesController@store1');
         });
     });
 	

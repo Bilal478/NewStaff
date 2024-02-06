@@ -291,45 +291,65 @@ class MembersIndex extends Component
             ->paginate(8);
     }
 	
-	public function payandcontinue(Request $request) {
-		Stripe::setApiKey(config('services.stripe.secret'));
-        $user = Auth::user();
-        $subscription = $user->subscription($request->plan);
-	    $price = \Stripe\Price::retrieve($subscription->stripe_price);
-	    $amount = $price->unit_amount * $request->selectseats;
+	// public function payandcontinue(Request $request) {
+	// 	Stripe::setApiKey(config('services.stripe.secret'));
+    //     $user = Auth::user();
+    //     $subscription = $user->subscription($request->plan);
+	//     $price = \Stripe\Price::retrieve($subscription->stripe_price);
+	//     $amount = $price->unit_amount * $request->selectseats;
 	
-		if ($user->hasDefaultPaymentMethod()) {
-			try {
-				$paymentIntent = PaymentIntent::create([
-					'payment_method' => $user->defaultPaymentMethod()->id,
-					'amount' => $amount,
-					'currency' => 'usd', // replace with your currency code (e.g., USD)
-					'customer' => $user->stripe_id,
-					'off_session' => true,
-					'confirm' => true,
-				]);
+	// 	if ($user->hasDefaultPaymentMethod()) {
+	// 		try {
+	// 			$paymentIntent = PaymentIntent::create([
+	// 				'payment_method' => $user->defaultPaymentMethod()->id,
+	// 				'amount' => $amount,
+	// 				'currency' => 'usd', // replace with your currency code (e.g., USD)
+	// 				'customer' => $user->stripe_id,
+	// 				'off_session' => true,
+	// 				'confirm' => true,
+	// 			]);
 
-				$user->subscription($request->plan)->incrementQuantity($request->selectseats);
+	// 			$user->subscription($request->plan)->incrementQuantity($request->selectseats);
 	
-				// Log the payment information or perform additional actions as needed
-				DB::table('transaction_log')->insert([
-					'user_id' => $user->id,
-					'account_id' => $this->account->id,
-					'subscription_id' => $subscription->id,
-					'payment_intent_id' => $paymentIntent->id,
-					'action' => 'buy_seats',
-					'quantity' => $request->selectseats,
-					'created_at' => now(),
-					'updated_at' => now(),
-				]);
+	// 			// Log the payment information or perform additional actions as needed
+	// 			DB::table('transaction_log')->insert([
+	// 				'user_id' => $user->id,
+	// 				'account_id' => $this->account->id,
+	// 				'subscription_id' => $subscription->id,
+	// 				'payment_intent_id' => $paymentIntent->id,
+	// 				'action' => 'buy_seats',
+	// 				'quantity' => $request->selectseats,
+	// 				'created_at' => now(),
+	// 				'updated_at' => now(),
+	// 			]);
 	
-				// Redirect with a success message or to a specific page
-				return redirect()->intended("/billing?buy_more_seats=" . $request->selectseats);
-			} catch (\Exception $e) {
-				// Handle the payment error
-				return redirect()->back()->with('error', $e->getMessage());
-			}
+	// 			// Redirect with a success message or to a specific page
+	// 			return redirect()->intended("/billing?buy_more_seats=" . $request->selectseats);
+	// 		} catch (\Exception $e) {
+	// 			// Handle the payment error
+	// 			return redirect()->back()->with('error', $e->getMessage());
+	// 		}
+	// 	}
+	// }
+    public function payandcontinue(Request $request){
+
+	    $user = Auth::user();
+	    $subscription=$user->subscription($request->plan);
+	    if ($user->hasDefaultPaymentMethod()) {
+
+		    $user->subscription($request->plan)
+			->incrementQuantity($request->selectseats);
+			DB::table('transaction_log')->insert([
+				'user_id' => $user->id,
+				'account_id' => $this->account->id,
+				'subscription_id' => $subscription->id,
+				'action' => 'buy_seats',
+				'quantity' => $request->selectseats,
+				'created_at' => now(),
+				'updated_at' => now(),
+			]);
 		}
+		return redirect()->intended("/members?buy_more_seats="."$request->selectseats");	
 	}
 	
 }

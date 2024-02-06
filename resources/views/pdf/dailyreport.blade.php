@@ -1,3 +1,6 @@
+<?php
+use Carbon\Carbon;
+?>
 <!DOCTYPE html>
 <html>
     <head>
@@ -75,16 +78,50 @@
             <tbody>
         
             @foreach ($dates as $date)
+                <?php
+                $totalDuration = collect($users)
+                ->where('date', $date->format('Y-m-d'))
+                ->sum(function ($item) {
+                // Convert duration to seconds and sum them up
+                return strtotime($item['duration']) - strtotime('00:00:00');
+                });
+
+                // Convert total seconds back to HH:MM:SS format
+                $totalDurationFormatted = gmdate('H:i:s', $totalDuration);
+                ?>
                 <?php $inner_count = 0; ?>
             <tr style="color: #374151; font-size: 12px; text-align: left; border-bottom: 1px solid #E5E7EB;">
             <th style="padding: 15px 10px; text-align: left;">
-                {{ $date->format('M d, Y') }} 
+                {{ $date->format('D,M d, Y') }}      
+            </th>
+            <th style="padding: 15px 10px; text-align: left;">
+                 @if ($totalDurationFormatted != '00:00:00')
+                     <span>{{ $totalDurationFormatted }} hrs</span>
+                @endif
             </th>
             <th style="padding: 15px 10px; text-align: left;">
                 
             </th>
             <th style="padding: 15px 10px; text-align: left;">
-                
+               
+            </th>
+            <th style="padding: 15px 10px; text-align: left;">
+               
+            </th>
+            <th style="padding: 15px 10px; text-align: left;">
+               
+            </th>
+            <th style="padding: 15px 10px; text-align: left;">
+               
+            </th>
+            <th style="padding: 15px 10px; text-align: left;">
+               
+            </th>
+            <th style="padding: 15px 10px; text-align: left;">
+               
+            </th>
+            <th style="padding: 15px 10px; text-align: left;">
+               
             </th>
             <th style="padding: 15px 10px; text-align: left;">
                
@@ -99,31 +136,62 @@
                     <tr  style="color: #374151; font-size: 12px; text-align: left; border-bottom: 1px solid #E5E7EB;">
                     
                     <td style="padding: 15px 10px; text-align: left; font-weight:800;">
-                            Project
+                            Organization
                     </td>
                    
                     <td style="padding: 15px 10px; text-align: left; font-weight:800;">
-                            Duration
+                            Project
+                    </td>
+                    <td style="padding: 15px 10px; text-align: left; font-weight:800;">
+                            Task
                     </td>
                     <td style="padding: 15px 10px; text-align: left; font-weight:800;">
                             Activity
                     </td>
                     <td style="padding: 15px 10px; text-align: left; font-weight:800;">
-                            Time
+                            Idle
+                    </td> 
+                    <td style="padding: 15px 10px; text-align: left; font-weight:800;">
+                            Manual
+                    </td> 
+                    <td style="padding: 15px 10px; text-align: left; font-weight:800;">
+                            Duration
+                    </td> 
+                    <td style="padding: 15px 10px; text-align: left; font-weight:800;">
+                            Start
+                    </td> 
+                    <td style="padding: 15px 10px; text-align: left; font-weight:800;">
+                            Stop
+                    </td> 
+                    <td style="padding: 15px 10px; text-align: left; font-weight:800;">
+                            Type
+                    </td> 
+                    <td style="padding: 15px 10px; text-align: left; font-weight:800;">
+                            Payment Type
                     </td>
                 </tr>
                 @endif
                 <?php $inner_count = 1; ?>
-                <tr style="color: #374151; font-size: 12px; text-align: left; border-bottom: 1px solid #E5E7EB;">
+                <tr style="color: #374151; font-size: 12px; text-align: left; border-bottom: 1px solid #E5E7EB; @if($loop->odd) background-color: #f3f4f6; @endif">
                    
                     <td style="padding: 15px 10px; text-align: left;">
-                    {{ $day['project_title'] }}
-                        <p><span class="taskTitle"> {{ $day['task_title'] }}</span></p>
+                        <p><span class="taskTitle"> {{ $day['account_name'] }}</span></p>
                         
                     </td>
                     <td style="padding: 15px 10px; text-align: left;">
                    
-                   <p><span class="taskTitle"> {{ $day['duration'] }}</span></p>
+                   <p><span class="taskTitle"> {{ $day['project_title'] }}</span></p>
+                   
+               </td>
+               <td style="padding: 15px 10px; text-align: left;">
+              
+                   <p><span class="taskTitle"> {{ $day['task_title'] }}</span></p>
+                   
+               </td>
+               
+               <td style="padding: 15px 10px; text-align: left;">
+              
+                   <p><span class="taskTitle"> {{ $day['productivity'] }}%</span></p>
                    
                </td>
                <td style="padding: 15px 10px; text-align: left;">
@@ -131,10 +199,34 @@
                    <p><span class="taskTitle"> {{ $day['productivity'] }}</span></p>
                    
                </td>
-               
                <td style="padding: 15px 10px; text-align: left;">
               
-                   <p><span class="taskTitle"> {{ $day['start_time'] }} - {{ $day['end_time'] }}</span></p>
+                   <p><span class="taskTitle"> {{ $day['productivity'] }}</span></p>
+                   
+               </td>
+               <td style="padding: 15px 10px; text-align: left;">
+              
+                   <p><span class="taskTitle"> {{ $day['duration'] }}</span></p>
+                   
+               </td>
+               <td style="padding: 15px 10px; text-align: left;">
+              
+                   <p><span class="taskTitle"> {{ $date->format('D, M d, Y') }} {{ Carbon::createFromFormat('h:i A', $day['start_time'])->format('g:i a') }}</span></p>
+                   
+               </td>
+               <td style="padding: 15px 10px; text-align: left;">
+              
+                   <p><span class="taskTitle">{{ $date->format('D, M d, Y') }} {{ Carbon::createFromFormat('h:i A', $day['end_time'])->format('g:i a') }}</span></p>
+                   
+               </td>
+               <td style="padding: 15px 10px; text-align: left;">
+              
+                   <p><span class="taskTitle"> Time Entry</span></p>
+                   
+               </td>
+               <td style="padding: 15px 10px; text-align: left;">
+              
+                   <p><span class="taskTitle"> Billable</span></p>
                    
                </td>
                    

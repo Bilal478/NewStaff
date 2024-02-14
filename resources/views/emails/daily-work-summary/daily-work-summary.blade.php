@@ -35,7 +35,7 @@
                 <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{$totalProductivity}}%</td>
             </tr>
         </table>
-        <h2 style="margin-top: 20px;">Low Activity</h2>
+        <h2 style="margin-top: 20px;">Top Low to High Activity</h2>
         <table style="width: 100%; border-collapse: collapse;">
             @foreach ($lowMembers as $member)
                 <tr>
@@ -45,7 +45,7 @@
                 </tr>
             @endforeach
         </table>
-        <h2 style="margin-top: 20px;">Top Members</h2>
+        <h2 style="margin-top: 20px;">Top Hours Members</h2>
         <table style="width: 100%; border-collapse: collapse;">
             @foreach ($topMembers as $member)
                 <tr>
@@ -65,6 +65,9 @@
                 </tr>
             @endforeach
         </table>
+        <p style="margin-top: 20px; text-align: center;">
+            <a href="{{ route('login') }}" style="color: #3498db; text-decoration: none; font-weight: bold;">Log In to your NeoStaff account to view all members or change notification settings</a>
+        </p>
     </div>
 </body>
 </html>

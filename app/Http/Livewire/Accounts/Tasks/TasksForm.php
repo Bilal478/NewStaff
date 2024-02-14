@@ -71,7 +71,7 @@ class TasksForm extends Component
         'due_date' => 'date_format:"M d, Y"|nullable',
         'project_id' => 'required',
         'user_id' => 'required',
-        'task_id' => 'required',
+        // 'task_id' => 'required',
         // 'team_id' => 'required',
         // 'department_id' => 'required',
         'completed' => 'nullable',

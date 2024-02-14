@@ -1,6 +1,22 @@
 <?php 
 use Carbon\Carbon;
 $user_login = auth()->id();
+$preWeekTotalDurationFormatted=$previousWeekUsers[0];
+$preWeekaverageProductivityFormatted=$previousWeekUsers[1];
+$totalDuration = collect($users)->sum(function ($item) {
+// Convert duration to seconds and sum them up
+return strtotime($item['duration']) - strtotime('00:00:00');
+});
+
+// Convert total seconds back to HH:MM:SS format
+$totalDurationFormatted = gmdate('H:i:s', $totalDuration);
+$totalProductivity = collect($users)->sum('productivity');
+
+// Calculate average productivity
+$averageProductivity = count($users) > 0 ? $totalProductivity / count($users) : 0;
+
+// Format average productivity as needed
+$averageProductivityFormatted = number_format($averageProductivity); 
 ?>
 @php
 $account_user = DB::table('account_user')
@@ -14,8 +30,10 @@ $account_user = DB::table('account_user')
     <div class="container">
         <span class="stripe">
         <a class="toggle-button"  href="{{ route('accounts.reports') }}">Weekly</a>
-        <a class="toggle-button white" href="{{ route('accounts.dailyreports') }}" >Daily</a>
-        
+        <a class="toggle-button white" >Daily</a>
+        @php            
+        session(['selected_date' => $this->date,'selected_user' => $this->user_id]);
+        @endphp
         </span>
     
   </div>
@@ -43,7 +61,10 @@ $account_user = DB::table('account_user')
                         <div class="ml-2">
                         <x-inputs.select-without-label wire:model="user_id" class="w-60" name="user_id">
                                 @forelse ($user_list->count() ? $user_list : $login as $user)
-                                    <option value="{{ $user->id }}" {{ $user->id == $user_login ? 'selected' : '' }}>
+                                    {{-- <option value="{{ $user->id }}" {{ $user->id == $user_login ? 'selected' : '' }}>
+                                        {{ $user->full_name }}
+                                    </option> --}}
+                                    <option value="{{ $user->id }}" {{ session('selected_user1') ? ($user->id == session('selected_user1') ? 'selected' : '') : ($user->id == $user_login ? 'selected' : '') }}>
                                         {{ $user->full_name }}
                                     </option>
                                 @empty
@@ -62,7 +83,16 @@ $account_user = DB::table('account_user')
 		@endrole
        
     </div>
-
+    <div class="flex font-medium" style="justify-content: space-between;">
+        <div style="flex: 1;">
+            <span>Total Hours = {{$totalDurationFormatted}}</span>
+            <span style="margin-left: 15px">Total Activity = {{$averageProductivityFormatted}}%</span>
+        </div>
+        <div style="flex: 1; text-align: right;">
+            <span>Previous Week Total Hours = {{$preWeekTotalDurationFormatted}}</span>
+            <span style="margin-left: 15px">Previous Week Total Activity = {{$preWeekaverageProductivityFormatted}}%</span>
+        </div>
+    </div>
     
     <div class="w-full overflow-x-auto rounded-md border">
         <table class="w-full bg-white">
@@ -91,10 +121,12 @@ $account_user = DB::table('account_user')
                 ?>
                 <?php $inner_count = 0; ?>
             <tr class="text-left  text-xs text-gray-700 font-medium border-b-2">
-            <th class="px-4 py-4">
+            <th class="px-2 py-4">
                 {{ $date->format('D, M d, Y') }}
+            </th>
+            <th>
                 @if ($totalDurationFormatted != '00:00:00')
-                    {{ $totalDurationFormatted }} hrs
+                {{ $totalDurationFormatted }} hrs
                 @endif
             </th>
             </tr>
@@ -104,43 +136,43 @@ $account_user = DB::table('account_user')
                    
                     <tr class="text-left font-extrabold text-xs text-gray-700 font-medium border-b-2">
 
-                    <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+                    <td class="min-w-32 left-4 top-auto bg-white z-10 px-2 py-5">
                             Organization
                     </td>
                     
-                    <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+                    <td class="min-w-32 left-4 top-auto bg-white z-10 px-2 py-5">
                             Project
                     </td>
 
-                    <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+                    <td class="min-w-32 left-4 top-auto bg-white z-10 px-2 py-5">
                             Task
                     </td>
                    
-                    <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+                    <td class="min-w-24 left-4 top-auto bg-white z-10 px-2 py-5">
                             Activity
                     </td>
 
-                    <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+                    <td class="min-w-24 left-4 top-auto bg-white z-10 px-2 py-5">
                             Idle
                     </td>
                       
-                     <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+                     <td class="min-w-24 left-4 top-auto bg-white z-10 px-2 py-5">
                             Manual
                     </td>
 
-                    <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+                    <td class="min-w-24 left-4 top-auto bg-white z-10 px-2 py-5">
                             Duration
                     </td>
-                     <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+                     <td class="min-w-32 left-4 top-auto bg-white z-10 px-2 py-5">
                             Start
                     </td>
-                     <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+                     <td class="min-w-32 left-4 top-auto bg-white z-10 px-2 py-5">
                             Stop
                     </td>
-                     <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+                     <td class="min-w-24 left-4 top-auto bg-white z-10 px-2 py-5">
                             Type
                     </td>
-                     <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+                     <td class="min-w-24 left-4 top-auto bg-white z-10 px-2 py-5">
                             Payment Type
                     </td>
                 </tr>
@@ -148,28 +180,28 @@ $account_user = DB::table('account_user')
                 <?php $inner_count = 1; ?>
                 <tr class="text-left text-xs text-gray-700 font-medium border-b-2 @if($loop->odd) bg-gray-200 @endif">
                    
-                    <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5 @if($loop->odd) bg-gray-200 @endif">
+                    <td class="min-w-32 left-4 top-auto bg-white z-10 px-2 py-5 @if($loop->odd) bg-gray-200 @endif">
                     
                         <p><span class="taskTitle">{{ $day['account_name'] }}</span></p>
                         
                     </td>
-                    <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5 @if($loop->odd) bg-gray-200 @endif">
+                    <td class="min-w-32 left-4 top-auto bg-white z-10 px-2 py-5 @if($loop->odd) bg-gray-200 @endif">
                    
                    <p><span class="taskTitle"> {{ $day['project_title'] }}</span></p>
                    
                </td>
-               <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5 @if($loop->odd) bg-gray-200 @endif">
+               <td class="min-w-32 left-4 top-auto bg-white z-10 px-2 py-5 @if($loop->odd) bg-gray-200 @endif">
               
                    <p><span class="taskTitle">  {{ $day['task_title'] }}</span></p>
                    
                </td>
-                <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5 @if($loop->odd) bg-gray-200 @endif">
+                <td class="min-w-24 left-4 top-auto bg-white z-10 px-2 py-5 @if($loop->odd) bg-gray-200 @endif">
               
                    <p><span class="taskTitle">  {{ $day['productivity'] }}%</span></p>
                    
                </td>
                
-              <!--  <td  style="cursor: pointer;"  class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5">
+              <!--  <td  style="cursor: pointer;"  class="min-w-32 left-4 top-auto bg-white z-10 px-2 py-5">
               
                    <p style="display: inline;"><span class="taskTitle"> {{ $day['start_time'] }} - {{ $day['end_time'] }}</span></p>
                    @if($account_user->allow_edit_time == 1)
@@ -189,45 +221,39 @@ $account_user = DB::table('account_user')
                     </button>
                     @endif
                </td> -->
-                <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5 @if($loop->odd) bg-gray-200 @endif">
+                <td class="min-w-24 left-4 top-auto bg-white z-10 px-2 py-5 @if($loop->odd) bg-gray-200 @endif">
               
-                   <p><span class="taskTitle"> {{ $day['productivity'] }}</span></p>
+                   <p><span class="taskTitle">{{ $day['idle_percentage'] }}%</span></p>
                    
                </td> 
-               <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5 @if($loop->odd) bg-gray-200 @endif">
+               <td class="min-w-24 left-4 top-auto bg-white z-10 px-2 py-5 @if($loop->odd) bg-gray-200 @endif">
               
-                   <p><span class="taskTitle">
-                   @if ($day['is_manual_time'] == 1)
-                   100%
-                   @else
-                   0%
-                   @endif  
-                   </span></p>
+                   <p><span class="taskTitle">{{ $day['manual_percentage'] }}%</span></p>
                    
                </td> 
-               <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5 @if($loop->odd) bg-gray-200 @endif">
+               <td class="min-w-24 left-4 top-auto bg-white z-10 px-2 py-5 @if($loop->odd) bg-gray-200 @endif">
               
                    <p><span class="taskTitle"> {{ $day['duration'] }}</span></p>
                    
                </td> 
-               <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5 @if($loop->odd) bg-gray-200 @endif">
+               <td class="min-w-32 left-4 top-auto bg-white z-10 px-2 py-5 @if($loop->odd) bg-gray-200 @endif">
               
                    <p><span class="taskTitle"> {{ $date->format('D, M d, Y') }} {{ Carbon::createFromFormat('h:i A', $day['start_time'])->format('g:i a') }}
 
                    </span></p>
                    
                </td> 
-               <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5 @if($loop->odd) bg-gray-200 @endif">
+               <td class="min-w-32 left-4 top-auto bg-white z-10 px-2 py-5 @if($loop->odd) bg-gray-200 @endif">
               
                    <p><span class="taskTitle"> {{ $date->format('D, M d, Y') }} {{ Carbon::createFromFormat('h:i A', $day['end_time'])->format('g:i a') }}</span></p>
                    
                </td> 
-               <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5 @if($loop->odd) bg-gray-200 @endif">
+               <td class="min-w-24 left-4 top-auto bg-white z-10 px-2 py-5 @if($loop->odd) bg-gray-200 @endif">
               
                    <p><span class="taskTitle"> Time Entry</span></p>
                    
                </td> 
-               <td class="min-w-52 sticky left-4 top-auto bg-white z-10 px-9 py-5 @if($loop->odd) bg-gray-200 @endif">
+               <td class="min-w-24 left-4 top-auto bg-white z-10 px-2 py-5 @if($loop->odd) bg-gray-200 @endif">
               
                    <p><span class="taskTitle"> Billable</span></p>
                    

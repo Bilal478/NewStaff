@@ -52,10 +52,22 @@ class ReportsIndex extends Component
     {
         $this->resetPage();
     }
-
+    // public function resetSession()
+    // {
+    //     session()->forget(['selected_date']);
+    // }
     public function mount()
     {
-        $this->date = Carbon::today()->format('M d, Y');
+        $selectedDate = session('selected_date', null);
+        $selectedUser = session('selected_user', null);
+        if ($selectedUser) {
+            $this->user_id = $selectedUser;
+        }
+        if ($selectedDate) {
+            $this->date = $selectedDate;
+        } else {
+            $this->date = Carbon::today()->format('M d, Y');
+        }
         $this->week = $this->getWeekFormatted();
         $departments_ids = [];
 	// $this->user_list = User::orderBy('firstname')->get(['id', 'firstname', 'lastname']);

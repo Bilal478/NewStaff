@@ -48,6 +48,9 @@
                 </tr>
             @endforeach
         </table>
+        <p style="margin-top: 20px; text-align: center;">
+            <a href="{{ route('login') }}" style="color: #3498db; text-decoration: none; font-weight: bold;">Log In to your NeoStaff account to view all members or change notification settings</a>
+        </p>
     </div>
 </body>
 </html>

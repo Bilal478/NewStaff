@@ -23,8 +23,11 @@ $totalTimeFormatted = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
     </x-page.title>
     <div class="container">
         <span class="stripe">
-        <a class="toggle-button white" href="{{ route('accounts.reports') }}">Weekly</a>
+        <a class="toggle-button white" >Weekly</a>
         <a class="toggle-button" href="{{ route('accounts.dailyreports') }}">Daily</a>
+        @php            
+        session(['selected_date1' => $this->date,'selected_user1' => $this->user_id])
+        @endphp
         </span>
     </div>
     <div class="flex items-center flex-wrap pb-8 flex-col sm:flex-row">
@@ -51,9 +54,12 @@ $totalTimeFormatted = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
                         <div class="ml-2">
                         <x-inputs.select-without-label wire:model="user_id" class="w-60" name="user_id">
                                 @forelse ($user_list->count() ? $user_list : $login as $user)
-                                    <option value="{{ $user->id }}" {{ $user->id == $user_login ? 'selected' : '' }}>
+                                {{-- <option value="{{ $user->id }}" {{ $user->id == $user_login ? 'selected' : '' }}>
                                         {{ $user->full_name }}
-                                    </option>
+                                    </option> --}}
+                                <option value="{{ $user->id }}" {{ session('selected_user') ? ($user->id == session('selected_user') ? 'selected' : '') : ($user->id == $user_login ? 'selected' : '') }}>
+                                    {{ $user->full_name }}
+                                </option>
                                 @empty
                                     <option disabled>No users found.</option>
                                 @endforelse

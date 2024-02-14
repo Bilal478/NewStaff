@@ -1,5 +1,21 @@
 <?php
 use Carbon\Carbon;
+$preWeekTotalDurationFormatted=$previousWeekUsers[0];
+$preWeekaverageProductivityFormatted=$previousWeekUsers[1];
+$totalDuration = collect($users)->sum(function ($item) {
+// Convert duration to seconds and sum them up
+return strtotime($item['duration']) - strtotime('00:00:00');
+});
+
+// Convert total seconds back to HH:MM:SS format
+$totalDurationFormatted = gmdate('H:i:s', $totalDuration);
+$totalProductivity = collect($users)->sum('productivity');
+
+// Calculate average productivity
+$averageProductivity = count($users) > 0 ? $totalProductivity / count($users) : 0;
+
+// Format average productivity as needed
+$averageProductivityFormatted = number_format($averageProductivity); 
 ?>
 <!DOCTYPE html>
 <html>
@@ -71,7 +87,16 @@ use Carbon\Carbon;
                     </h1><br><br>
                 </div>
 
-
+                <div style="display: flex; justify-content: space-between;">
+                    <div style="flex: 1;">
+                        <span>Total Hours = {{$totalDurationFormatted}}</span>
+                        <span style="margin-left: 15px">Total Activity = {{$averageProductivityFormatted}}%</span>
+                    </div>
+                    <div style="flex: 1; text-align: right;">
+                        <span>Previous Week Total Hours = {{$preWeekTotalDurationFormatted}}</span>
+                        <span style="margin-left: 15px">Previous Week Total Activity = {{$preWeekaverageProductivityFormatted}}%</span>
+                    </div>
+                </div>
 
         <div cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="width: 100%;">
             <table style="width: 100%;">
@@ -196,12 +221,12 @@ use Carbon\Carbon;
                </td>
                <td style="padding: 15px 10px; text-align: left;">
               
-                   <p><span class="taskTitle"> {{ $day['productivity'] }}</span></p>
+                   <p><span class="taskTitle"> {{ $day['idle_percentage'] }}%</span></p>
                    
                </td>
                <td style="padding: 15px 10px; text-align: left;">
               
-                   <p><span class="taskTitle"> {{ $day['productivity'] }}</span></p>
+                   <p><span class="taskTitle"> {{ $day['manual_percentage'] }}%</span></p>
                    
                </td>
                <td style="padding: 15px 10px; text-align: left;">

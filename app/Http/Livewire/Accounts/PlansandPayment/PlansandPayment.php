@@ -53,7 +53,7 @@ class PlansandPayment extends Component
             ]);
 	}else{
 		$request->user()->newSubscription($request->plan, $plan->stripe_id)
-			->trialDays(15)
+			->trialDays(30)
 			->quantity($request->selectseats)
 			->create($request->token, 
 			[

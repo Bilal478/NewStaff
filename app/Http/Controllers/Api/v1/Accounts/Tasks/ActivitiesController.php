@@ -86,9 +86,9 @@ class ActivitiesController extends Controller
         $secondsToAdd = $request->to - $request->from;
         $existingActivity->update([
             // Update other fields as needed
-            'to' => $request->to,
+            'to' => $request->from+600,
             'seconds' => $existingActivity->seconds+$secondsToAdd,
-            'end_datetime' => $request->end_datetime ?: $end_datetime,
+            'end_datetime' => $request->end_datetime ?: $findTo,
         ]);
         $this->storeScreenshots($request, $account, $existingActivity);
 
@@ -98,7 +98,10 @@ class ActivitiesController extends Controller
         ], 200);
         } else {
         // Create a new record
-        $activity = $task->activities()->create($request->validated());
+        // $activity = $task->activities()->create($request->validated());
+        $requestArray = $request->validated();
+        $requestArray['to'] = $request->from + 600; // Modify 'to' based on your requirement
+        $activity = $task->activities()->create($requestArray);
         Cache::put('last_activity_id', $activity->id);
         $this->storeScreenshots($request, $account, $activity);
 

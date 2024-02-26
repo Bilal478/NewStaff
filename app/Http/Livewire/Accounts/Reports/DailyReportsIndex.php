@@ -489,13 +489,16 @@ class DailyReportsIndex extends Component
         
         // return $arrayData;
     $users=$arrayData;
-    $totalDuration = collect($users)->sum(function ($item) {
-    // Convert duration to seconds and sum them up
-    return strtotime($item['duration']) - strtotime('00:00:00');
+    $totalDurationInSeconds = collect($users)->sum(function ($item) {
+        // Convert duration to seconds and sum them up
+        return strtotime($item['duration']) - strtotime('00:00:00');
     });
-
-    // Convert total seconds back to HH:MM:SS format
-    $totalDurationFormatted = gmdate('H:i:s', $totalDuration);
+    
+    $hours = floor($totalDurationInSeconds / 3600);
+    $minutes = floor(($totalDurationInSeconds % 3600) / 60);
+    $seconds = $totalDurationInSeconds % 60;
+    
+    $totalDurationFormatted = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
     $totalProductivity = collect($users)->sum('productivity');
 
     // Calculate average productivity

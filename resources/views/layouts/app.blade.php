@@ -23,7 +23,9 @@ $account = Account::find(session()->get('account_id'));
 
 if(count($count_subs) == '0'){
 	
-	header('Location: https://media.neostaff.app/');
+	// header('Location: https://media.neostaff.app/');
+	header('Location:  https://neostaff.app/#price');
+
 	die();	
 }
 

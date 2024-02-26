@@ -2,13 +2,16 @@
 use Carbon\Carbon;
 $preWeekTotalDurationFormatted=$previousWeekUsers[0];
 $preWeekaverageProductivityFormatted=$previousWeekUsers[1];
-$totalDuration = collect($users)->sum(function ($item) {
-// Convert duration to seconds and sum them up
-return strtotime($item['duration']) - strtotime('00:00:00');
+$totalDurationInSeconds = collect($users)->sum(function ($item) {
+        // Convert duration to seconds and sum them up
+    return strtotime($item['duration']) - strtotime('00:00:00');
 });
-
-// Convert total seconds back to HH:MM:SS format
-$totalDurationFormatted = gmdate('H:i:s', $totalDuration);
+    
+$hours = floor($totalDurationInSeconds / 3600);
+$minutes = floor(($totalDurationInSeconds % 3600) / 60);
+$seconds = $totalDurationInSeconds % 60;
+    
+$totalDurationFormatted = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
 $totalProductivity = collect($users)->sum('productivity');
 
 // Calculate average productivity
@@ -158,7 +161,7 @@ $averageProductivityFormatted = number_format($averageProductivity);
                 @if($date->format('Y-m-d') == $day['date'])
                     @if($inner_count==0)
                    
-                    <tr  style="color: #374151; font-size: 12px; text-align: left; border-bottom: 1px solid #E5E7EB;">
+                <tr  style="color: #374151; font-size: 12px; text-align: left; border-bottom: 1px solid #E5E7EB;">
                     
                     <td style="padding: 15px 10px; text-align: left; font-weight:800;">
                             Organization
@@ -171,18 +174,6 @@ $averageProductivityFormatted = number_format($averageProductivity);
                             Task
                     </td>
                     <td style="padding: 15px 10px; text-align: left; font-weight:800;">
-                            Activity
-                    </td>
-                    <td style="padding: 15px 10px; text-align: left; font-weight:800;">
-                            Idle
-                    </td> 
-                    <td style="padding: 15px 10px; text-align: left; font-weight:800;">
-                            Manual
-                    </td> 
-                    <td style="padding: 15px 10px; text-align: left; font-weight:800;">
-                            Duration
-                    </td> 
-                    <td style="padding: 15px 10px; text-align: left; font-weight:800;">
                             Start
                     </td> 
                     <td style="padding: 15px 10px; text-align: left; font-weight:800;">
@@ -192,9 +183,18 @@ $averageProductivityFormatted = number_format($averageProductivity);
                             Type
                     </td> 
                     <td style="padding: 15px 10px; text-align: left; font-weight:800;">
-                            Payment Type
+                        Activity
                     </td>
-                </tr>
+                    <td style="padding: 15px 10px; text-align: left; font-weight:800;">
+                        Idle
+                    </td> 
+                    <td style="padding: 15px 10px; text-align: left; font-weight:800;">
+                        Manual
+                    </td> 
+                    <td style="padding: 15px 10px; text-align: left; font-weight:800;">
+                        Duration
+                    </td> 
+                    </tr>
                 @endif
                 <?php $inner_count = 1; ?>
                 <tr style="color: #374151; font-size: 12px; text-align: left; border-bottom: 1px solid #E5E7EB; @if($loop->odd) background-color: #f3f4f6; @endif">
@@ -205,55 +205,57 @@ $averageProductivityFormatted = number_format($averageProductivity);
                     </td>
                     <td style="padding: 15px 10px; text-align: left;">
                    
-                   <p><span class="taskTitle"> {{ $day['project_title'] }}</span></p>
+                        <p><span class="taskTitle"> {{ $day['project_title'] }}</span></p>
                    
-               </td>
-               <td style="padding: 15px 10px; text-align: left;">
+                    </td>
+                    <td style="padding: 15px 10px; text-align: left;">
               
-                   <p><span class="taskTitle"> {{ $day['task_title'] }}</span></p>
+                        <p><span class="taskTitle"> {{ $day['task_title'] }}</span></p>
                    
-               </td>
-               
-               <td style="padding: 15px 10px; text-align: left;">
+                    </td>
+                    <td style="padding: 15px 10px; text-align: left;">
               
-                   <p><span class="taskTitle"> {{ $day['productivity'] }}%</span></p>
+                        <p><span class="taskTitle"> {{ $date->format('D, M d, Y') }} {{ Carbon::createFromFormat('h:i A', $day['start_time'])->format('g:i a') }}</span></p>
                    
-               </td>
-               <td style="padding: 15px 10px; text-align: left;">
+                    </td>
+                    <td style="padding: 15px 10px; text-align: left;">
               
-                   <p><span class="taskTitle"> {{ $day['idle_percentage'] }}%</span></p>
+                        <p><span class="taskTitle">{{ $date->format('D, M d, Y') }} {{ Carbon::createFromFormat('h:i A', $day['end_time'])->format('g:i a') }}</span></p>
                    
-               </td>
-               <td style="padding: 15px 10px; text-align: left;">
+                    </td>
+                    <td style="padding: 15px 10px; text-align: left;">
               
-                   <p><span class="taskTitle"> {{ $day['manual_percentage'] }}%</span></p>
+                        <p><span class="taskTitle"> 
+                            @if ($day['manual_percentage']==100)
+                                Manual 
+                            @elseif ($day['manual_percentage']==0)
+                                Tracked 
+                            @else
+                                {{$day['manual_percentage']}}% Manual {{ 100-$day['manual_percentage'] }}% Tracked
+                            @endif
+                        </span></p>
                    
-               </td>
-               <td style="padding: 15px 10px; text-align: left;">
+                    </td>
+                    <td style="padding: 15px 10px; text-align: left;">
               
-                   <p><span class="taskTitle"> {{ $day['duration'] }}</span></p>
-                   
-               </td>
-               <td style="padding: 15px 10px; text-align: left;">
-              
-                   <p><span class="taskTitle"> {{ $date->format('D, M d, Y') }} {{ Carbon::createFromFormat('h:i A', $day['start_time'])->format('g:i a') }}</span></p>
-                   
-               </td>
-               <td style="padding: 15px 10px; text-align: left;">
-              
-                   <p><span class="taskTitle">{{ $date->format('D, M d, Y') }} {{ Carbon::createFromFormat('h:i A', $day['end_time'])->format('g:i a') }}</span></p>
-                   
-               </td>
-               <td style="padding: 15px 10px; text-align: left;">
-              
-                   <p><span class="taskTitle"> Time Entry</span></p>
-                   
-               </td>
-               <td style="padding: 15px 10px; text-align: left;">
-              
-                   <p><span class="taskTitle"> Billable</span></p>
-                   
-               </td>
+                        <p><span class="taskTitle"> {{ $day['productivity'] }}%</span></p>
+           
+                    </td>
+                    <td style="padding: 15px 10px; text-align: left;">
+      
+                        <p><span class="taskTitle"> {{ $day['idle_percentage'] }}%</span></p>
+           
+                    </td>
+                    <td style="padding: 15px 10px; text-align: left;">
+      
+                        <p><span class="taskTitle"> {{ $day['manual_percentage'] }}%</span></p>
+           
+                    </td>
+                    <td style="padding: 15px 10px; text-align: left;">
+      
+                        <p><span class="taskTitle"> {{ $day['duration'] }}</span></p>
+           
+                    </td>
                    
                 </tr>
                 @endif

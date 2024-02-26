@@ -3,13 +3,16 @@ use Carbon\Carbon;
 $user_login = auth()->id();
 $preWeekTotalDurationFormatted=$previousWeekUsers[0];
 $preWeekaverageProductivityFormatted=$previousWeekUsers[1];
-$totalDuration = collect($users)->sum(function ($item) {
-// Convert duration to seconds and sum them up
-return strtotime($item['duration']) - strtotime('00:00:00');
+$totalDurationInSeconds = collect($users)->sum(function ($item) {
+    // Convert duration to seconds and sum them up
+    return strtotime($item['duration']) - strtotime('00:00:00');
 });
 
-// Convert total seconds back to HH:MM:SS format
-$totalDurationFormatted = gmdate('H:i:s', $totalDuration);
+$hours = floor($totalDurationInSeconds / 3600);
+$minutes = floor(($totalDurationInSeconds % 3600) / 60);
+$seconds = $totalDurationInSeconds % 60;
+
+$totalDurationFormatted = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
 $totalProductivity = collect($users)->sum('productivity');
 
 // Calculate average productivity
@@ -32,7 +35,7 @@ $account_user = DB::table('account_user')
         <a class="toggle-button"  href="{{ route('accounts.reports') }}">Weekly</a>
         <a class="toggle-button white" >Daily</a>
         @php            
-        session(['selected_date' => $this->date,'selected_user' => $this->user_id]);
+        session(['selected_date' => $date,'selected_user' => $user_id]);
         @endphp
         </span>
     
@@ -134,72 +137,58 @@ $account_user = DB::table('account_user')
                 @if($date->format('Y-m-d') == $day['date'])
                     @if($inner_count==0)
                    
-                    <tr class="text-left font-extrabold text-xs text-gray-700 font-medium border-b-2">
+                <tr class="text-left font-extrabold text-xs text-gray-700 font-medium border-b-2">
 
                     <td class="min-w-32 left-4 top-auto bg-white z-10 px-2 py-5">
                             Organization
                     </td>
-                    
                     <td class="min-w-32 left-4 top-auto bg-white z-10 px-2 py-5">
                             Project
                     </td>
-
                     <td class="min-w-32 left-4 top-auto bg-white z-10 px-2 py-5">
                             Task
                     </td>
-                   
-                    <td class="min-w-24 left-4 top-auto bg-white z-10 px-2 py-5">
-                            Activity
-                    </td>
-
-                    <td class="min-w-24 left-4 top-auto bg-white z-10 px-2 py-5">
-                            Idle
-                    </td>
-                      
-                     <td class="min-w-24 left-4 top-auto bg-white z-10 px-2 py-5">
-                            Manual
-                    </td>
-
-                    <td class="min-w-24 left-4 top-auto bg-white z-10 px-2 py-5">
-                            Duration
-                    </td>
-                     <td class="min-w-32 left-4 top-auto bg-white z-10 px-2 py-5">
+                    <td class="min-w-32 left-4 top-auto bg-white z-10 px-2 py-5">
                             Start
                     </td>
-                     <td class="min-w-32 left-4 top-auto bg-white z-10 px-2 py-5">
+                    <td class="min-w-32 left-4 top-auto bg-white z-10 px-2 py-5">
                             Stop
                     </td>
-                     <td class="min-w-24 left-4 top-auto bg-white z-10 px-2 py-5">
+                    <td class="min-w-32 left-4 top-auto bg-white z-10 px-2 py-5">
                             Type
                     </td>
-                     <td class="min-w-24 left-4 top-auto bg-white z-10 px-2 py-5">
-                            Payment Type
+                    <td class="text-center min-w-24 left-4 top-auto bg-white z-10 px-2 py-5">
+                        Activity
+                    </td>
+                    <td class="text-center min-w-24 left-4 top-auto bg-white z-10 px-2 py-5">
+                        Idle
+                    </td>
+                    <td class="text-center min-w-24 left-4 top-auto bg-white z-10 px-2 py-5">
+                        Manual
+                    </td>
+                    <td class="text-center min-w-24 left-4 top-auto bg-white z-10 px-2 py-5">
+                        Duration
                     </td>
                 </tr>
                 @endif
                 <?php $inner_count = 1; ?>
-                <tr class="text-left text-xs text-gray-700 font-medium border-b-2 @if($loop->odd) bg-gray-200 @endif">
+                <tr class="text-left text-xs text-gray-700 font-medium border-b-2">
                    
-                    <td class="min-w-32 left-4 top-auto bg-white z-10 px-2 py-5 @if($loop->odd) bg-gray-200 @endif">
+                    <td class="min-w-32 left-4 top-auto bg-white z-10 px-2 py-5">
                     
                         <p><span class="taskTitle">{{ $day['account_name'] }}</span></p>
                         
                     </td>
-                    <td class="min-w-32 left-4 top-auto bg-white z-10 px-2 py-5 @if($loop->odd) bg-gray-200 @endif">
+                    <td class="min-w-32 left-4 top-auto bg-white z-10 px-2 py-5">
                    
-                   <p><span class="taskTitle"> {{ $day['project_title'] }}</span></p>
+                        <p><span class="taskTitle"> {{ $day['project_title'] }}</span></p>
                    
-               </td>
-               <td class="min-w-32 left-4 top-auto bg-white z-10 px-2 py-5 @if($loop->odd) bg-gray-200 @endif">
+                    </td>
+                    <td class="min-w-32 left-4 top-auto bg-white z-10 px-2 py-5">
               
-                   <p><span class="taskTitle">  {{ $day['task_title'] }}</span></p>
+                        <p><span class="taskTitle">  {{ $day['task_title'] }}</span></p>
                    
-               </td>
-                <td class="min-w-24 left-4 top-auto bg-white z-10 px-2 py-5 @if($loop->odd) bg-gray-200 @endif">
-              
-                   <p><span class="taskTitle">  {{ $day['productivity'] }}%</span></p>
-                   
-               </td>
+                    </td>
                
               <!--  <td  style="cursor: pointer;"  class="min-w-32 left-4 top-auto bg-white z-10 px-2 py-5">
               
@@ -221,43 +210,51 @@ $account_user = DB::table('account_user')
                     </button>
                     @endif
                </td> -->
-                <td class="min-w-24 left-4 top-auto bg-white z-10 px-2 py-5 @if($loop->odd) bg-gray-200 @endif">
+                    <td class="min-w-32 left-4 top-auto bg-white z-10 px-2 py-5">
               
-                   <p><span class="taskTitle">{{ $day['idle_percentage'] }}%</span></p>
-                   
-               </td> 
-               <td class="min-w-24 left-4 top-auto bg-white z-10 px-2 py-5 @if($loop->odd) bg-gray-200 @endif">
-              
-                   <p><span class="taskTitle">{{ $day['manual_percentage'] }}%</span></p>
-                   
-               </td> 
-               <td class="min-w-24 left-4 top-auto bg-white z-10 px-2 py-5 @if($loop->odd) bg-gray-200 @endif">
-              
-                   <p><span class="taskTitle"> {{ $day['duration'] }}</span></p>
-                   
-               </td> 
-               <td class="min-w-32 left-4 top-auto bg-white z-10 px-2 py-5 @if($loop->odd) bg-gray-200 @endif">
-              
-                   <p><span class="taskTitle"> {{ $date->format('D, M d, Y') }} {{ Carbon::createFromFormat('h:i A', $day['start_time'])->format('g:i a') }}
+                        <p><span class="taskTitle"> {{ $date->format('D, M d, Y') }} {{ Carbon::createFromFormat('h:i A', $day['start_time'])->format('g:i a') }}
 
-                   </span></p>
+                        </span></p>
                    
-               </td> 
-               <td class="min-w-32 left-4 top-auto bg-white z-10 px-2 py-5 @if($loop->odd) bg-gray-200 @endif">
+                    </td> 
+                    <td class="min-w-32 left-4 top-auto bg-white z-10 px-2 py-5">
               
-                   <p><span class="taskTitle"> {{ $date->format('D, M d, Y') }} {{ Carbon::createFromFormat('h:i A', $day['end_time'])->format('g:i a') }}</span></p>
+                        <p><span class="taskTitle"> {{ $date->format('D, M d, Y') }} {{ Carbon::createFromFormat('h:i A', $day['end_time'])->format('g:i a') }}</span></p>
                    
-               </td> 
-               <td class="min-w-24 left-4 top-auto bg-white z-10 px-2 py-5 @if($loop->odd) bg-gray-200 @endif">
+                    </td> 
+                    <td class="min-w-32 left-4 top-auto bg-white z-10 px-2 py-5">
               
-                   <p><span class="taskTitle"> Time Entry</span></p>
+                        <p><span class="taskTitle">
+                            @if ($day['manual_percentage']==100)
+                                Manual 
+                            @elseif ($day['manual_percentage']==0)
+                                Tracked 
+                            @else
+                                {{$day['manual_percentage']}}% Manual {{ 100-$day['manual_percentage'] }}% Tracked
+                            @endif
+                        </span></p>
                    
-               </td> 
-               <td class="min-w-24 left-4 top-auto bg-white z-10 px-2 py-5 @if($loop->odd) bg-gray-200 @endif">
+                    </td> 
+                    <td class="text-center min-w-24 left-4 top-auto bg-white z-10 px-2 py-5">
               
-                   <p><span class="taskTitle"> Billable</span></p>
+                        <p><span class="taskTitle">  {{ $day['productivity'] }}%</span></p>
                    
-               </td>
+                    </td>
+                    <td class="text-center min-w-24 left-4 top-auto bg-white z-10 px-2 py-5">
+              
+                        <p><span class="taskTitle">{{ $day['idle_percentage'] }}%</span></p>
+                   
+                    </td> 
+                    <td class="text-center min-w-24 left-4 top-auto bg-white z-10 px-2 py-5">
+              
+                        <p><span class="taskTitle">{{ $day['manual_percentage'] }}%</span></p>
+                   
+                    </td> 
+                    <td class="text-center min-w-24 left-4 top-auto bg-white z-10 px-2 py-5">
+              
+                        <p><span class="taskTitle"> {{ $day['duration'] }}</span></p>
+                   
+                    </td> 
                    
                 </tr>
                 @endif

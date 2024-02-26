@@ -65,7 +65,7 @@ Route::get('work-summary-email', function(){
 
         echo 'Emails sent successfully';
 });
-Route::post('/update-subscription', [StripeWebhookController::class, 'handleSubscriptionUpdated']);
+Route::post('/update-subscription', [StripeWebhookController::class, 'handle']);
 Route::view('/download', 'download')->name('download');
 Route::get('accept-invitation/{randomID}', Login2::class)->name('accept-invitation');
 

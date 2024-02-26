@@ -9,6 +9,7 @@ class Subscription extends Model
 {
     protected $fillable = [
         'stripe_status',
+        'ends_at',
     ];
     use HasFactory;
     public function user()

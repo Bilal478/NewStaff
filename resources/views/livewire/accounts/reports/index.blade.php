@@ -26,7 +26,7 @@ $totalTimeFormatted = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
         <a class="toggle-button white" >Weekly</a>
         <a class="toggle-button" href="{{ route('accounts.dailyreports') }}">Daily</a>
         @php            
-        session(['selected_date1' => $this->date,'selected_user1' => $this->user_id])
+        session(['selected_date1' => $date,'selected_user1' => $user_id]);
         @endphp
         </span>
     </div>

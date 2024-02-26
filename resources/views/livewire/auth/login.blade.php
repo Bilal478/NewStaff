@@ -26,18 +26,6 @@
     <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div class="px-4 py-8 bg-white shadow sm:rounded-lg sm:px-10">
             <form wire:submit.prevent="authenticate">
-                {{-- @if($subscriptionExpired)
-                 <div class="alert alert-warning text-xs">
-                  {{ trans('Subscription Period Ended') }}
-                  <a href="{{ route('buy_subscription') }}" class="float-right font-medium text-blue-600 hover:text-blue-500 focus:outline-none focus:underline transition ease-in-out duration-150" href="#">Buy a Subscription</a>
-                 </div>
-                 @endif --}}
-                 @if($subscriptionExpired)
-                 <div class="alert alert-warning text-xs">
-                 {{ trans('Subscription Period Ended') }}
-                   <a wire:click.prevent="buySubscription" class="float-right font-medium text-blue-600 hover:text-blue-500 focus:outline-none focus:underline transition ease-in-out duration-150" href="#">Buy a Subscription</a>
-                 </div>
-                @endif
                 <x-inputs.text
                     wire:model.lazy="email"
                     label="Email address"

@@ -147,23 +147,49 @@ $formattedTime = sprintf('%d:%02d', $minutes, $remainingSeconds);
                 <div class="flex items-center justify-center space-x-2">
                     <div class="flex items-center">
                         <x-svgs.keyboard class="w-4 h-4 text-blue-500 mr-1" />
-                        <span class="text-xs text-gray-500">{{ $activity->keyboard_count }}</span>
+                        <span class="text-xs text-gray-500">
+                            @if ($activity->is_manual_time==1)
+                            <x-svgs.minus class="w-4 h-4 text-black-500 mr-1" />
+                            @else
+                            {{ $activity->keyboard_count }}
+                            @endif
+                        </span>
                     </div>
 
                     <div class="flex items-center">
                         <x-svgs.cursor class="w-4 h-4 text-blue-500 mr-1" />
-                        <span class="text-xs text-gray-500">{{ $activity->mouse_count }}</span>
+                        <span class="text-xs text-gray-500">
+                            @if ($activity->is_manual_time==1)
+                            <x-svgs.minus class="w-4 h-4 text-black-500 mr-1" />
+                            @else
+                            {{ $activity->mouse_count }}
+                            @endif
+                        </span>
                     </div>
 
                     <div class="flex items-center">
                         <x-svgs.computer class="w-4 h-4 text-blue-500 mr-1" />
-                        <span class="text-xs text-gray-500">{{ $activity->total_activity_percentage }}%</span>
+                        <span class="text-xs text-gray-500">
+                            @if ($activity->is_manual_time==1)
+                            <x-svgs.minus class="w-4 h-4 text-black-500 mr-1" />
+                            @else
+                            {{ $activity->total_activity_percentage }}%
+                            @endif
+                        </span>
                     </div>
                 </div>
                 <div class="flex items-center justify-center space-x-2 mt-2">
                     <div class="flex items-center">
-                        <span class="text-xs text-gray-500">{{ $activity->total_activity_percentage }}% of {{$formattedTime}} min</span>
-                    </div>
+                        <span class="text-xs text-gray-500">
+                            @if ($activity->is_manual_time == 1)
+                                <span class="flex items-center">
+                                    <x-svgs.minus class="w-4 h-4 text-black-500 mr-1" /> % of {{$formattedTime}} min
+                                </span>
+                            @else
+                               {{ $activity->total_activity_percentage }}% of {{$formattedTime}} min
+                            @endif
+                        </span>
+                   </div>
                 </div>
             </div>
 

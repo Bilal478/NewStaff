@@ -99,9 +99,11 @@ $account = Account::where('id', $account_id)
             </h3>
             <div class="flex items-center text-sm {{ $totalPreviuosTimeState=='more'? 'text-red-500' :'text-green-500'}}">
                 @if($totalPreviuosTimeState=='more')
-                <img style="margin-top:-2px;margin-right: 10px;" src="https://d2elkgkdx2cp5d.cloudfront.net/assets/global/arrow_red-7d7d05038fc89ddb147974ea866c4c303ba2bfccc049b6bf073d4709f0d026bb.svg">
+                <x-svgs.arrow-up class="h-7 w-4 text-green-500 mr-1" />
+                {{-- <img style="margin-top:-2px;margin-right: 10px;" src="https://d2elkgkdx2cp5d.cloudfront.net/assets/global/arrow_red-7d7d05038fc89ddb147974ea866c4c303ba2bfccc049b6bf073d4709f0d026bb.svg"> --}}
                 @else
-                <img style="margin-top: -2px;margin-right: 10px;"  src="https://d2elkgkdx2cp5d.cloudfront.net/assets/global/arrow_green-bb4267018493d26d5ef23d41f52f674046a789343cd449b2dace465966c00883.svg">
+                <x-svgs.arrow-down class="h-7 w-4 text-red-500 mr-1" />
+                {{-- <img style="margin-top: -2px;margin-right: 10px;"  src="https://d2elkgkdx2cp5d.cloudfront.net/assets/global/arrow_green-bb4267018493d26d5ef23d41f52f674046a789343cd449b2dace465966c00883.svg"> --}}
                 @endif
                 <span class="text-lg">
                     {{ gmdate('H:i', $totalPreviuosTime) }}

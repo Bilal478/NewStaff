@@ -24,7 +24,7 @@ class Home extends Component
     {
         $this->validate();
 
-        if (!Auth::guard('web')->attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
+        if (!Auth::guard('web')->attempt(['email' => $this->email, 'password' => $this->password])) {
             $this->addError('email', trans('auth.failed'));
 
             return;

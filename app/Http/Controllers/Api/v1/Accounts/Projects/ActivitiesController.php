@@ -35,7 +35,7 @@ class ActivitiesController extends Controller
 
        if($last_activity_record){
         if(!($last_activity_record->start_datetime == $start_datetime && $last_activity_record->end_datetime == $end_datetime
-        && $last_activity_record->account_id == $account->id &&  $last_activity_record->project_id == $project->id))
+        && $last_activity_record->account_id == $account->id &&  $last_activity_record->project_id == $project->id && $last_activity_record->task_id == $request->task_id))
         {
             $activity = $project->activities()->create($request->validated());
             Cache::put('last_activity_id', $activity->id);
@@ -45,6 +45,21 @@ class ActivitiesController extends Controller
                 'message' => 'The activity has been saved.',
                 'activity' => new ActivityResource($activity->refresh())
             ], 200);
+        }
+        else{
+            $last_activity_record->update([
+                // Update other fields as needed
+                // 'to' => $request->from+600,
+                'seconds' => $request->seconds,
+                // 'end_datetime' => $request->end_datetime ?: $findTo,
+            ]);
+            Cache::put('last_activity_id', $last_activity_record->id);
+            $this->storeScreenshots($request, $account, $last_activity_record);
+            return api_response([
+                'message' => 'The activity has been updated.',
+                'activity' => new ActivityResource($last_activity_record->refresh())
+            ], 200);
+
         }
        }
        else{
@@ -62,7 +77,6 @@ class ActivitiesController extends Controller
     }
     public function store1(StoreProjectActivityRequest $request, Account $account, Project $project)
     {
-        // dd('qqq');
         if (Gate::denies('store-project-activity', $project)) {
             return api_response_unauthorized();
         }
@@ -93,6 +107,7 @@ class ActivitiesController extends Controller
                 'seconds' => $existingActivity->seconds+$secondsToAdd,
                 'end_datetime' => $request->end_datetime ?: $findTo,
             ]);
+            Cache::put('last_activity_id', $existingActivity->id);
             $this->storeScreenshots($request, $account, $existingActivity);
     
             return api_response([

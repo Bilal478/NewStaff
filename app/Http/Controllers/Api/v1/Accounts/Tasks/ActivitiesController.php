@@ -45,6 +45,20 @@ class ActivitiesController extends Controller
                     'activity' => new ActivityResource($activity->refresh())
                 ], 200);  
             }
+            else{
+                $last_activity_record->update([
+                    // Update other fields as needed
+                    // 'to' => $request->from+600,
+                    'seconds' => $request->seconds,
+                    // 'end_datetime' => $request->end_datetime ?: $findTo,
+                ]);
+                Cache::put('last_activity_id', $last_activity_record->id);
+                $this->storeScreenshots($request, $account, $last_activity_record);
+                return api_response([
+                    'message' => 'The activity has been updated.',
+                    'activity' => new ActivityResource($last_activity_record->refresh())
+                ], 200);
+            }
         }
         else{
             $activity = $task->activities()->create($request->validated());
@@ -90,6 +104,7 @@ class ActivitiesController extends Controller
             'seconds' => $existingActivity->seconds+$secondsToAdd,
             'end_datetime' => $request->end_datetime ?: $findTo,
         ]);
+        Cache::put('last_activity_id', $existingActivity->id);
         $this->storeScreenshots($request, $account, $existingActivity);
 
         return api_response([

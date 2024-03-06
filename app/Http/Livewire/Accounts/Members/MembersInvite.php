@@ -53,10 +53,10 @@ class MembersInvite extends Component
         $departmentId = $this->selectedDepartment;
         $projectId = $this->selectedProject;
         $randomID = substr(md5(uniqid(mt_rand(), true)), 0, 16);
-        $prefix = 'sub_1';
-        $length = 28 - strlen($prefix);
-        $randomString = Str::random($length);
-        $stripe_id = $prefix . $randomString;   
+        // $prefix = 'sub_1';
+        // $length = 28 - strlen($prefix);
+        // $randomString = Str::random($length);
+        // $stripe_id = $prefix . $randomString;   
         $userExist = DB::table('users')
         ->where('email', $this->email)
         ->first();    
@@ -85,13 +85,13 @@ class MembersInvite extends Component
             'department_id' => $departmentId,
             'user_id' => $user->id,
         ]);
-        DB::table('subscriptions')->insert([
-            'user_id' => $user->id,
-            'name' => 'Annual',
-            'stripe_id' =>  $stripe_id,
-            'stripe_status' => 'active',
-            'created_at' => now(),
-        ]);
+        // DB::table('subscriptions')->insert([
+        //     'user_id' => $user->id,
+        //     'name' => 'Annual',
+        //     'stripe_id' =>  $stripe_id,
+        //     'stripe_status' => 'active',
+        //     'created_at' => now(),
+        // ]);
         DB::table('account_user')->insert([
             'role' => $this->role,
             'account_id' => $this->account->id,

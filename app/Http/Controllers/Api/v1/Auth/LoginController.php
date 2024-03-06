@@ -14,6 +14,8 @@ use Intervention\Image\Facades\Image;
 use App\Jobs\ConvertImagesJob;
 use App\Models\Screenshot;
 
+use function PHPUnit\Framework\isEmpty;
+
 class LoginController extends Controller
 {
     public function __invoke(Request $request)
@@ -36,11 +38,59 @@ class LoginController extends Controller
             ], 401);
         }
         $user_subscriptions = $user->subscriptions()->active()->get();
-        // dd( $user_subscriptions);
-        if ($user_subscriptions->isEmpty()) {
+
+        if (isEmpty($user_subscriptions)) {
+            $userAccounts = $user->accounts;
+            $ownerIds = $userAccounts
+            ->filter(function ($account) {
+            return !empty($account->owner_id);
+            })
+            ->pluck('owner_id');
+
+            foreach ($ownerIds as $ownerId) {
+
+                $owner =DB::table('users')
+                ->where('id', $ownerId)
+                ->first();	
+                if ($owner) {
+                    $activeSubscription = DB::table('subscriptions')
+                    ->where('user_id', $owner->id)
+                    ->where('stripe_status','!=','canceled')
+                    ->first();
+                }
+    
+                if ($activeSubscription) {
+                    $user->last_login_at = now();
+                    $user->last_login_ip = request()->ip();
+                    $user->save();
+                    $account=$user->accounts();
+                    $account_id=null;
+
+                    if($account){
+                        $account_id=$account->first()->id;
+                    }
+                    $user_role = DB::table('account_user')
+                    ->where('user_id', '=', $user->id)->pluck('role')->first();
+
+                    $companies = $user->accounts()->get(['accounts.id', 'accounts.name']);
+                    $companies_list = $companies->map(function ($company) {
+                        return [
+                            'id' => $company->id,
+                            'company_name' => $company->name,
+                        ];
+                    });
+
+                    return api_response([
+                        'token' => $user->createToken($request->device_name)->plainTextToken, 'UserID' => $user['id'],
+                        'role' => $user_role,
+                        'companies_list' => $companies_list,
+                    ], 200);
+        
+                }
+            } 
             return api_response_errors([
                 'subscription' => ['User has no active subscriptions.'],
-            ], 401);
+            ], 404);
         }
 
         $account=$user->accounts();
@@ -49,19 +99,6 @@ class LoginController extends Controller
         if($account)
         {
             $account_id=$account->first()->id;
-        }
-        $owner_id_query = DB::table('account_user')
-        ->where('account_id', $account_id)
-        ->first();	
-        $count_subs = DB::table('subscriptions')
-        ->where('user_id', $owner_id_query->user_id)
-        ->where('stripe_status', '!=', 'canceled')
-        ->get();
-
-        if(count($count_subs) == '0'){
-            return api_response_errors([
-            'subscription' => ['User has no active subscriptions.'],
-            ], 401);
         }
         $user_role = DB::table('account_user')
         ->where('user_id', '=', $user->id)->pluck('role')->first();

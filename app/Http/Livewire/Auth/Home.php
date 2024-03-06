@@ -8,7 +8,10 @@ use App\Models\User;
 use App\Models\Account;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
+
+use function PHPUnit\Framework\isEmpty;
 
 class Home extends Component
 {
@@ -29,19 +32,51 @@ class Home extends Component
 
             return;
         }
-		$user = Auth::user();
-		$user_subscriptions = $user->subscriptions()->active()->get();
+		
+        $user = Auth::user();
+        $user_subscriptions = $user->subscriptions()->active()->get();
+        
+        if (isEmpty($user_subscriptions)) {
+            $userAccounts = $user->accounts;
+            $ownerIds = $userAccounts
+            ->filter(function ($account) {
+            return !empty($account->owner_id);
+            })
+            ->pluck('owner_id');
 
-		if(empty($user_subscriptions)){
-			return redirect()->intended('step2');
-		}
-		else {
-            $user->last_login_at = now();
-            $user->last_login_ip = request()->ip();
-            $user->save();
-			return redirect()
-            ->intended(route(RouteServiceProvider::HOME));
-		}
+            foreach ($ownerIds as $ownerId) {
+
+                $owner =DB::table('users')
+                ->where('id', $ownerId)
+                ->first();	
+
+                if ($owner) {
+                    $activeSubscription = DB::table('subscriptions')
+                    ->where('user_id', $owner->id)
+                    ->where('stripe_status','!=','canceled')
+                    ->first();
+                }
+    
+                if ($activeSubscription) {
+                    $user->last_login_at = now();
+                    $user->last_login_ip = request()->ip();
+                    $user->save();
+        
+                    return redirect()->intended(route(RouteServiceProvider::HOME));
+                }
+               
+        } 
+                Auth::logout();
+                $this->addError('email', trans('Subscription has been canceled'));
+                return;
+        }else {
+                // The user has an active subscription
+                $user->last_login_at = now();
+                $user->last_login_ip = request()->ip();
+                $user->save();
+
+                return redirect()->intended(route(RouteServiceProvider::HOME));
+        }
     }
 
     public function render()

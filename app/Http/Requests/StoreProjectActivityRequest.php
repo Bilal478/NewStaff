@@ -25,6 +25,7 @@ class StoreProjectActivityRequest extends FormRequest
             'total_activity' => 'required|required',
             'total_activity_percentage' => 'required|required',
             'screenshots' => 'array|nullable',
+            'task_id'     => 'exists:tasks,id'
             // 'screenshots.*' => ['string', new Base64],
         ];
     }

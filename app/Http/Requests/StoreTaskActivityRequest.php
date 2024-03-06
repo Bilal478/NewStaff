@@ -25,6 +25,7 @@ class StoreTaskActivityRequest extends FormRequest
             'total_activity' => 'required|required',
             'total_activity_percentage' => 'required|required',
             'screenshots' => 'array|nullable',
+            'task_id'     => 'exists:tasks,id'
             // 'screenshots.*' => ['string', new Base64],
         ];
     }
@@ -38,7 +39,7 @@ class StoreTaskActivityRequest extends FormRequest
     {
         $validated = Arr::except($this->validator->validated(), ['screenshots']);
         $validated['user_id'] = request()->user()->id;
-        $validated['project_id'] = request()->project_id;
+        $validated['project_id'] =  isset(request()->project_id)?request()->project_id:0;
         $validated['account_id'] = request()->account->id;
 
         return $validated;

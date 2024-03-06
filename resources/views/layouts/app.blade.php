@@ -7,24 +7,47 @@ $user = Auth::user();
 $user_subscriptions = $user->subscriptions()->active()->get();
 
 if(count($user_subscriptions) == '0' && session()->get('account_role') == 'owner'){
-	
-	header('Location:  https://neostaff.app/#price');
+	Auth::logout();
+	header('Location:  https://media.neostaff.app/');
 	die();	
 }
- 
-$account = Account::find(session()->get('account_id'));
-	$owner_id_query = DB::table('account_user')
-		->where('account_id', $account->id)
-		->first();	
-	$count_subs = DB::table('subscriptions')
-		->where('user_id', $owner_id_query->user_id)
-		->where('stripe_status', '!=', 'canceled')
-		->get();
+// $account = Account::find(session()->get('account_id'));
+// 	$owner_id_query = DB::table('account_user')
+// 		->where('account_id', $account->id)
+// 		->first();	
+// 	$count_subs = DB::table('subscriptions')
+// 		->where('user_id', $owner_id_query->user_id)
+// 		->where('stripe_status', '!=', 'canceled')
+// 		->get();
+            $count=0;
+            $userAccounts = $user->accounts;
+            $ownerIds = $userAccounts
+            ->filter(function ($account) {
+            return !empty($account->owner_id);
+            })
+            ->pluck('owner_id');
 
-if(count($count_subs) == '0'){
-	
+            foreach ($ownerIds as $ownerId) {
+
+                $owner =DB::table('users')
+                ->where('id', $ownerId)
+                ->first();	
+
+                if ($owner) {
+                    $activeSubscription = DB::table('subscriptions')
+                    ->where('user_id', $owner->id)
+                    ->where('stripe_status','!=','canceled')
+                    ->first();
+                }
+    
+                if ($activeSubscription) {
+                    $count++;
+                }
+            }
+if($count == '0'){
+	Auth::logout();
 	// header('Location: https://media.neostaff.app/');
-	header('Location:  https://neostaff.app/#price');
+	header('Location:  https://media.neostaff.app/');
 
 	die();	
 }

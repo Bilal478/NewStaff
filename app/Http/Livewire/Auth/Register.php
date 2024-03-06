@@ -65,11 +65,6 @@ class Register extends Component
                 // 'g-recaptcha-response' => ['required'],
             ]);
     
-            $account = Account::create([
-                'name' => $this->accountName,
-            ]);
-            
-    
             $user = User::create([
                 'firstname' => $this->firstName,
                 'lastname' => $this->lastName,
@@ -79,6 +74,12 @@ class Register extends Component
             ]);
 
 
+            $account = Account::create([
+                'name' => $this->accountName,
+                'owner_id' => $user->id,
+            ]);
+
+        
             $department = Department::create([
                 'title' => $account->name.' Department',
                 'account_id' => $account->id,

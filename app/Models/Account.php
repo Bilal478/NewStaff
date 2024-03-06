@@ -24,6 +24,7 @@ class Account extends Model
         'zipcode',
         'phone',
         'time',
+        'owner_id',
     ];
 
     protected $dates = ['deleted_at'];

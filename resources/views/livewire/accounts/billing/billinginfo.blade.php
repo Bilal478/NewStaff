@@ -6,7 +6,9 @@ use App\Models\Subscription;
 use App\Models\Account;
 use App\Models\AccountInvitation;
 
-$user = Auth::user();
+$account = Account::find(session()->get('account_id'));
+$userId = $account->owner_id;
+$user = User::find($userId)->first();
 $user_mail = $user->email;
 
 $paymentMethods = $user->paymentMethods();
@@ -20,7 +22,7 @@ $fech_update = $paymentMethods[0]->created;
 $update_at = date('M/d/Y', $fech_update);
 
 
-$user_id = Auth::user()->id;
+$user_id = $user->id;
 	
 	$plan = DB::select('SELECT name FROM subscriptions WHERE user_id = "'.$user_id.'"AND stripe_status != "canceled"');
 	

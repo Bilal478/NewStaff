@@ -14,7 +14,8 @@ $account = Account::find(session()->get('account_id'));
 	
 	$count_subs = count($subs);
 
-	$user = Auth::user()->id;
+	// $user = Auth::user()->id;
+	$user = $account->owner_id;
 
 	
 	$quantity_seats = DB::select('SELECT quantity FROM subscriptions WHERE user_id = "'.$user.'"AND stripe_status != "canceled"');

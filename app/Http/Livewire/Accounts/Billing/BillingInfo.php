@@ -34,10 +34,12 @@ class BillingInfo extends Component
 				
         ];
 		
-		$user = Auth::user();
-	
-		$user_subscriptions = $user->subscriptions()->active()->get();
+		$account = Account::find(session()->get('account_id'));
+        $userId = $account->owner_id;
+		$user = User::find($userId)->first();
 
+		$user_subscriptions = $user->subscriptions()->active()->get();
+		
 		return view('livewire.accounts.billing.billinginfo',  ['subscriptions'=>$user_subscriptions, 'users' => $this->users()])->layout('layouts.app', ['title' => 'Billing'])
 		->with($data);
     }

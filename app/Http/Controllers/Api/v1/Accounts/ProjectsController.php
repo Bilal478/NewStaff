@@ -20,7 +20,7 @@ class ProjectsController extends Controller
         
        $projects = DB::table('projects')
        ->where('projects.account_id', '=', $account->id)
-       ->where('projects.deleted_at', '!=', NULL)
+       ->where('projects.deleted_at', '=', NULL)
        ->join('project_user', 'projects.id', '=', 'project_user.project_id')
        ->where('project_user.user_id', '=', $request->user()->id)
        ->select('projects.*')

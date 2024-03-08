@@ -3,22 +3,7 @@
 
 	use App\Models\Account;	
 
-$user = Auth::user();
-$user_subscriptions = $user->subscriptions()->active()->get();
-
-if(count($user_subscriptions) == '0' && session()->get('account_role') == 'owner'){
-	Auth::logout();
-	header('Location:  https://media.neostaff.app/');
-	die();	
-}
-// $account = Account::find(session()->get('account_id'));
-// 	$owner_id_query = DB::table('account_user')
-// 		->where('account_id', $account->id)
-// 		->first();	
-// 	$count_subs = DB::table('subscriptions')
-// 		->where('user_id', $owner_id_query->user_id)
-// 		->where('stripe_status', '!=', 'canceled')
-// 		->get();
+            $user = Auth::user();
             $count=0;
             $userAccounts = $user->accounts;
             $ownerIds = $userAccounts
@@ -44,13 +29,11 @@ if(count($user_subscriptions) == '0' && session()->get('account_role') == 'owner
                     $count++;
                 }
             }
-if($count == '0'){
-	Auth::logout();
-	// header('Location: https://media.neostaff.app/');
-	header('Location:  https://media.neostaff.app/');
-
-	die();	
-}
+            if($count == '0'){
+	            Auth::logout();
+	            header('Location:  https://media.neostaff.app/');
+	            die();	
+            }
 
 ?>
 

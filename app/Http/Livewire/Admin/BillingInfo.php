@@ -20,7 +20,16 @@ class BillingInfo extends Component
     public function render()
     {
         $accounts = Account::whereNull('deleted_at')->get();
-        $activeMembers=Subscription::where('stripe_status' , 'active')->get();
+        $activeMemberIds = Subscription::where('stripe_status','!=','canceled')->pluck('user_id');
+        $accountIds = Account::whereIn('owner_id', $activeMemberIds)->pluck('id')->toArray();
+        $userIds = [];
+        foreach ($accountIds as $accountId) {
+            $userIds = array_merge($userIds, DB::table('account_user')
+            ->where('account_id', $accountId)
+            ->pluck('user_id')
+            ->toArray());
+        }
+        $activeMembers = array_unique($userIds);
         $lastTransactionRecord = DB::table('transaction_log')
         ->orderBy('created_at', 'desc')
         ->first();

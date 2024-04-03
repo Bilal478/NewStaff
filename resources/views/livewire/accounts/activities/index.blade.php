@@ -210,105 +210,42 @@ $account = Account::where('id', $account_id)
     @endphp
     @if ($activitiesGroup->count())
     {{-- @dump($activitiesGroup) --}}
-    @foreach ($activitiesGroup as $time => $activities)
-    <div class="text-gray-500 text-xs py-4 activities">
-        {{ $time }}
-    </div>
-    <div class="flex flex-wrap -mx-4 activities">
-        @if ($activity = $activities->first(function ($activity, $key) {
-        return $activity->start_datetime->format('i') == '00';
-        }))
+    @foreach ($activitiesGroup as $hourInterval => $activities)
         @php
-        if($activities->first()->screenshots->count() == 2){
-            $countActivity = $countActivity+2;
-        }
-        else{
-            $countActivity = $countActivity+1; 
-        }
+            // Split the hour interval string into start and end times
+            list($startTime, $endTime) = explode(' - ', $hourInterval);
+            $startDateTime = Carbon\Carbon::parse($startTime);
+            $endDateTime = Carbon\Carbon::parse($endTime);
+        @endphp
+        <div class="text-gray-500 text-xs py-4 activities">
+            {{ $startDateTime->format('h:i A') }} - {{ $endDateTime->format('h:i A') }}
+        </div>
+        <div class="flex flex-wrap -mx-4 activities">
+            @for ($i = 0; $i < 6; $i++)
+                @php
+                    $time = $startDateTime->copy()->addMinutes($i * 10);
+                    $timeActivities = $activities->filter(function ($activity) use ($time) {
+                        return Carbon\Carbon::parse($activity['start_time'])->format('H:i') === $time->format('H:i');
+                    });
+                    $countActivity = 0;
+                    if ($timeActivities->isNotEmpty()) {
+                        // Check if screenshots exist and are not empty
+                        $screenshots = $timeActivities->first()['screenshots'];
+                        if (is_array($screenshots) && count($screenshots) == 2) {
+                            $countActivity = $countActivity + 2;
+                        } elseif (is_array($screenshots) && count($screenshots) == 1) {
+                            $countActivity = $countActivity + 1;
+                        }
+                    }
+                @endphp
+                @if ($timeActivities->isNotEmpty())
+                    <x-activities.card :activity="$timeActivities->first()" :countActivity="$countActivity" />
+                @else
+                    <x-activities.empty />
+                @endif
+            @endfor
+        </div>
         
-        @endphp
-        <x-activities.card :activity="$activity" :countActivity="$countActivity" />
-        @else
-        <x-activities.empty />
-        @endif
-        @if ($activity = $activities->first(function ($activity, $key) {
-        return $activity->start_datetime->format('i') == '10';
-        }))
-        @php
-        if($activities->first()->screenshots->count() == 2 && $countActivity !=0){
-            $countActivity = $countActivity+2;
-        }
-        else{
-            $countActivity = $countActivity+1; 
-        }
-        @endphp
-        <x-activities.card :activity="$activity" :countActivity="$countActivity" />
-        @else
-        <x-activities.empty />
-        @endif
-
-        @if ($activity = $activities->first(function ($activity, $key) {
-        return $activity->start_datetime->format('i') == '20';
-        }))
-        @php
-        if($activities->first()->screenshots->count() == 2 && $countActivity !=0){
-            $countActivity = $countActivity+2;
-        }
-        else{
-            $countActivity = $countActivity+1; 
-        }
-        @endphp
-        <x-activities.card :activity="$activity" :countActivity="$countActivity" />
-        @else
-        <x-activities.empty />
-        @endif
-
-        @if ($activity = $activities->first(function ($activity, $key) {
-        return $activity->start_datetime->format('i') == '30';
-        }))
-        @php
-        if($activities->first()->screenshots->count() == 2 && $countActivity !=0){
-            $countActivity = $countActivity+2;
-        }
-        else{
-            $countActivity = $countActivity+1; 
-        }
-        @endphp
-        <x-activities.card :activity="$activity" :countActivity="$countActivity" />
-        @else
-        <x-activities.empty />
-        @endif
-        @if ($activity = $activities->first(function ($activity, $key) {
-        return $activity->start_datetime->format('i') == '40';
-        }))
-        @php
-        if($activities->first()->screenshots->count() == 2 && $countActivity !=0){
-            $countActivity = $countActivity+2;
-        }
-        else{
-            $countActivity = $countActivity+1; 
-        }
-        @endphp
-        <x-activities.card :activity="$activity" :countActivity="$countActivity" />
-        @else
-        <x-activities.empty />
-        @endif
-        @if ($activity = $activities->first(function ($activity, $key) {
-        return $activity->start_datetime->format('i') == '50';
-        }))
-        @php
-        if($activities->first()->screenshots->count() == 2 && $countActivity !=0){
-            $countActivity = $countActivity+2;
-        }
-        else{
-            $countActivity = $countActivity+1; 
-        }
-        @endphp
-        <x-activities.card :activity="$activity" :countActivity="$countActivity" :countActivity="$countActivity" />
-        @else
-        <x-activities.empty />
-        @endif
-    </div>
     
     @endforeach
     @else

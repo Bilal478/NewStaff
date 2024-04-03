@@ -5,7 +5,7 @@
 $account_user = DB::table('account_user')
     ->where('user_id', auth()->user()->id)
     ->first();
-$seconds = $activity->seconds;
+$seconds = $activity['seconds'];
 $minutes = floor($seconds / 60);
 $remainingSeconds = $seconds % 60;
 $formattedTime = sprintf('%d:%02d', $minutes, $remainingSeconds);
@@ -13,34 +13,33 @@ $formattedTime = sprintf('%d:%02d', $minutes, $remainingSeconds);
 <div class="w-full sm:w-1/2 md:w-1/3 xl:w-1/6">
     <article class="bg-white mx-4 mb-8 rounded-md border shadow-sm hover:shadow-md article">
         <div class="relative group rounded-t-md overflow-hidden bg-black">
-            <div
-                class="activity-img flex items-center justify-center absolute inset-0 z-10 opacity-0 transition duration-500 ease-linear group-hover:opacity-100">
+            <div class="activity-img flex items-center justify-center absolute inset-0 z-10 opacity-0 transition duration-500 ease-linear group-hover:opacity-100">
                 {{-- @dd($loop->iteration) --}}
-                @if($activity->screenshots->first() != NULL)
-                    @if ($activity->screenshots->first()->path != '00/1234567890.png')
-                    <button
-                        wire:click.stop="$emit('screenshotsShow', {{ $activity->user_id }},{{ $activity->account_id }},'{{ $activity->date }}')"
-                        onclick="currentSlide({{ $countActivity }})" type="button"
-                        class="number_of_screeshot bg-white font-montserrat font-semibold px-3 py-1 rounded-sm text-gray-700 text-xs">
-                        View screens
-                    </button>
+                @if(!empty($activity['screenshots']))
+                    @if ($activity['screenshots'][0]->path != '00/1234567890.png')
+                        <button
+                            wire:click.stop="$emit('screenshotsShow', {{ $activity['user_id'] }}, {{ $activity['account_id'] }}, '{{ $activity['date'] }}')"
+                            onclick="currentSlide({{ $countActivity }})" type="button"
+                            class="number_of_screeshot bg-white font-montserrat font-semibold px-3 py-1 rounded-sm text-gray-700 text-xs">
+                            View screens
+                        </button>
                     @endif
                 @endif
             </div>
             {{-- @dump($activity) --}}
             <div
                 class="overflow-hidden object-cover h-28 rounded-t-md transition duration-300 transform ease-linear group-hover:scale-110 group-hover:opacity-60">
-                @if ($activity->screenshots)
-                    @if (count($activity->screenshots) > 0)
-                        <img style="" src="{{ $activity->screenshots->first()->fullPath() }}" alt="">
+                @if ($activity['screenshots'])
+                    @if (count($activity['screenshots']) > 0)
+                    <img src="{{ $activity['screenshots'][0]->fullPath() }}" alt="">
                     @endif
                 @endif
-                @if($activity->screenshots->first() != NULL)
-                    @if ($activity->screenshots->first()->path === '00/1234567890.png')
+                @if($activity['screenshots'] != NULL)
+                    @if ($activity['screenshots'][0]->path === '00/1234567890.png')
                         <img class="img_placeholder" src="2.png">
                     @endif
                 @else
-                @if($activity->is_manual_time==0)
+                @if($activity['is_manual_time']==0)
                 <img class="img_placeholder" src="image_short.png">
                 @else
                 <img class="img_placeholder" src="2.png">
@@ -52,31 +51,31 @@ $formattedTime = sprintf('%d:%02d', $minutes, $remainingSeconds);
 
         <div class="relative pt-6 pb-4">
             <div class="number_of_screeshot absolute w-full flex justify-center top-1 -mt-5 z-10">
-            @if($activity->screenshots->first() != NULL)
-                @if ($activity->screenshots->first()->path != '00/1234567890.png')    
-                <span style="margin-top: -35px;" class=" font_weight bg-white flex items-center justify-center h-6 rounded-full shadow-md text-blue-600 text-center text-xs w-24">{{$activity->screenshots->count()}} {{ $activity->screenshots->count() == 1 ? 'screen' : 'screens'}}</span>
+            @if($activity['screenshots'] != NULL)
+                @if ($activity['screenshots'][0]->path != '00/1234567890.png')    
+                <span style="margin-top: -35px;" class=" font_weight bg-white flex items-center justify-center h-6 rounded-full shadow-md text-blue-600 text-center text-xs w-24">{{count($activity['screenshots'])}} {{ count($activity['screenshots']) == 1 ? 'screen' : 'screens'}}</span>
                 @endif
             @else
             <span style="margin-top: -35px;" class=" font_weight bg-white flex items-center justify-center h-6 rounded-full shadow-md text-blue-600 text-center text-xs w-24">0 screen</span>
             @endif   
           
-                <!-- <button wire:click.stop="$emit('screenshotsShow', {{$activity->id}})" class="bg-white flex items-center justify-center h-6 rounded-full shadow-md text-blue-600 text-center text-xs w-24">
-                    {{ $activity->screenshots->count() }} {{ $activity->screenshots->count() == 1 ? 'screen' : 'screens'}}
+                <!-- <button wire:click.stop="$emit('screenshotsShow', {{$activity['id']}})" class="bg-white flex items-center justify-center h-6 rounded-full shadow-md text-blue-600 text-center text-xs w-24">
+                    {{ count($activity['screenshots']) }} {{ count($activity['screenshots']) == 1 ? 'screen' : 'screens'}}
                 </button> -->
             </div>
 
 
             <div class="px-4">
                 <div class="flex mb-4 w-full">
-                    <span class="text-xs text-gray-500">{{ $activity->start_datetime->format('g:i: a') }} -
-                        {{ $activity->end_datetime->format('g:i: a') }}</span>
+                    <span class="text-xs text-gray-500">{{ $activity['start_time']->format('g:i: a') }} -
+                        {{ $activity['end_time']->format('g:i: a') }}</span>
                 </div>
                 <br>
                 <div class="flex mb-4 w-3/5" style="
                 margin-top: -36px; justify-content: center;">
                     
                         <!-- <button type="button"
-                            wire:click="$emit('trackEdit','{{ $activity->id }}','{{ $activity->date }}','{{ $activity->start_datetime->format('H:i:s') }}','{{ $activity->end_datetime->format('H:i:s') }}')">
+                            wire:click="$emit('trackEdit','{{ $activity['id'] }}','{{ $activity['date'] }}','{{ $activity['start_time']->format('H:i:s') }}','{{ $activity['end_time']->format('H:i:s') }}')">
                             <span class="text-xs text-blue-500">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor">
@@ -87,7 +86,7 @@ $formattedTime = sprintf('%d:%02d', $minutes, $remainingSeconds);
                             </span>
                         </button> -->
                         @if($account_user->allow_edit_time == 1)
-                        <button type="button" class="mr-1" wire:click="$emit('deleteActivityShow',{{ $activity->id }})">
+                        <button type="button" class="mr-1" wire:click="$emit('deleteActivityShow',{{ $activity['id'] }})">
                             <span class="text-xs text-red-500">
                             <svg class="svg-icon" style="font-size: 1rem;" viewBox="0 0 20 20">
 							<path d="M17.114,3.923h-4.589V2.427c0-0.252-0.207-0.459-0.46-0.459H7.935c-0.252,0-0.459,0.207-0.459,0.459v1.496h-4.59c-0.252,0-0.459,0.205-0.459,0.459c0,0.252,0.207,0.459,0.459,0.459h1.51v12.732c0,0.252,0.207,0.459,0.459,0.459h10.29c0.254,0,0.459-0.207,0.459-0.459V4.841h1.511c0.252,0,0.459-0.207,0.459-0.459C17.573,4.127,17.366,3.923,17.114,3.923M8.394,2.886h3.214v0.918H8.394V2.886z M14.686,17.114H5.314V4.841h9.372V17.114z M12.525,7.306v7.344c0,0.252-0.207,0.459-0.46,0.459s-0.458-0.207-0.458-0.459V7.306c0-0.254,0.205-0.459,0.458-0.459S12.525,7.051,12.525,7.306M8.394,7.306v7.344c0,0.252-0.207,0.459-0.459,0.459s-0.459-0.207-0.459-0.459V7.306c0-0.254,0.207-0.459,0.459-0.459S8.394,7.051,8.394,7.306"></path>
@@ -96,8 +95,8 @@ $formattedTime = sprintf('%d:%02d', $minutes, $remainingSeconds);
                         </button>
                         @endif
                         @if($account_user->allow_delete_screenshot == 1)
-                        @if(count($activity->screenshots) != 0)
-                        <button type="button" wire:click="$emit('deleteImageActivityShow',{{ $activity->id }},{{ $activity->screenshots }})">
+                        @if(count($activity['screenshots']) != 0)
+                        <button type="button" wire:click="$emit('deleteImageActivityShow',{{ $activity['id'] }},{{ $activity['screenshots'] }})">
                             <span class="text-xs text-blue-500">
                                 <svg version="1.0" xmlns="http://www.w3.org/2000/svg" style="color: rgb(226, 111, 3)"
                                     width="12.000000pt" height="12.000000pt" viewBox="0 0 20.000000 20.000000"
@@ -127,17 +126,17 @@ $formattedTime = sprintf('%d:%02d', $minutes, $remainingSeconds);
 
                 <div class="relative mb-4">
                     <div class="w-full h-1 bg-gray-200 rounded-sm"></div>
-                    @if ($activity->total_activity_percentage >= 51)
+                    @if ($activity['total_activity_percentage'] >= 51)
                         <div class="h-1 rounded-sm absolute top-0 left-0 bg-green-500"
-                            style="width: {{ $activity->total_activity_percentage }}%"></div>
+                            style="width: {{ $activity['total_activity_percentage'] }}%"></div>
                     @endif
-                    @if ($activity->total_activity_percentage >= 21 and $activity->total_activity_percentage <= 50)
+                    @if ($activity['total_activity_percentage'] >= 21 and $activity['total_activity_percentage'] <= 50)
                         <div class="h-1 rounded-sm absolute top-0 left-00"
-                            style="width: {{ $activity->total_activity_percentage }}%;background-color: #fdd54ac4;"></div>
+                            style="width: {{ $activity['total_activity_percentage'] }}%;background-color: #fdd54ac4;"></div>
                     @endif
-                    @if ($activity->total_activity_percentage <= 20)
+                    @if ($activity['total_activity_percentage'] <= 20)
                         <div class="h-1 rounded-sm absolute top-0 left-0 bg-red-500"
-                            style="width: {{ $activity->total_activity_percentage }}%"></div>
+                            style="width: {{ $activity['total_activity_percentage'] }}%"></div>
                     @endif
 
                     {{-- <div class="h-1 rounded-sm absolute top-0 left-0 {{ $activity->total_activity_percentage >= 50 ? 'bg-green-500' : 'bg-red-500' }}"
@@ -148,10 +147,10 @@ $formattedTime = sprintf('%d:%02d', $minutes, $remainingSeconds);
                     <div class="flex items-center">
                         <x-svgs.keyboard class="w-4 h-4 text-blue-500 mr-1" />
                         <span class="text-xs text-gray-500">
-                            @if ($activity->is_manual_time==1)
+                            @if ($activity['is_manual_time']==1)
                             <x-svgs.minus class="w-4 h-4 text-black-500 mr-1" />
                             @else
-                            {{ $activity->keyboard_count }}
+                            {{ $activity['keyboard_count'] }}
                             @endif
                         </span>
                     </div>
@@ -159,10 +158,10 @@ $formattedTime = sprintf('%d:%02d', $minutes, $remainingSeconds);
                     <div class="flex items-center">
                         <x-svgs.cursor class="w-4 h-4 text-blue-500 mr-1" />
                         <span class="text-xs text-gray-500">
-                            @if ($activity->is_manual_time==1)
+                            @if ($activity['is_manual_time']==1)
                             <x-svgs.minus class="w-4 h-4 text-black-500 mr-1" />
                             @else
-                            {{ $activity->mouse_count }}
+                            {{ $activity['mouse_count'] }}
                             @endif
                         </span>
                     </div>
@@ -170,10 +169,10 @@ $formattedTime = sprintf('%d:%02d', $minutes, $remainingSeconds);
                     <div class="flex items-center">
                         <x-svgs.computer class="w-4 h-4 text-blue-500 mr-1" />
                         <span class="text-xs text-gray-500">
-                            @if ($activity->is_manual_time==1)
+                            @if ($activity['is_manual_time']==1)
                             <x-svgs.minus class="w-4 h-4 text-black-500 mr-1" />
                             @else
-                            {{ $activity->total_activity_percentage }}%
+                            {{ $activity['total_activity_percentage'] }}%
                             @endif
                         </span>
                     </div>
@@ -181,12 +180,12 @@ $formattedTime = sprintf('%d:%02d', $minutes, $remainingSeconds);
                 <div class="flex items-center justify-center space-x-2 mt-2">
                     <div class="flex items-center">
                         <span class="text-xs text-gray-500">
-                            @if ($activity->is_manual_time == 1)
+                            @if ($activity['is_manual_time'] == 1)
                                 <span class="flex items-center">
                                     <x-svgs.minus class="w-4 h-4 text-black-500 mr-1" /> % of {{$formattedTime}} min
                                 </span>
                             @else
-                               {{ $activity->total_activity_percentage }}% of {{$formattedTime}} min
+                               {{ $activity['total_activity_percentage'] }}% of {{$formattedTime}} min
                             @endif
                         </span>
                    </div>

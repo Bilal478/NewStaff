@@ -56,8 +56,16 @@ class Activity extends Model
             $from = CarbonInterval::seconds($activity->from)->cascade()->format('%H:%I:%S');
             $to = CarbonInterval::seconds($activity->to)->cascade()->format('%H:%I:%S');
 
+            // $activity->start_datetime = Carbon::createFromFormat('Y-m-d H:i:s', $activity->date->format('Y-m-d') . ' ' . $from)->toDateTimeString();
+            // $activity->end_datetime = Carbon::createFromFormat('Y-m-d H:i:s', $activity->date->format('Y-m-d') . ' ' . $to)->toDateTimeString();
+          
+            if ($to === '00:00:00') {
+                $activity->date=$activity->date->subDay();
+                $activity->end_datetime = Carbon::createFromFormat('Y-m-d H:i:s', $activity->date->addDay()->format('Y-m-d') . ' 00:00:00')->toDateTimeString();
+            } else {
+                $activity->end_datetime = Carbon::createFromFormat('Y-m-d H:i:s',  $activity->date->format('Y-m-d') . ' ' . $to)->toDateTimeString();
+            }
             $activity->start_datetime = Carbon::createFromFormat('Y-m-d H:i:s', $activity->date->format('Y-m-d') . ' ' . $from)->toDateTimeString();
-            $activity->end_datetime = Carbon::createFromFormat('Y-m-d H:i:s', $activity->date->format('Y-m-d') . ' ' . $to)->toDateTimeString();
         });
     }
 

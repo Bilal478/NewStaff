@@ -55,6 +55,7 @@ class ActivitiesController extends Controller
             ]);
             Cache::put('last_activity_id', $last_activity_record->id);
             $this->storeScreenshots($request, $account, $last_activity_record);
+            
             return api_response([
                 'message' => 'The activity has been updated.',
                 'activity' => new ActivityResource($last_activity_record->refresh())
@@ -95,28 +96,42 @@ class ActivitiesController extends Controller
     
         // Find record in the 10-minute slot
         $existingActivity = $project->activities()
+        ->where('task_id', NULL)
         ->whereBetween('start_datetime', [$findFrom,$findTo])
         ->whereBetween('end_datetime', [$findFrom,$findTo])
         ->first();
-            if ($existingActivity) {
-            // Update the existing record
-            $secondsToAdd = $request->to - $request->from;
-            $existingActivity->update([
-                // Update other fields as needed
-                'to' => $request->from+600,
-                'seconds' => $existingActivity->seconds+$secondsToAdd,
-                'end_datetime' => $request->end_datetime ?: $findTo,
-            ]);
-            Cache::put('last_activity_id', $existingActivity->id);
-            $this->storeScreenshots($request, $account, $existingActivity);
+        if ($existingActivity) {
+            // Check if task_id is different
+            if ($existingActivity->account_id != $account->id || $existingActivity->project_id != $project->id) {
+                // Create a new record
+                $requestArray = $request->validated();
+                $requestArray['to'] = $request->from + 600; // Modify 'to' based on your requirement
+                $activity = $project->activities()->create($requestArray);
+                Cache::put('last_activity_id', $activity->id);
+                $this->storeScreenshots($request, $account, $activity);
     
-            return api_response([
-                'message' => 'The activity has been updated.',
-                'activity' => new ActivityResource($existingActivity->refresh())
-            ], 200);
+                return api_response([
+                    'message' => 'The activity has been saved.',
+                    'activity' => new ActivityResource($activity->refresh())
+                ], 200);
             } else {
-            // Create a new record
-            // $activity = $project->activities()->create($request->validated());
+                // Update the existing record
+                $secondsToAdd = $request->to - $request->from;
+                $existingActivity->update([
+                    // Update other fields as needed
+                    'to' => $request->from + 600,
+                    'seconds' => $existingActivity->seconds + $secondsToAdd,
+                    'end_datetime' => $request->end_datetime ?: $findTo,
+                ]);
+                Cache::put('last_activity_id', $existingActivity->id);
+                $this->storeScreenshots($request, $account, $existingActivity);
+    
+                return api_response([
+                    'message' => 'The activity has been updated.',
+                    'activity' => new ActivityResource($existingActivity->refresh())
+                ], 200);
+            }
+        } else {
             $requestArray = $request->validated();
             $requestArray['to'] = $request->from + 600; // Modify 'to' based on your requirement
             $activity = $project->activities()->create($requestArray);

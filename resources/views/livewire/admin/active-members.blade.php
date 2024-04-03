@@ -6,6 +6,14 @@
     <div class="md:flex items-center justify-between pb-8">
         <div class="md:flex items-center md:space-x-4">
             <x-inputs.search wire:model.debounce.500ms="search" class="w-full md:w-72"/>
+            <div class="ml-2">
+                <x-inputs.select-without-label2 wire:model="selectedAccount"  name="selectedAccount">
+                    <option value="">All Accounts</option>
+                    @foreach($accounts as $account)
+                    <option value="{{ $account->id }}">{{ $account->name }}</option>
+                    @endforeach 
+                </x-inputs.select-without-label>
+            </div>
         </div>
     </div>
     <div class="w-full pb-4">
@@ -36,94 +44,89 @@
             </div>
         </div>
     </div>
-    @foreach ($userData as $data)
-    @if($data['user_data'])
+    @foreach ($users as $user)
     <div x-data="{ expanded: false }" class="w-full bg-white py-5 rounded-md border mb-3" style="cursor: pointer;">
         <div class="flex items-center text-sm">
             <div class="w-12 px-1 text-gray-700 flex font-montserrat font-semibold">
                 <button  @click="expanded = !expanded">
-                   
                     <x-svgs.minus x-show="expanded" class="w-6 h-6 text-blue-600 mr-3" />
-                    
                     <x-svgs.plus x-show="!expanded" class="w-6 h-6 text-blue-600 mr-3" />
-                    
                 </button>
             </div>
-            <div wire:click.stop="$emit('memberShow','{{ $data['user_data']->id }}')" class="w-60 px-3 truncate">
+            <div wire:click.stop="$emit('memberShow','{{ $user->id }}')" class="w-60 px-3 truncate">
                 <div class="flex items-center">
                     <x-user.avatar />
                     <span class="ml-3 block text-left font-montserrat text-xs font-semibold text-gray-500">
-                       {{ $data['user_data']->firstname }} {{ $data['user_data']->lastname }}
+                       {{ $user->firstname }} {{ $user->lastname }}
                     </span>
                 </div>
             </div>
-            <div wire:click.stop="$emit('memberShow','{{ $data['user_data']->id }}')" class="w-44 px-3 text-xs text-gray-500">
-                @if ($data['accounts_data']->isNotEmpty())
-                @foreach($data['accounts_data'] as $index => $account) 
-                    {{ $account->name }}
-                    @if ($index < $data['accounts_data']->count() - 1)
-                        ,
-                    @endif
+            <div wire:click.stop="$emit('memberShow','{{ $user->id }}')" class="w-44 px-3 text-xs text-gray-500">
+                @if ($user->accounts->isNotEmpty())
+                    @foreach($user->accounts as $index => $account) 
+                        {{ $account->name }}
+                        @if ($index < $user->accounts->count() - 1)
+                            ,
+                        @endif
                     @endforeach
-                    @else
+                @else
                     No Company
-                    @endif
-                </div>
-                <div wire:click.stop="$emit('memberShow','{{ $data['user_data']->id }}')" class="w-60 px-3 text-xs text-gray-500">
-                    {{ $data['user_data']->email }}
-                </div>
-                <div wire:click.stop="$emit('memberShow','{{ $data['user_data']->id }}')" class="w-44 px-3 text-xs text-gray-500">
-                    {{ $data['user_data']->created_at }}
-                </div>
-                <div wire:click.stop="$emit('memberShow','{{ $data['user_data']->id }}')" class="w-44 px-3 text-xs text-gray-500 text-center">
-                    {{ $data['user_data']->punchin_pin_code }}
-                </div> 
-                <div wire:click.stop="$emit('memberShow','{{ $data['user_data']->id }}')" class="w-44 px-3 text-xs text-gray-500 text-center">
-                    {{ $data['user_data']->last_login_at }}
-                </div>
-                <div class="text-center w-20 px-3 flex justify-end">
-                    <x-dropdowns.context-menu>
-                        <x-dropdowns.context-menu-item wire:click.stop="$emit('resetPassword', {{$data['user_data']->id}})"  name="Reset Password" svg="svgs.edit"/>
-                    </x-dropdowns.context-menu>
-                </div>
+                @endif
+            </div>
+            <div wire:click.stop="$emit('memberShow','{{ $user->id }}')" class="w-60 px-3 text-xs text-gray-500">
+                {{ $user->email }}
+            </div>
+            <div wire:click.stop="$emit('memberShow','{{ $user->id }}')" class="w-44 px-3 text-xs text-gray-500">
+                {{ $user->created_at }}
+            </div>
+            <div wire:click.stop="$emit('memberShow','{{ $user->id }}')" class="w-44 px-3 text-xs text-gray-500 text-center">
+                {{ $user->punchin_pin_code }}
             </div> 
-            <div class="" x-show="expanded">
-                <hr>
-                <div class="text-xs mt-5 text-gray-400 hidden font-medium  md:flex items-center">
-                    <div class="w-12 px-3">
-                    
-                    </div>
-                    <div class="w-44 px-3" style="font-size: 13px;">
-                    PERMISSIONS
-                    </div>
-                    <div class="w-44 text-gray-700" style="font-size: 13px;">
-                    {{isset($data['user_data']) ? $data['user_data']->permissions :""}}
-                    </div>
-                </div>
-                <div class="text-xs mt-5 text-gray-700 font-medium md:flex items-center">
-                    <div class="w-12 px-3">
-                    </div>
-                    <div class="w-44 px-3 text-gray-400" style="font-size: 13px;">
-                    IP ADDRESS
-                    </div>
-                    <div class="w-44" style="font-size: 13px;">
-                    {{isset($data['user_data']) ? $data['user_data']->ipaddress :""}}
-                    </div>
-                </div>
-            </div>   
+            <div wire:click.stop="$emit('memberShow','{{ $user->id }}')" class="w-44 px-3 text-xs text-gray-500 text-center">
+                {{ $user->last_login_at }}
+            </div>
+            <div class="text-center w-20 px-3 flex justify-end">
+                <x-dropdowns.context-menu>
+                    <x-dropdowns.context-menu-item wire:click.stop="$emit('resetPassword', {{$user->id}})"  name="Reset Password" svg="svgs.edit"/>
+                </x-dropdowns.context-menu>
+            </div>
         </div>
-        @endif   
-        @endforeach
-            <div wire:loading>
-                <!-- Show the loading animation -->
-                <div class="loading-overlay">
-                <div  class="loading-animation">
-                    <!-- Add your loading animation here -->  
+        <div class="" x-show="expanded">
+            <hr>
+            <div class="text-xs mt-5 text-gray-400 hidden font-medium  md:flex items-center">
+                <div class="w-12 px-3">
+                
                 </div>
+                <div class="w-44 px-3" style="font-size: 13px;">
+                    PERMISSIONS
+                </div>
+                <div class="w-44 text-gray-700" style="font-size: 13px;">
+                    {{ $user->permissions ?? "" }}
                 </div>
             </div>
+            <div class="text-xs mt-5 text-gray-700 font-medium md:flex items-center">
+                <div class="w-12 px-3">
+                </div>
+                <div class="w-44 px-3 text-gray-400" style="font-size: 13px;">
+                    IP ADDRESS
+                </div>
+                <div class="w-44" style="font-size: 13px;">
+                    {{ $user->ipaddress ?? "" }}
+                </div>
+            </div>
+        </div>   
+    </div> 
+    @endforeach
+    <div wire:loading>
+        <!-- Show the loading animation -->
+        <div class="loading-overlay">
+            <div  class="loading-animation">
+                <!-- Add your loading animation here -->  
+            </div>
+        </div>
+    </div>
     <div class="pt-5">
-        {{ $activeMembers->links() }}
+        {{ $users->links() }}
     </div> 
 </div>
 @push('modals')

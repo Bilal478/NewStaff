@@ -48,7 +48,7 @@ if($temp >0){//or 1
             </a>
         </div> 
 		<h2 class="mt-2 mb-4 text-2xl sm:text-3xl font-bold text-center text-gray-600 leading-9">
-            Billing Information 
+            Registration - Step 2
         </h2>
 	
 	<div class="row">
@@ -58,7 +58,7 @@ if($temp >0){//or 1
 	?>
 		<div class="col-md-5 switch-left">
 			<div class="Monthly-price">
-				<span style="font-weight: bold;" id="Monthly-price" >Pay Monthly</span>
+				<span style="font-weight: bold;" id="Monthly-price" >Monthly Membership</span>
 			</div>
 		</div>
 		<div class="col-md-2 switch-center">
@@ -71,7 +71,7 @@ if($temp >0){//or 1
 		</div>
 		<div class="col-md-5 switch-right">
 			<div class="Annual-price">
-				<span  style="font-weight:normal" id="Annual-price">Pay Annual</span>
+				<span  style="font-weight:normal" id="Annual-price">Annual Membership</span>
 			</div>	
 		</div>
 	<?php
@@ -80,7 +80,7 @@ if($temp >0){//or 1
 	?>
 		<div class="col-md-5 switch-left">
 			<div class="Monthly-price">
-				<span id="Monthly-price" >Pay Monthly</span>
+				<span id="Monthly-price" >Monthly Membership</span>
 			</div>
 		</div>
 		
@@ -95,7 +95,7 @@ if($temp >0){//or 1
 			
 		<div class="col-md-5 switch-right">
 			<div class="Annual-price">
-				<span  style="font-weight:bold" id="Annual-price">Pay Annual</span>
+				<span  style="font-weight:bold" id="Annual-price">Annual Membership</span>
 			</div>	
 		</div>
 	<?php
@@ -157,7 +157,7 @@ if($temp >0){//or 1
 							<div class="der col-lg-8"> 
 								
 								<h2 class = "company">'.$show_company.'</h2>
-								<h2 class = "price" id="price">$'.$price.'USD</h2>
+								<h2 class = "price" id="price">$'.$price.' USD</h2>
 							</div>
 							
 						</div>
@@ -199,14 +199,14 @@ if($temp >0){//or 1
 				</div>
 				
 				<div class="form-group pb-6">
-					<label for="">Card details</label>
-					<div  onchange="Show()" id="card-element"></div>
+					<label for="">Card Details</label>
+					<div  onchange="Show()" id="card-element" class="form-control w-full h-10"></div>
 				</div>
 							<p>
 				
 				<button type="submit" class="text-center w-full  mt-2 sm:mt-0 h-10  rounded-md bg-blue-600 
 					text-white pl-4 pr-6 hover:bg-blue-500 focus:outline-none active:bg-blue-700 transition duration-150 ease-in-out"	
-					id="card-button" data-secret="{{ $intent->client_secret }}">PAY NOW</button>  
+					id="card-button" data-secret="{{ $intent->client_secret }}">Start your Free Trial</button>  
 					
 				</form>
 

@@ -3,6 +3,11 @@
 
 	use App\Models\Account;	
 
+            if (!$token = request()->cookie('auth_token')) {
+                Auth::logout();
+                header('Location:  https://media.neostaff.app/');
+                die();	
+            }
             $user = Auth::user();
             $count=0;
             $userAccounts = $user->accounts;

@@ -237,16 +237,72 @@ class ActivitiesIndex extends Component
     public function activitiesForUser()
     {
         $this->ActivitiesAverage();
-         return User::where('id',$this->user_id)->first()
+        $activities = User::where('id',$this->user_id)->first()
             ->activities()
             ->whereDate('date', $this->formatted_date)
             ->oldest('start_datetime')
-            ->get()
-            ->mapToGroups(function ($activity, $key) {
-                return [
-                    $activity->start_datetime->format('h:00 a') . ' - ' . $activity->start_datetime->addHour()->format('h:00 a') => $activity
-                ];
-            });
+            ->get();
+
+        $activityIds = $activities->pluck('id')->toArray();
+
+        // Fetch screenshots for the activity IDs
+        $screenshotsData = Screenshot::whereIn('activity_id', $activityIds)->get()->groupBy('activity_id');
+
+        $arrayData = [];
+        $mergedKeys = [];
+        foreach ($activities as $key => $activity) {
+            $taskIds = [];
+            if (in_array($key, $mergedKeys)) {
+                continue; // Skip this activity if it has already been merged
+            }
+            // Check if there is a next activity
+            if (isset($activities[$key + 1])) {
+                if ($activity->start_datetime == $activities[$key + 1]->start_datetime) {
+                    $activity->seconds += $activities[$key + 1]->seconds;
+                    $taskIds[] = $activity->task_id;
+                    $taskIds[] = $activities[$key + 1]->task_id;
+                    $mergedKeys[] = $key + 1;
+                }
+            }
+            $screenshotsDataForActivity = $screenshotsData[$activity->id] ?? [];
+            $arrayData[] = [
+            'id' => $activity->id,
+            'user_id' => $activity->user_id,
+            'start_time' => $activity->start_datetime,
+            'end_time' => $activity->end_datetime,
+            'date' => $activity->date->format('Y-m-d'),
+            'seconds'=>  $activity->seconds,
+            'total_activity_percentage' => $activity->total_activity_percentage,
+            'keyboard_count' => $activity->keyboard_count,
+            'mouse_count' => $activity->mouse_count,
+            // 'productivity' => intval($activity->productivity),
+            'project_id' => $activity->project_id,
+            'project_title' => $activity->project_title,
+            'task_id' => !empty($taskIds) ? $taskIds : $activity->task_id,
+            'account_id' => $activity->account_id,
+            'task_title' =>  isset($activity->task_id)  ? $activity->task_title : 'No to-do',
+            'is_manual_time' =>  $activity->is_manual_time,
+            'screenshots' => $screenshotsDataForActivity,
+            ];
+        }
+    
+        $collection = collect($arrayData)->mapToGroups(function ($item, $key) {
+        // Format the start time to the nearest hour
+        $hourInterval = Carbon::parse($item['start_time'])->format('h:00 a') . ' - ' . Carbon::parse($item['start_time'])->addHour()->format('h:00 a');
+        return [$hourInterval => $item];
+        });
+    
+        return $collection;
+        //  return User::where('id',$this->user_id)->first()
+        //     ->activities()
+        //     ->whereDate('date', $this->formatted_date)
+        //     ->oldest('start_datetime')
+        //     ->get()
+        //     ->mapToGroups(function ($activity, $key) {
+        //         return [
+        //             $activity->start_datetime->format('h:00 a') . ' - ' . $activity->start_datetime->addHour()->format('h:00 a') => $activity
+        //         ];
+        //     });
     }
 
     public function activitiesTime()

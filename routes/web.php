@@ -54,6 +54,7 @@ use App\Http\Livewire\SelectPlan;
 use App\Jobs\DailyWorkSummaryJob;
 use App\Http\Livewire\ManagerSection;
 use App\Http\Controllers\StripeWebhookController;
+use App\Http\Livewire\Auth\CodeVerification;
 
 //Route::view('/', 'welcome')->name('home');
 
@@ -75,6 +76,8 @@ Route::get('/downloads/ubuntu/', [download::class, 'ubuntuFile'])->name('downloa
 
 Route::get('/terms-and-conditions', [download::class, 'TermsAndConditions']);
 Route::get('/hipaa', [download::class, 'hipaa']);
+Route::get('/verify-2fa',CodeVerification::class)->name('verify-2fa');
+Route::post('/verify-2fa', [CodeVerification::class, 'verify'])->name('verify-2fa.verify');
 
 Route::middleware('guest:web')->group(function () {
     Route::get('login', Login::class)->name('login');

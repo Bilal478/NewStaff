@@ -186,15 +186,6 @@ class MembersIndex extends Component
             $this->account->users()->detach($userId);
             DB::table('users')->where('id', $userId)->delete();
         }
-        DB::table('transaction_log')->insert([
-            'user_id' => $user->id,
-            'account_id' => $this->account->id,
-            'subscription_id' => $subscription->id,
-            'action' => 'cancel_subscription',
-            'quantity' => 1,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
         $this->toast("User is deleted permanently");
     }
 
@@ -334,20 +325,10 @@ class MembersIndex extends Component
     public function payandcontinue(Request $request){
 
 	    $user = Auth::user();
-	    $subscription=$user->subscription($request->plan);
 	    if ($user->hasDefaultPaymentMethod()) {
 
 		    $user->subscription($request->plan)
 			->incrementQuantity($request->selectseats);
-			DB::table('transaction_log')->insert([
-				'user_id' => $user->id,
-				'account_id' => $this->account->id,
-				'subscription_id' => $subscription->id,
-				'action' => 'buy_seats',
-				'quantity' => $request->selectseats,
-				'created_at' => now(),
-				'updated_at' => now(),
-			]);
 		}
 		return redirect()->intended("/members?buy_more_seats="."$request->selectseats");	
 	}

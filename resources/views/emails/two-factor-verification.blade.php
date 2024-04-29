@@ -1,10 +1,14 @@
 @component('mail::message')
 # Two-Factor Verification Code
 
-Your verification code is: {{ $verificationCode }}
+Hello,
 
-This code will expire in one minute.
+Your verification code for {{ config('app.name') }} is: **{{ $verificationCode }}**
 
-Thanks,<br>
+This code will expire in one minute. If you did not request this code, please ignore this email.
+
+Thank you for using {{ config('app.name') }}.
+
+Best regards,<br>
 {{ config('app.name') }}
 @endcomponent

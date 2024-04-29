@@ -52,6 +52,7 @@ class BillingInfo extends Component
         ->get();
 
         $totalAmount = 0;
+        $amount = 0;
         // $price = StripeSubscription::retrieve('sub_1OC6V1AdgPnFPgwGGRIZDXO8');
         // dd($price);
         // $price = PaymentIntent::retrieve('pi_3OCzm0AdgPnFPgwG0XUcCzqK');
@@ -83,7 +84,7 @@ class BillingInfo extends Component
         ->get();
 
         $totalAmount = 0;
-
+        $amount = 0;
         foreach ($currentDayTransactions as $transaction) {
           $subscription=Subscription::where('id',$transaction->subscription_id)->first();
           $priceId = $subscription->stripe_price;
@@ -112,7 +113,7 @@ class BillingInfo extends Component
     ->get();
 
     $totalAmount = 0;
-
+    $amount = 0;
     foreach ($currentMonthCanceledTransactions as $transaction) {
       $subscription=Subscription::where('id',$transaction->subscription_id)->first();
       if($subscription){

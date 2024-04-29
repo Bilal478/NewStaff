@@ -9,18 +9,18 @@
             Two Factor Authentication
         </h2>
     </div>
-    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div class="px-4 py-8 bg-white shadow sm:rounded-lg sm:px-10">
+    <div class="mt-4 sm:mx-auto sm:w-full sm:max-w-md">
+        <div class="px-4 py-3 bg-white shadow sm:rounded-lg sm:px-10">
+            <div class="mb-3 text-gray-600 font-bold">A 6-digit code has been sent to your email adrees. Check your inbox or spam folder.</div>
             <div>
                 <form wire:submit.prevent="verify" id="verificationForm">
                     <div>
-                        <label for="code">Verification Code:</label>
-                        <input type="text" id="code" wire:model.lazy="code" required class="form-control placeholder-gray-300 w-full">
+                        <input type="text" id="code" wire:model.lazy="code" placeholder="Enter code here" required class="form-control placeholder-gray-300 w-full">
                         @error('code')
                         <div id="errorMessage" style="font-size: 12px; color:red;">{{ $message }}</div>
                         @enderror
                     </div>
-                    <button type="submit" class="btn btn-primary mt-2" id="verifyButton">Verify</button>
+                    <button type="submit" class="btn btn-primary mt-2" id="verifyButton">Verify Code</button>
                 </form>
             </div>
         </div>

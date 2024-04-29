@@ -21,7 +21,7 @@
                 Transaction Id
             </div>
             <div class="w-60 px-3 ">
-                Stripe Id
+                Invoice Id
             </div>
             <div class="w-56  text-center">
                 User Name
@@ -32,9 +32,9 @@
             <div class="w-44 px-3 text-center">
                 Amount
             </div>
-            <div class="w-44 px-3 text-center">
+            {{-- <div class="w-44 px-3 text-center">
                 Details
-            </div>
+            </div> --}}
             <div class="w-44 px-3 text-center">
                 DateTime
             </div>
@@ -52,9 +52,7 @@
                 </div>
             </div>
             <div class="w-60  text-xs text-gray-500 text-center">
-                {{-- {{ $data['payment_intent_id'] }} --}}
-                
-pi_3OD2twAdgPnFPgwG1MwovEmB
+                {{ $data['invoice_id'] }}
             </div>
             <div class="w-56 text-xs text-gray-500 text-center">
                 {{ $data['userName'] }}
@@ -65,7 +63,7 @@ pi_3OD2twAdgPnFPgwG1MwovEmB
             <div class="w-44 px-3 text-xs text-gray-500 text-center">
                 ${{ $data['amount'] }}.00
             </div>
-            <div class="w-44 px-3 text-xs text-gray-500 text-center">
+            {{-- <div class="w-44 px-3 text-xs text-gray-500 text-center">
                 @if ($data['action']=='CANCEL_SUBSCRIPTION')
                 <td style="padding: 10px;">Cancel Subscription</td>
                 @elseif ($data['action']=='DELETE_SEATS')
@@ -75,7 +73,7 @@ pi_3OD2twAdgPnFPgwG1MwovEmB
                 @else
                 <td style="padding: 10px;">Buy Seats</td>
                 @endif
-               </div>
+            </div> --}}
             <div class="w-44 px-3 text-xs text-gray-500 text-center">
                 {{ $data['created_at'] }}
             </div>

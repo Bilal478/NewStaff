@@ -20,9 +20,12 @@
                     <span>{{$date}} from {{$startTime}} to {{$endTime}}</span>
                 </div>
             </div>
+            <h3 class="mb-3 mt-3">Old Time :</h3>
+            <span class="mr-2">From</span><input type="text" class="border border-dark custom-input-small" value="{{$startTime}}" readonly><br><br>
+            <span class="mr-7">To</span><input type="text" class="border border-dark custom-input-small" value="{{$endTime}}" readonly>
             <h3 class="mb-3 mt-3">New Time :</h3>
-            <span class="mr-2">From</span><input wire:model="newStartTime" id="startTimePicker" type="text" class="border border-dark custom-input"><input type="text" class="border border-dark custom-input-small" value="{{$startTime}}" readonly><br><br>
-            <span class="mr-7">To</span><input wire:model="newEndTime" id="endTimePicker" type="text" class="border border-dark custom-input"><input type="text" class="border border-dark custom-input-small" value="{{$endTime}}" readonly>
+            <span class="mr-2">From</span><input wire:model="newStartTime" id="startTimePicker" type="text" class="border border-dark custom-input"><br><br>
+            <span class="mr-7">To</span><input wire:model="newEndTime" id="endTimePicker" type="text" class="border border-dark custom-input">
 			<div class="flex justify-end mt-6">
 				<x-buttons.blue-inline type="submit">
 				  Update Time
@@ -33,30 +36,34 @@
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.6/dist/flatpickr.min.js"></script>
 <script>
-   document.addEventListener("DOMContentLoaded", function () {
-    const startTimePicker = flatpickr("#startTimePicker", {
-        enableTime: true,
-        noCalendar: true,
-        dateFormat: "H:i",
-        defaultDate: "{{$startTime}}",
-        minuteIncrement: 10,
-        onClose: function (selectedDates, dateStr, instance) {
-            document.getElementById("startTimeDisplay").textContent = dateStr;
-            instance.close(); // Close the time picker after selecting a time
-        }
-    });
+  document.addEventListener("DOMContentLoaded", function () {
+   const startTimePicker = flatpickr("#startTimePicker", {
+       enableTime: true,
+       noCalendar: true,
+       dateFormat: "H:i",
+       defaultDate: "{{$startTime}}",
+       minuteIncrement: 10,
+       onClose: function (selectedDates, dateStr) {
+           const startTimeDisplay = document.getElementById("startTimeDisplay");
+           if (startTimeDisplay) {
+               startTimeDisplay.textContent = dateStr;
+           }
+       }
+   });
 
-    const endTimePicker = flatpickr("#endTimePicker", {
-        enableTime: true,
-        noCalendar: true,
-        dateFormat: "H:i",
-        defaultDate: "{{$endTime}}",
-        minuteIncrement: 10,
-        onClose: function (selectedDates, dateStr, instance) {
-            document.getElementById("endTimeDisplay").textContent = dateStr;
-            instance.close(); // Close the time picker after selecting a time
-        }
-    });
+   const endTimePicker = flatpickr("#endTimePicker", {
+       enableTime: true,
+       noCalendar: true,
+       dateFormat: "H:i",
+       defaultDate: "{{$endTime}}",
+       minuteIncrement: 10,
+       onClose: function (selectedDates, dateStr) {
+           const endTimeDisplay = document.getElementById("endTimeDisplay");
+           if (endTimeDisplay) {
+               endTimeDisplay.textContent = dateStr;
+           }
+       }
+   });
 });
 </script>
 

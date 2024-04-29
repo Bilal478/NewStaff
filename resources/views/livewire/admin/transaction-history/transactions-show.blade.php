@@ -11,7 +11,7 @@
                 <span>Amount:</span>
                 <span>${{ $transactionAmount }}.00</span>
             </div>
-            <div class="flex justify-between mb-2">
+            {{-- <div class="flex justify-between mb-2">
                 <span>Action:</span>
                 <span>
                     @if ($transactionRecord->action=='delete_seats')
@@ -24,14 +24,14 @@
                     Subscription User   
                     @endif
                 </span>
-            </div>
+            </div> --}}
             <div class="flex justify-between mb-2">
                 <span>Date:</span>
                 <span>{{ $transactionRecord->created_at }}</span>
             </div>
             <div class="flex justify-between mb-2">
                 <span>Payment ID:</span>
-                <a href="https://stripe.com/dashboard/payments/{{  $transactionRecord->payment_intent_id }}" target="_blank" class="text-blue-500">{{ $transactionRecord->payment_intent_id }}</a>
+                <a href="https://stripe.com/dashboard/invoices/{{  $transactionRecord->invoice_id }}" target="_blank" class="text-blue-500">{{ $transactionRecord->invoice_id }}</a>
             </div>
             </div>
             @endif

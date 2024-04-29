@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Session;
+
 
 class CodeVerification extends Component
 {
@@ -20,7 +22,7 @@ class CodeVerification extends Component
     {
         $this->validate();
     
-        $user = Auth::user();
+        $user = Session::get('2fa_user');
     
         if ($user && $user->verification_code == $this->code && $user->verification_code_expiry > now()) {
             $user->verification_code = null;
@@ -52,6 +54,7 @@ class CodeVerification extends Component
     }
     public function completeLogin($user)
     {
+        Auth::login($user,true);
         $user->last_login_at = now();
         $user->last_login_ip = request()->ip();
         $user->save();

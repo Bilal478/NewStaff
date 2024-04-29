@@ -47,17 +47,7 @@ class BillingInfo extends Component
 	public function cancel2()
 	{
 		$user = Auth::user();
-		$subscription=$user->subscription($_GET['planname']);
 		$cancel_subscription  = $user->subscription($_GET['planname'])->cancelNow();
-		DB::table('transaction_log')->insert([
-			'user_id' => $user->id,
-			'account_id' => $this->account->id,
-			'subscription_id' => $subscription->id,
-			'action' => 'cancel_subscription',
-			'quantity' => $subscription->quantity,
-			'created_at' => now(),
-			'updated_at' => now(),
-		]);
 		
 		return redirect()->intended('https://neostaff.app/#price');
 	}
@@ -65,33 +55,14 @@ class BillingInfo extends Component
 	public function deleteseats(Request $request){
 		
 		$user = Auth::user();
-		$subscription=$user->subscription($_POST['planname']);
 		
 		$number_seats = $_POST['all-seats'];
 			
 		if($number_seats==1){
 			$user->subscription($_POST['planname'])->decrementQuantity(1);
-			DB::table('transaction_log')->insert([
-				'user_id' => $user->id,
-				'account_id' => $this->account->id,
-				'subscription_id' => $subscription->id,
-				'action' => 'delete_seats',
-				'quantity' => 1,
-				'created_at' => now(),
-				'updated_at' => now(),
-			]);
 		}
 		if($number_seats>1){
 			$user->subscription($_POST['planname'])->decrementQuantity($number_seats);
-			DB::table('transaction_log')->insert([
-				'user_id' => $user->id,
-				'account_id' => $this->account->id,
-				'subscription_id' => $subscription->id,
-				'action' => 'delete_seats',
-				'quantity' => $number_seats,
-				'created_at' => now(),
-				'updated_at' => now(),
-			]);
 		}
 
 		return redirect()->intended("/billing");
@@ -189,20 +160,10 @@ class BillingInfo extends Component
     public function payandcontinue(Request $request){
 
 	    $user = Auth::user();
-	    $subscription=$user->subscription($request->plan);
 	    if ($user->hasDefaultPaymentMethod()) {
 
 		    $user->subscription($request->plan)
 			->incrementQuantity($request->selectseats);
-			DB::table('transaction_log')->insert([
-				'user_id' => $user->id,
-				'account_id' => $this->account->id,
-				'subscription_id' => $subscription->id,
-				'action' => 'buy_seats',
-				'quantity' => $request->selectseats,
-				'created_at' => now(),
-				'updated_at' => now(),
-			]);
 		}
 		return redirect()->intended("/billing?buy_more_seats="."$request->selectseats");	
 	}

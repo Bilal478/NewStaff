@@ -56,7 +56,8 @@ class EditTimeModal extends Component
             $this->endTime = $data['end_time'];
             $this->date = Carbon::parse($data['date'])->format('D, M j, Y');
             $this->simpleDate = $data['date'];
-
+            $this->newStartTime = '';
+            $this->newEndTime = '';
         }
         $this->dispatchBrowserEvent('open-activities-edit-time-modal');
 
@@ -205,6 +206,17 @@ class EditTimeModal extends Component
         }
     }
     if($newEndTimeValue<$oldEndTimeValue && $newEndTimeValue>$oldStartTimeValue ){
+          // Check if $newEndTimeValue falls within a 10-minute interval
+          $minutes = date('i', strtotime($newEndTimeValue));
+          if ($minutes % 10 != 0) {
+              // Calculate the adjustment in minutes to the nearest lower 10-minute interval
+              $adjustment = $minutes % 10;
+              // Adjust $newEndTimeValue to the nearest lower 10-minute interval
+              $newEndTimeValue = date('Y-m-d H:i:00', strtotime($newEndTimeValue) - $adjustment * 60);
+              
+              // Calculate the seconds between the original time and the nearest lower 10-minute interval
+              $secondsDifference = $adjustment * 60;
+          }
         $time=($oldEndTimeValueTemp-$newEndTimeValueTemp)/600;
         for($i=0 ; $i<$time ; $i++){
             $temp = strtotime ( '+'.$i.'0 minutes ' , strtotime (substr($newEndTimeValue,0,19) ) ) ;

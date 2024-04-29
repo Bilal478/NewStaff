@@ -40,17 +40,6 @@ class PlansandPayment extends Component
 		$request->user()->newSubscription($request->plan, $plan->stripe_id)
 			->quantity($request->selectseats)
 			->create($request->token, ['email' => $user->email]);
-
-			$subscription=Subscription::where('user_id',$user->id)->first();
-			DB::table('transaction_log')->insert([
-                'user_id' => $user->id,
-				'account_id' => $this->account->id,
-                'subscription_id' => $subscription->id,
-                'action' => 'subscription_user',
-                'quantity' => $request->selectseats,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
 	}else{
 		$request->user()->newSubscription($request->plan, $plan->stripe_id)
 			->trialDays(30)
@@ -59,17 +48,6 @@ class PlansandPayment extends Component
 			[
 				'email' => $user->email
 			]);	
-
-			$subscription=Subscription::where('user_id',$user->id)->first();
-			DB::table('transaction_log')->insert([
-                'user_id' => $user->id,
-				'account_id' => $this->account->id,
-                'subscription_id' => $subscription->id,
-                'action' => 'subscription_user',
-                'quantity' => $request->selectseats,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
 	}
 		
 		return redirect()->intended('/sendmail');

@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Account;
 use App\Models\Subscription;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Laravel\Cashier\Http\Controllers\WebhookController as CashierWebhookController;
 use Symfony\Component\HttpFoundation\Response;
@@ -87,4 +90,34 @@ class StripeWebhookController extends CashierWebhookController
         }
         return $this->successMethod();
     }
+    protected function handleInvoice_Paid($event)
+    {
+        // Retrieve the invoice object from the event
+        $invoice = $event->data->object;
+
+        // Retrieve other relevant details from the invoice object
+        $invoiceId = $invoice->id;
+        $subscriptionId = $invoice->subscription;
+        $prorationAmount = $invoice->proration;
+        $totalAmount = $invoice->total/100;
+        $subscription=Subscription::where('stripe_id',$subscriptionId)->first();
+        $user=User::where('id',$subscription->user_id)->first();
+        $account=Account::where('owner_id',$user->id)->first();
+        DB::table('transaction_log')->insert([
+            'user_id' => $user->id,
+            'account_id' => $account->id,
+            'subscription_id' => $subscription->id,
+            'amount' =>  $totalAmount,
+            'created_at' => now(),
+            'updated_at' => now(),
+            'invoice_id' => $invoiceId,
+        ]);
+
+        // Log the invoice paid event and additional details
+        Log::info("Invoice Paid event received. Invoice ID: $invoiceId, Subscription ID: $subscriptionId");
+        Log::info("Proration Amount: $prorationAmount, Total Amount: $totalAmount");
+
+        return $this->successMethod();
+    }
+
 }

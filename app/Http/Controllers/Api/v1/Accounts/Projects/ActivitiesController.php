@@ -26,12 +26,25 @@ class ActivitiesController extends Controller
         $to = CarbonInterval::seconds($request->to)->cascade()->format('%H:%I:%S');
     
         $date = Carbon::parse($request->date); // Convert $request->date to a Carbon instance
+         //new code
+         $findFrom = floor($request->from / 600) * 600;
+         $findTo = ceil($request->to / 600) * 600;
+         
+         // Convert $findFrom and $findTo to the same format as $start_datetime and $end_datetime
+         $findFrom = Carbon::parse($date->format('Y-m-d') . ' ' . gmdate('H:i:s', $findFrom))->toDateTimeString();
+         $findTo = Carbon::parse($date->format('Y-m-d') . ' ' . gmdate('H:i:s', $findTo))->toDateTimeString();
+         //end new code
     
         $start_datetime = Carbon::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') . ' ' . $from)->toDateTimeString();
         $end_datetime = Carbon::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') . ' ' . $to)->toDateTimeString();
     
         
-        $last_activity_record = Activity::find(Cache::get('last_activity_id'));  
+        // $last_activity_record = Activity::find(Cache::get('last_activity_id'));  
+        $last_activity_record = $project->activities()
+        ->where('task_id', NULL)
+        ->whereBetween('start_datetime', [$findFrom,$findTo])
+        ->whereBetween('end_datetime', [$findFrom,$findTo])
+        ->first();
 
        if($last_activity_record){
         if(!($last_activity_record->start_datetime == $start_datetime && $last_activity_record->end_datetime == $end_datetime

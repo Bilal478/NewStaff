@@ -79,7 +79,7 @@ class Login extends Component
     
                 if ($activeSubscription) {
                     $this->sendVerificationCode($user);
-                    Session::put('2fa_user_id', $user->id); // Store user ID in session for verification
+                    Session::put('2fa_user', $user); // Store user ID in session for verification
                     $this->redirect('/verify-2fa'); // Redirect to 2FA verification page
                     // $user->last_login_at = now();
                     // $user->last_login_ip = request()->ip();
@@ -93,7 +93,7 @@ class Login extends Component
                 return;
         }else {
             $this->sendVerificationCode($user);
-            Session::put('2fa_user_id', $user->id); // Store user ID in session for verification
+            Session::put('2fa_user', $user); // Store user ID in session for verification
             $this->redirect('/verify-2fa'); // Redirect to 2FA verification page
                 // // The user has an active subscription
                 // $user->last_login_at = now();

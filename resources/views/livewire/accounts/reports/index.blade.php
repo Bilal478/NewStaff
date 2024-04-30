@@ -76,8 +76,16 @@ $totalTimeFormatted = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
         {{-- @endif --}}
         
     </div>
-    <div style="float: right">
+    <div class="flex justify-between mb-1">
+    <div class="mt-5">
         <b>Total Hours = {{$totalTimeFormatted}}</b>
+    </div>
+    <div>
+        <button wire:click="$emit('activityCreate', '{{ $date }}', '{{ $user_id }}' , 'notActivityPage')" type="button" class=" h-10 text-sm flex items-center rounded-md bg-blue-600 text-white pl-3 pr-3 hover:bg-blue-500 focus:outline-none active:bg-blue-700 transition duration-150 ease-in-out">
+            <x-svgs.plus class="w-5 h-5 mr-1" />
+            Add time
+        </button>
+    </div>
     </div>
     
     <div class="w-full overflow-x-auto rounded-md border">
@@ -191,6 +199,7 @@ $totalTimeFormatted = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
     <x-states.empty-data message="There are no records for this week." />
     @endif --}}
     @push('modals')
+        @livewire('accounts.tasks.tasks-form')
         @livewire('activites-modal')
         @livewire('time-modal')
         @livewire('accounts.activities.edit-time-modal')

@@ -3,7 +3,7 @@ $account_user = DB::table('account_user')
     ->where('user_id', auth()->user()->id)
     ->first();
 @endphp
-<x-modals.small x-on:open-activity-modal.window="open = true" x-on:close-activity-modal.window="open = false">
+<x-modals.small x-on:open-activity-modal.window="open = true" x-on:close-activity-modal.window="open = false" style="z-index: 10">
 
     <table class="w-full border mt-5">
         <thead>
@@ -60,6 +60,15 @@ $account_user = DB::table('account_user')
 
         </tbody>
     </table>
+  
+       <div>
+    <button wire:click="$emit('activityCreate', '{{ $date }}', '{{ $user_id }}' , 'notActivityPage')" type="button" class="mt-3 w-full h-10 text-center text-sm flex items-center justify-center rounded-md bg-blue-600 text-white hover:bg-blue-500 focus:outline-none active:bg-blue-700 transition duration-150 ease-in-out">
+        <x-svgs.plus class="w-5 h-5 mr-1" />
+        <span>Add time</span>
+    </button>
+</div>
+
+    
 
 
 </x-modals.small>

@@ -2,7 +2,7 @@
 		<form wire:submit.prevent="update"  autocomplete="off">	 
 			
 			<h5 class="font-montserrat font-semibold text-lg text-gray-700 mb-6">
-				Split Time		
+				Edit Time		
 			</h5>
             <div class="border border-dark rounded p-3">
                 <div class="flex justify-around">
@@ -16,7 +16,7 @@
                   </div>
                 </div>
                 <div class="flex flex-col" id="timespan-div">
-                    <span id="timespan">Timespan</span>
+                    <span id="timespan">TIME SPAN</span>
                     <span>{{$date}} from {{$startTime}} to {{$endTime}}</span>
                 </div>
             </div>

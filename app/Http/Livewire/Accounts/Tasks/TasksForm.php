@@ -54,6 +54,7 @@ class TasksForm extends Component
     public $var = [];
     public $datetimerange;
     public $tasksDropdownOptions = [];
+    public $flag;
 
 
     protected $listeners = [
@@ -366,8 +367,18 @@ else{
 
         $this->toast('Activity Created', "The Activity has been created from " .
             $this->seconds . " to " . $this->seconds_two);
-
+        if($this->flag=="notActivityPage"){
+        $this->dispatchBrowserEvent('close-activity-modal');
+            $this->seconds='';
+            $this->seconds_two='';
+            $this->task_id = null;
+      
+            $this->emit('activityUpdate');
+            $this->emit('tasksUpdate');
+        }
+        else{
         return redirect('/activities');
+        }
     }
 
     public function getTaskProperty()
@@ -388,12 +399,13 @@ else{
     {
         return view('livewire.accounts.tasks.form', ['usersIn' => User::inProject($this->project_id)->get(), 'project' => $this->project]);
     }
-    public function create2($date,$userId)
-    {
+    public function create2($date,$userId,$flag)
+    { 
         $this->datetimerange = date('Y-m-d', strtotime($date));
         $this->tasksDropdownOptions = Task::where('user_id', $userId)->get();
         $this->emit('tasksUpdated',json_encode($this->tasksDropdownOptions));
         $this->user_id=$userId;
+        $this->flag=$flag;
         $this->dispatchBrowserEvent('open-activities-form-modal');
     }
 

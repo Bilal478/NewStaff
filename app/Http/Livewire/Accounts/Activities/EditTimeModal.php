@@ -82,8 +82,22 @@ class EditTimeModal extends Component
         $oldEndTimeValue = $this->simpleDate.' '.date('H:i:s', strtotime($this->endTime));
         $oldStartTimeValueTemp = strtotime($this->simpleDate . ' ' . $this->startTime);
         $oldEndTimeValueTemp = strtotime($this->simpleDate . ' ' . $this->endTime);
-       
-    if($newStartTimeValue<$oldStartTimeValue){
+        if($this->endTime=="12:00 AM"){
+            $carbonEndTime = Carbon::createFromTime(24, 0, 0);
+    
+        $oldEndTimeValueTemp = $carbonEndTime->timestamp;
+        }
+    if($newStartTimeValueTemp<$oldStartTimeValueTemp){
+        $minutes = date('i', strtotime($newStartTimeValue));
+          if ($minutes % 10 != 0) {
+              // Calculate the adjustment in minutes to the nearest lower 10-minute interval
+              $adjustment = $minutes % 10;
+              // Adjust $newEndTimeValue to the nearest lower 10-minute interval
+              $newStartTimeValue = date('Y-m-d H:i:00', strtotime($newStartTimeValue) - $adjustment * 60);
+              
+              // Calculate the seconds between the original time and the nearest lower 10-minute interval
+              $secondsDifference = $adjustment * 60;
+          }
         $time=($oldStartTimeValueTemp-$newStartTimeValueTemp)/600;
             for($i=0 ; $i<$time ; $i++){
             $temp = strtotime ( '+'.$i.'0 minutes ' , strtotime (substr($newStartTimeValue,0,19) ) ) ;
@@ -134,7 +148,17 @@ class EditTimeModal extends Component
             }    
         }
     }
-    if($newEndTimeValue>$oldEndTimeValue){
+    if($newEndTimeValueTemp>$oldEndTimeValueTemp){
+        $minutes = date('i', strtotime($newEndTimeValue));
+        if ($minutes % 10 != 0) {
+            // Calculate the adjustment in minutes to the nearest lower 10-minute interval
+            $adjustment = $minutes % 10;
+            // Adjust $newEndTimeValue to the nearest lower 10-minute interval
+            $newEndTimeValue = date('Y-m-d H:i:00', strtotime($newEndTimeValue) - $adjustment * 60);
+            
+            // Calculate the seconds between the original time and the nearest lower 10-minute interval
+            $secondsDifference = $adjustment * 60;
+        }
         $time=($newEndTimeValueTemp-$oldEndTimeValueTemp)/600;
         for($i=0 ; $i<$time ; $i++){
             $temp = strtotime ( '+'.$i.'0 minutes ' , strtotime (substr($oldEndTimeValue,0,19) ) ) ;
@@ -185,7 +209,17 @@ class EditTimeModal extends Component
         }    
         }
     }
-    if($newStartTimeValue>$oldStartTimeValue && $newStartTimeValue<$oldEndTimeValue ){
+    if($newStartTimeValueTemp>$oldStartTimeValueTemp && $newStartTimeValueTemp<$oldEndTimeValueTemp ){
+        $minutes = date('i', strtotime($newStartTimeValue));
+        if ($minutes % 10 != 0) {
+            // Calculate the adjustment in minutes to the nearest lower 10-minute interval
+            $adjustment = $minutes % 10;
+            // Adjust $newEndTimeValue to the nearest lower 10-minute interval
+            $newStartTimeValue = date('Y-m-d H:i:00', strtotime($newStartTimeValue) - $adjustment * 60);
+            
+            // Calculate the seconds between the original time and the nearest lower 10-minute interval
+            $secondsDifference = $adjustment * 60;
+        }
         $time=($newStartTimeValueTemp-$oldStartTimeValueTemp)/600;
         for($i=0 ; $i<$time ; $i++){
             $temp = strtotime ( '+'.$i.'0 minutes ' , strtotime (substr($oldStartTimeValue,0,19) ) ) ;
@@ -205,7 +239,7 @@ class EditTimeModal extends Component
             ->delete();    
         }
     }
-    if($newEndTimeValue<$oldEndTimeValue && $newEndTimeValue>$oldStartTimeValue ){
+    if($newEndTimeValueTemp<$oldEndTimeValueTemp && $newEndTimeValueTemp>$oldStartTimeValueTemp ){
           // Check if $newEndTimeValue falls within a 10-minute interval
           $minutes = date('i', strtotime($newEndTimeValue));
           if ($minutes % 10 != 0) {

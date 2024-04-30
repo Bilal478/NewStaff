@@ -377,7 +377,9 @@ else{
             $this->emit('tasksUpdate');
         }
         else{
-        return redirect('/activities');
+            $this->emit('activityUpdate');
+            $this->emit('tasksUpdate');
+        // return redirect('/activities');
         }
     }
 

@@ -144,6 +144,7 @@ class EditTimeModal extends Component
                 'account_id' => $this->accountId,
                 'created_at' =>  $newStartTimeValue, 
                 'updated_at' =>  $newStartTimeValue, 
+                'is_manual_time' =>  1,
             ]);
             }    
         }
@@ -205,6 +206,7 @@ class EditTimeModal extends Component
                 'account_id' => $this->accountId,
                 'created_at' =>  $newStartTimeValue, 
                 'updated_at' =>  $newStartTimeValue,
+                'is_manual_time' =>  1,
             ]);
         }    
         }

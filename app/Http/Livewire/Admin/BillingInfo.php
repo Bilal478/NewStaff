@@ -39,12 +39,10 @@ class BillingInfo extends Component
     }
 
     public function currentMonthBilledAmount(){
-        // Stripe::setApiKey(config('services.stripe.secret'));
         $firstDayOfMonth = Carbon::now()->startOfMonth();
         $lastDayOfMonth = Carbon::now()->endOfMonth();
 
         $currentMonthTransactions = DB::table('transaction_log')->whereBetween('created_at', [$firstDayOfMonth, $lastDayOfMonth])
-        // ->whereIn('action', ['subscription_user', 'buy_seats'])
         ->get();
 
         $totalAmount = 0;

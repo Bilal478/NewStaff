@@ -30,7 +30,20 @@ class TasksForm2 extends Component
 	
 	 protected $listeners = [
         'activity' => 'Show',
-    ];
+		'updateTimepickerOneTask' => 'updateTimepickerOneTask',
+        'updateTimepickerTwoTask' => 'updateTimepickerTwoTask'
+        ];
+
+
+    public function updateTimepickerOneTask($value)
+    {
+        $this->seconds_one_task = $value;
+    }
+
+    public function updateTimepickerTwoTask($value)
+    {
+        $this->seconds_two_task = $value;
+    }
 	
 	public function Show(Task $task){
 		$this->task_info = $task;
@@ -65,7 +78,7 @@ class TasksForm2 extends Component
 			DB::table('activities')->insert([
 				'from' => 621,
 				'to' => 1200, 
-				'seconds' => $hour_in_seconds_two - $hour_in_seconds,
+				'seconds' => 600, //$hour_in_seconds_two - $hour_in_seconds,
 				'start_datetime' =>   $new_start_time, //substr($start_datetime,0,19),
 				'date' => $this->datetimerange,
 				'keyboard_count' => 100,

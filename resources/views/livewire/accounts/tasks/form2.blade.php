@@ -48,53 +48,46 @@
 	</x-modals.small>
 </div>	
 	@push('scripts')
-<script>
+	<script>
+	$(document).ready(function() {
     $('.timepicker_one_task').timepicker({
-
-            timeFormat: 'HH:mm:ss a',
-            interval: 30,
-            dynamic: false,
-            dropdown: true,
-            scrollbar: true,
-            change: tmTotalHrsOnSite
-
-        });
-
-        function tmTotalHrsOnSite () {
-            var x = $(".timepicker_one_task").val();
-			
-			document.getElementById('seconds_two_task').value = '';
-			
-            let elementName = $(".timepicker_one_task").attr('id');
+        timeFormat: 'HH:mm:ss a',
+        interval: 30,
+        dynamic: false,
+        dropdown: true,
+        scrollbar: true,
+        change: function() {
             var data = $(".timepicker_one_task").val();
-            @this.set(elementName, data);
-			
-				var block_time = x.split(':');
-				
-				var start_t = parseInt(block_time[1])+parseInt(30);
-				
-				if(start_t == 60){	start_t = '00';	block_time[0] = parseInt(block_time[0])+parseInt(1);	}
-				
-				$('.timepicker_two_task').timepicker({
-					timeFormat: 'HH:mm:ss a',
-					interval: 30,
-					dynamic: false,
-					dropdown: true,
-					scrollbar: true,
-					change: tmTotalHrsOnSite_two
-				});
-				
-	$('.timepicker_two_task').timepicker('option', 'minTime', new Date(0, 0, 0, block_time[0], start_t, 0));
-			
+            Livewire.emit('updateTimepickerOneTask', data);
+            updateTimepickerTwoTask();
         }
-        function tmTotalHrsOnSite_two () {
-            var x = $(".timepicker_two_task").val();
-            let elementName = $(".timepicker_two_task").attr('id');
+    });
+
+    function updateTimepickerTwoTask() {
+        var x = $(".timepicker_one_task").val();
+        var block_time = x.split(':');
+        var start_t = parseInt(block_time[1]) + parseInt(30);
+        if (start_t == 60) {
+            start_t = '00';
+            block_time[0] = parseInt(block_time[0]) + parseInt(1);
+        }
+
+        $('.timepicker_two_task').timepicker('option', 'minTime', new Date(0, 0, 0, block_time[0], start_t, 0));
+    }
+
+    $('.timepicker_two_task').timepicker({
+        timeFormat: 'HH:mm:ss a',
+        interval: 30,
+        dynamic: false,
+        dropdown: true,
+        scrollbar: true,
+        change: function() {
             var data = $(".timepicker_two_task").val();
-            @this.set(elementName, data);
-			
+            Livewire.emit('updateTimepickerTwoTask', data);
         }
-		
+    });
+});
+
 </script>
 @endpush
 

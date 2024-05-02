@@ -364,23 +364,15 @@ else{
     }
 
         $this->dispatchBrowserEvent('close-activities-form-modal');
+        $this->dispatchBrowserEvent('close-activity-modal');
 
         $this->toast('Activity Created', "The Activity has been created from " .
             $this->seconds . " to " . $this->seconds_two);
-        if($this->flag=="notActivityPage"){
-        $this->dispatchBrowserEvent('close-activity-modal');
             $this->seconds='';
             $this->seconds_two='';
             $this->task_id = null;
-      
             $this->emit('activityUpdate');
             $this->emit('tasksUpdate');
-        }
-        else{
-            $this->emit('activityUpdate');
-            $this->emit('tasksUpdate');
-        // return redirect('/activities');
-        }
     }
 
     public function getTaskProperty()

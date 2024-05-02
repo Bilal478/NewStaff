@@ -118,7 +118,7 @@ $totalTimeFormatted = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
                 @foreach ($users as $userName => $activity)
                 <tr class="text-sm text-gray-600 hover:bg-gray-50 {{ $loop->last ? '' : 'border-b' }}">
                     <td class="min-w-52 sticky left-0 top-auto bg-white z-10 px-4 py-5">
-                        {{ $userName }}
+                        {{ explode('|', $userName)[0] }}
                         <p><span class="taskTitle">{{$activity['task_title']}}</span></p>
                         <div class="border-r-2 bg-red-500 absolute right-0 inset-y-0"></div>
                     </td>

@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use Carbon\CarbonInterval;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 
@@ -29,7 +28,7 @@ class CollectionMacroServiceProvider extends ServiceProvider
     {
         Collection::macro('groupByUserName', function () {
             return $this->groupBy(function ($item) {
-                return $item->project_title;
+                return $item->project_title . '|' . $item->task_title;
             });
         });
 

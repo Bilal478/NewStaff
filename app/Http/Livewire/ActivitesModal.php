@@ -167,7 +167,10 @@ class ActivitesModal extends Component
         
         $startDateTime = strtotime($this->activityToRemoved['date'] . ' ' . $this->activityToRemoved['start_time']);
         $endDateTime =strtotime($this->activityToRemoved['date'] . ' ' . $this->activityToRemoved['end_time']);
-
+        if($this->activityToRemoved['end_time']=="12:00 AM"){
+            $carbonEndTime = Carbon::createFromTime(24, 0, 0);
+            $endDateTime = $carbonEndTime->timestamp;
+        }
         $startDateTimeTemp =$this->activityToRemoved['date'].' '.date('H:i:s', strtotime($this->activityToRemoved['start_time']));
         $endDateTimeValueTemp =$this->activityToRemoved['date'].' '.date('H:i:s', strtotime($this->activityToRemoved['start_time']));
 

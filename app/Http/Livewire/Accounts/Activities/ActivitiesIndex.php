@@ -325,6 +325,9 @@ class ActivitiesIndex extends Component
 
         if ($user) {
             $this->timeToday = CarbonInterval::seconds($user->activities()->thisPeriodOfTime($today,  $today)->sum('seconds'))->cascade()->format('%H:%I:%S');
+            if($user->activities()->thisPeriodOfTime($today,  $today)->sum('seconds')=="86400"){
+                $this->timeToday="24:00:00";
+            }
             $this->timeToday = strtotime($this->timeToday) - strtotime('TODAY');
             $this->timeYesterday =  CarbonInterval::seconds($user->activities()->thisPeriodOfTime($yesterday, $yesterday)->sum('seconds'))->cascade()->format('%H:%I:%S');
             $this->timeYesterday = strtotime($this->timeYesterday) - strtotime('TODAY');

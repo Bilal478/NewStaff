@@ -125,7 +125,13 @@ $totalTimeFormatted = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
 
                     @foreach ($activity['days'] as $day)
                     <td class="min-w-36 px-4 py-5">
-                        <a href="#" wire:click="$emit('activityModal','{{ $day['date'] }}','{{ $day['user_id'] }}','{{ $day['account_id'] }}','{{ $day['project_id'] }}','{{ $day['task_id'] }}')">{{ $day['seconds'] }}</a>
+                        <a href="#" wire:click="$emit('activityModal','{{ $day['date'] }}','{{ $day['user_id'] }}','{{ $day['account_id'] }}','{{ $day['project_id'] }}','{{ $day['task_id'] }}')">
+                            @if ($day['seconds2']==86400)
+                                24:00:00
+                            @else
+                            {{ $day['seconds'] }}
+                            @endif
+                        </a>
                         <x-svgs.computer class="w-4 h-4 text-blue-500 mr-1" />
                         {{ $day['productivity'] }}%
                         <br>

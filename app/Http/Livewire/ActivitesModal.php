@@ -132,7 +132,7 @@ class ActivitesModal extends Component
                 'end_time' => $lastResult->end_datetime->format('h:i A'),
                 'date' => $lastResult->date->format('Y-m-d'),
                 'duration' => CarbonInterval::seconds($seconds_sum+600)->cascade()->format('%H:%I:%S'),
-                'minutes' => $seconds_sum / 60,
+                'minutes' => ($seconds_sum / 60)+10,
                 'productivity' => intval($lastResult->productivity),
                 'project_id' => $lastResult->project_id,
                 'project_title' => $lastResult->project_title,

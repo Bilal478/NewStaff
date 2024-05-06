@@ -86,7 +86,11 @@ $account = Account::where('id', $account_id)
                 Time
             </h3>
             <span class="text-lg text-gray-800">
+                @if ($timeToday==86400)
+                    24:00
+                @else
                 {{ gmdate('H:i', $timeToday) }}
+                @endif
             </span>
             <br>
             <span class="text-sm text-gray-800">
@@ -106,7 +110,11 @@ $account = Account::where('id', $account_id)
                 {{-- <img style="margin-top: -2px;margin-right: 10px;"  src="https://d2elkgkdx2cp5d.cloudfront.net/assets/global/arrow_green-bb4267018493d26d5ef23d41f52f674046a789343cd449b2dace465966c00883.svg"> --}}
                 @endif
                 <span class="text-lg">
+                    @if ($totalPreviuosTime==86400)
+                    24:00
+                    @else
                     {{ gmdate('H:i', $totalPreviuosTime) }}
+                    @endif
                 </span>
             </div>
 
@@ -227,13 +235,13 @@ $account = Account::where('id', $account_id)
                     $timeActivities = $activities->filter(function ($activity) use ($time) {
                         return Carbon\Carbon::parse($activity['start_time'])->format('H:i') === $time->format('H:i');
                     });
-                    $countActivity = 0;
                     if ($timeActivities->isNotEmpty()) {
                         // Check if screenshots exist and are not empty
                         $screenshots = $timeActivities->first()['screenshots'];
-                        if (is_array($screenshots) && count($screenshots) == 2) {
+                        if (count($screenshots) == 2) {
                             $countActivity = $countActivity + 2;
-                        } elseif (is_array($screenshots) && count($screenshots) == 1) {
+                        } 
+                        if (count($screenshots) == 1) {
                             $countActivity = $countActivity + 1;
                         }
                     }

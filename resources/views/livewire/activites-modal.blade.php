@@ -26,7 +26,14 @@ $account_user = DB::table('account_user')
                 
                 <td class="p-2 border-r ">
                 
-                <p><span class="taskTitle"> {{ $item['duration'] }}</span></p>
+                <p><span class="taskTitle">
+                    @if ($item['minutes']==1440)
+                        24:00:00
+                    @else
+                     {{ $item['duration'] }}
+                    @endif
+                    </span>
+                </p>
                 
                 </td>
                 <td class="p-2 border-r">

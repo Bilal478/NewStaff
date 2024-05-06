@@ -87,6 +87,11 @@ class EditTimeModal extends Component
     
         $oldEndTimeValueTemp = $carbonEndTime->timestamp;
         }
+        if($this->newEndTime=="00:00"){
+            $carbonEndTime = Carbon::createFromTime(24, 0, 0);
+    
+        $newEndTimeValueTemp = $carbonEndTime->timestamp;
+        }
     if($newStartTimeValueTemp<$oldStartTimeValueTemp){
         $minutes = date('i', strtotime($newStartTimeValue));
           if ($minutes % 10 != 0) {

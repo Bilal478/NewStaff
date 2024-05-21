@@ -11,6 +11,7 @@ $userId = $account->owner_id;
 $user = User::find($userId)->first();
 $user_mail = $user->email;
 
+try {
 $paymentMethods = $user->paymentMethods();
 $invoices = $user->invoices();
 
@@ -40,6 +41,25 @@ $user_id = $user->id;
 		$fech_start = $fech_update;
 		$date_start = date('M/d/Y', $fech_update);
 	}
+} catch (\Exception $e) {
+    echo "<div>";
+    echo "<p><b>Sorry, we are unable to retrieve your membership details at the moment. It appears that your account was created in a test environment, but we are currently operating in a live environment.</b></p>";
+    // Display a styled button to go back
+    echo "<button style='background-color: #007bff; /* Green */
+	color: #fff;
+    border-color: #007bff;
+    padding: 10px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+    margin-top: 2px;
+    cursor: pointer;
+    border-radius: 5px;
+    border: 1px solid transparent;' onclick='history.back()'>Go Back</button>";
+    echo "</div>";
+    exit; // Exit script
+}
 	
 	
 	

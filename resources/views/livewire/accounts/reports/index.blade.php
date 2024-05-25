@@ -16,6 +16,11 @@ $minutes = floor(($totalTimeInSeconds % 3600) / 60);
 $seconds = $totalTimeInSeconds % 60;
 
 $totalTimeFormatted = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
+$totalHours = $hours + ($minutes / 60) + ($seconds / 3600);
+$finalFormattedTime = number_format($totalHours, 2);
+list($wholeHours, $fractional) = explode('.', $finalFormattedTime);
+// Format the final time with two-digit hours
+$totalDigitalTime = sprintf('%02d.%02d', $wholeHours, $fractional);
 ?>
 <div>
     <x-page.title svg="svgs.report">
@@ -79,6 +84,7 @@ $totalTimeFormatted = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
     <div class="flex justify-between mb-1">
     <div class="mt-5">
         <b>Total Hours = {{$totalTimeFormatted}}</b>
+        <b style="margin-left: 20px">Digital Time = {{$totalDigitalTime}}</b>
     </div>
     <div>
         <button wire:click="$emit('activityCreate', '{{ $date }}', '{{ $user_id }}' , 'notActivityPage')" type="button" class=" h-10 text-sm flex items-center rounded-md bg-blue-600 text-white pl-3 pr-3 hover:bg-blue-500 focus:outline-none active:bg-blue-700 transition duration-150 ease-in-out">

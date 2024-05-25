@@ -14,6 +14,12 @@
                         <span>Don't worry, you can log back in below</span>
                     </div>
                     <hr>
+                    @if($subscriptionExpired)
+                    <div class="alert alert-warning text-xs">
+                          {{ trans('Subscription has been canceled') }}
+                          <a href="{{ route('buy_subscription') }}" class="float-right font-medium text-blue-600 hover:text-blue-500 focus:outline-none focus:underline transition ease-in-out duration-150" href="#">Buy a Subscription</a>
+                    </div>
+                    @endif
                     <div class="d-flex contenedor align-items-center mt-4 ms-xl-5 lg-4 ">
                         <form wire:submit.prevent="authenticate" style="width: 23rem;">
                             <x-inputs.text

@@ -15,6 +15,12 @@
                 create a new account
             </a>
         </p>
+        @if($subscriptionExpired)
+        <div class="mt-2 alert alert-warning text-xs">
+              {{ trans('Subscription has been canceled') }}
+              <a href="{{ route('buy_subscription') }}" class="float-right font-medium text-blue-600 hover:text-blue-500 focus:outline-none focus:underline transition ease-in-out duration-150" href="#">Buy a Subscription</a>
+        </div>
+        @endif
         @if(session()->get('account_not_found'))
         <p class="mt-2 text-sm text-center text-red-600 leading-5 max-w">
            You can't access the dashboard.
@@ -23,7 +29,7 @@
         {{session()->forget('account_not_found')}}
     </div>
 
-    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+    <div class="mt-3 sm:mx-auto sm:w-full sm:max-w-md">
         <div class="px-4 py-8 bg-white shadow sm:rounded-lg sm:px-10">
             <form wire:submit.prevent="authenticate">
                 <x-inputs.text

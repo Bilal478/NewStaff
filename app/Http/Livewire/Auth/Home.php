@@ -20,6 +20,7 @@ class Home extends Component
 {
     public $email = '';
     public $password = '';
+    public $subscriptionExpired = false;
 
     protected $rules = [
         'email' => ['required', 'email'],
@@ -88,9 +89,14 @@ class Home extends Component
                 }
                
         } 
-                Auth::logout();
-                $this->addError('email', trans('Subscription has been canceled'));
-                return;
+            $isSubscriptionExist=Subscription::where('user_id',$user->id)->first();
+                if($isSubscriptionExist){
+                    $this->subscriptionExpired = true;
+                }
+                else{
+                    Auth::logout();
+                    $this->addError('email', trans('Subscription has been canceled'));
+                }              
         }else {
                 $this->sendVerificationCode($user);
                 Session::put('2fa_user', $user); // Store user ID in session for verification

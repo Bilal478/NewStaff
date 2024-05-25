@@ -5,6 +5,7 @@
 use App\Models\Account;	
 use App\Models\User;
 
+$userCount = isset($_GET['usersCount']) ? (int)$_GET['usersCount'] : 0;
 $account = Account::find(session()->get('account_id'));
 
 	$owner_id_query = DB::table('account_user')
@@ -16,14 +17,10 @@ $account = Account::find(session()->get('account_id'));
 	$count_subs = count($subs);
 	
 	$user_id = Auth::user()->id;
-	$trial_verify = DB::select('SELECT quantity FROM subscriptions WHERE user_id = "'.$user_id.'"AND stripe_status != "canceled"');
-	$temp = count($trial_verify);
-	// dd($userCount);
-
-// if($temp >0){//or 1
-// 	header('Location: /dashboard');
-// 		die();
-// }
+	$subscription = DB::table('subscriptions')
+		->where('user_id', $user_id)
+		->where('stripe_status', 'canceled')
+		->first();
 
 	if(($_GET['plan']!='Monthly') && ($_GET['plan']!='Annual')){
 		header('Location: https://neostaff.app/#price');
@@ -59,7 +56,7 @@ $account = Account::find(session()->get('account_id'));
 	?>
 		<div class="col-md-5 switch-left">
 			<div class="Monthly-price">
-				<span style="font-weight: bold;" id="Monthly-price" >Pay Monthly</span>
+				<span style="font-weight: bold;" id="Monthly-price" >Monthly Membership</span>
 			</div>
 		</div>
 		<div class="col-md-2 switch-center">
@@ -72,7 +69,7 @@ $account = Account::find(session()->get('account_id'));
 		</div>
 		<div class="col-md-5 switch-right">
 			<div class="Annual-price">
-				<span  style="font-weight:normal" id="Annual-price">Pay Annual</span>
+				<span  style="font-weight:normal" id="Annual-price">Annual Membership</span>
 			</div>	
 		</div>
 	<?php
@@ -81,7 +78,7 @@ $account = Account::find(session()->get('account_id'));
 	?>
 		<div class="col-md-5 switch-left">
 			<div class="Monthly-price">
-				<span id="Monthly-price" >Pay Monthly</span>
+				<span id="Monthly-price" >Monthly Membership</span>
 			</div>
 		</div>
 		
@@ -96,7 +93,7 @@ $account = Account::find(session()->get('account_id'));
 			
 		<div class="col-md-5 switch-right">
 			<div class="Annual-price">
-				<span  style="font-weight:bold" id="Annual-price">Pay Annual</span>
+				<span  style="font-weight:bold" id="Annual-price">Annual Membership</span>
 			</div>	
 		</div>
 	<?php
@@ -140,7 +137,6 @@ $account = Account::find(session()->get('account_id'));
 
 				$initials = getInicials($show_company);
 				
-
 				echo 
 				
 				'
@@ -158,7 +154,7 @@ $account = Account::find(session()->get('account_id'));
 							<div class="der col-lg-8"> 
 								
 								<h2 class = "company">'.$show_company.'</h2>
-								<h2 class = "price" id="price">$'.$price*$userCount.'USD</h2>
+								<h2 class = "price" id="price">$'.$price*($subscription->quantity-$userCount).' USD</h2>
 							</div>
 							
 						</div>
@@ -190,7 +186,7 @@ $account = Account::find(session()->get('account_id'));
 				
 				<div class="form-group pt-6">
 					<label for="">Users</label>
-					<input onchange="Calculate(<?php  echo $price; ?>)"  min="<?php echo $count_subs ?>" type="number" name="selectseats" id="selectseats" class="form-control placeholder-gray-300 w-full" value="<?php echo $count_subs ?>" placeholder="# seats">
+					<input onchange="Calculate(<?php  echo $price; ?>)"  min="<?php echo $count_subs ?>" type="number" name="selectseats" id="selectseats" class="form-control placeholder-gray-300 w-full" value="<?php echo $subscription->quantity-$userCount ?>" placeholder="# seats">
 				</div>
 				<?php }
 				?>
@@ -466,29 +462,89 @@ input:checked + .slider:before {
 	}
 </script>
 
+{{-- <script>
+	document.addEventListener('DOMContentLoaded', function () {
+	  var checkbox = document.querySelector('input[type="checkbox"]');
+	
+	  checkbox.addEventListener('change', function () {
+		if (checkbox.checked) {
+		  // do this
+			//document.getElementById("checkbox").checked = true;
+			
+			document.getElementById('Annual-price').style.fontWeight='bold';
+			document.getElementById('Monthly-price').style.fontWeight='normal';
+			history.pushState(null, "", "https://media.neostaff.app/billing_information?plan=Annual");
+			location.reload();
+			console.log('Annual');
+		} else {
+		  // do that
+			//document.getElementById("checkbox").checked = false;
+			document.getElementById('Monthly-price').style.fontWeight='bold';
+			document.getElementById('Annual-price').style.fontWeight='normal';
+			history.pushState(null, "", "https://media.neostaff.app/billing_information?plan=Monthly");
+			location.reload();
+			console.log('Monthly');
+		}
+	  });
+	});
+	</script> --}}
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-  var checkbox = document.querySelector('input[type="checkbox"]');
-
-  checkbox.addEventListener('change', function () {
-    if (checkbox.checked) {
-      // do this
-		//document.getElementById("checkbox").checked = true;
-		
-		document.getElementById('Annual-price').style.fontWeight='bold';
-		document.getElementById('Monthly-price').style.fontWeight='normal';
-		history.pushState(null, "", "https://media.neostaff.app/billing_information?plan=Annual");
-		location.reload();
-		console.log('Annual');
-    } else {
-      // do that
-		//document.getElementById("checkbox").checked = false;
-		document.getElementById('Monthly-price').style.fontWeight='bold';
-		document.getElementById('Annual-price').style.fontWeight='normal';
-		history.pushState(null, "", "https://media.neostaff.app/billing_information?plan=Monthly");
-		location.reload();
-		console.log('Monthly');
-    }
-  });
-});
-</script>
+	document.addEventListener('DOMContentLoaded', function () {
+		// Function to get the query parameters from the URL
+		function getQueryParams() {
+			const params = {};
+			window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (str, key, value) {
+				params[key] = decodeURIComponent(value);
+			});
+			return params;
+		}
+		var subscriptionQuantity = {{ $subscription->quantity }};
+	
+		// Retrieve the userCount parameter from the URL
+		const queryParams = getQueryParams();
+		const userCount = queryParams.usersCount || 0;
+	
+		// Update the price display based on the selected plan and userCount
+		function updatePrice(plan, userCount) {
+			let price = 0;
+			if (plan === 'Monthly') {
+				price = 4.0;
+			} else if (plan === 'Annual') {
+				price = 3.0 * 12;
+			}
+			document.getElementById('price').innerText = '$' + (price * (subscriptionQuantity-userCount)) + ' USD';
+		}
+	
+		var checkbox = document.querySelector('input[type="checkbox"]');
+		var plan = queryParams.plan || 'Monthly';
+		updatePrice(plan, userCount);
+	
+		// Set the initial state of the checkbox
+		if (plan === 'Annual') {
+			checkbox.checked = true;
+			document.getElementById('Annual-price').style.fontWeight = 'bold';
+			document.getElementById('Monthly-price').style.fontWeight = 'normal';
+		} else {
+			document.getElementById('Monthly-price').style.fontWeight = 'bold';
+			document.getElementById('Annual-price').style.fontWeight = 'normal';
+		}
+	
+		checkbox.addEventListener('change', function () {
+			if (checkbox.checked) {
+				// Annual plan selected
+				plan = 'Annual';
+				document.getElementById('Annual-price').style.fontWeight = 'bold';
+				document.getElementById('Monthly-price').style.fontWeight = 'normal';
+			} else {
+				// Monthly plan selected
+				plan = 'Monthly';
+				document.getElementById('Monthly-price').style.fontWeight = 'bold';
+				document.getElementById('Annual-price').style.fontWeight = 'normal';
+			}
+			// Update the URL and reload the page to reflect the new plan and userCount
+			history.pushState(null, "", `/billing_page?plan=${plan}&usersCount=${userCount}`);
+			location.reload();
+		});
+	});
+	</script>
+	

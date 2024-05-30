@@ -34,6 +34,7 @@ class ActivitiesIndex extends Component
         'activityUpdate' => '$refresh',
         // 'activityCreate' => 'create',
         'showPopUp' => 'openModal',
+        'activityDefinition' => 'showActivityDefinitionModal',
         'activityDelete' => 'delete',
         
     ];
@@ -58,6 +59,10 @@ class ActivitiesIndex extends Component
     public function openModal()
     {
         $this->dispatchBrowserEvent('open-track-time-pop-up-modal');
+    }
+    public function showActivityDefinitionModal()
+    {
+        $this->dispatchBrowserEvent('open-activity-definition-modal');
     }
 
     public function render()
@@ -367,21 +372,27 @@ class ActivitiesIndex extends Component
             $user = Auth::guard('web')->user();
         }
 
-        $week = Carbon::createFromFormat('M d, Y', $this->date)->format('W');
-        $year = Carbon::createFromFormat('M d, Y', $this->date)->format('Y');
+        // $week = Carbon::createFromFormat('M d, Y', $this->date)->format('W');
+        // $year = Carbon::createFromFormat('M d, Y', $this->date)->format('Y');
 
-        $timestamp = mktime( 0, 0, 0, 1, 1,  $year ) + ( $week * 7 * 24 * 60 * 60 );
-        $timestamp_for_monday = $timestamp - 86400 * ( date( 'N', $timestamp ) - 1 );
-        $date_for_monday = date( 'Y-m-d', $timestamp_for_monday );
-
+        // $timestamp = mktime( 0, 0, 0, 1, 1,  $year ) + ( $week * 7 * 24 * 60 * 60 );
+        // $timestamp_for_monday = $timestamp - 86400 * ( date( 'N', $timestamp ) - 1 );
+        // $date_for_monday = date( 'Y-m-d', $timestamp_for_monday );
+        // $currentWeekDates = [];
+        // for($i=0;$i<7;$i++){
+        //     $currentWeekDates[$i] = date('Y-m-d',strtotime($date_for_monday.' + '.$i.' days' ));
+        // }
+        $date = Carbon::createFromFormat('M d, Y', $this->date);
+        // Get the start of the week (Monday)
+        $startOfWeek = $date->startOfWeek(Carbon::MONDAY);
+        // Get the dates for the current week
         $currentWeekDates = [];
-        for($i=0;$i<7;$i++){
-            $currentWeekDates[$i] = date('Y-m-d',strtotime($date_for_monday.' + '.$i.' days' ));
+        for ($i = 0; $i < 7; $i++) {
+            $currentWeekDates[$i] = $startOfWeek->copy()->addDays($i)->format('Y-m-d');
         }
         
        
         if($user){
-       
         $weekHours = [];
         $WeekActivityPercentage = [];
         foreach($currentWeekDates as $index=>$currentWeekDate){

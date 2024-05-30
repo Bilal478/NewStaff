@@ -26,7 +26,7 @@ $account = Account::where('id', $account_id)
     
     <div></div>
 
-    <div class="flex items-center flex-wrap pb-8 flex-col sm:flex-row">
+    <div class="flex items-center flex-wrap pb-4 flex-col sm:flex-row">
         <div>
             <div class=" flex items-center justify-center mx-auto">
                 <button wire:click.prevent="subDay()" type="button" class="btnMostrar h-10 appearance-none bg-white block px-3 py-2 border border-gray-300 rounded-md text-gray-600 focus:outline-none hover:border-blue-500 hover:text-blue-600 transition duration-150 ease-in-out text-sm leading-5 mr-2">
@@ -77,9 +77,14 @@ $account = Account::where('id', $account_id)
         @endif
 
     </div>
-
+<div class="flex cursor-pointer" wire:click="$emit('activityDefinition')">
+    <x-svgs.benchmark class="mb-5"/>
+    <h4 class="text-md xl:tracking-widest font-bold text-blue-600 ml-3 mt-1">
+        Activity Definitions
+    </h3>
+</div>
 <!-- activities -->
-    <div class="mx-4">
+    <div class="mx-4 my-3">
     <div class="md:flex bg-white rounded-md border mx-4 mb-8">
         <div class="  p-6">
             <h4 class="text-sm  xl:tracking-widest uppercase mb-2">
@@ -125,8 +130,16 @@ $account = Account::where('id', $account_id)
         </div>
         <div class="flex flex-row">
             <div class="left_border p-6">
+                @php
+                    $dateFormatted = Carbon\Carbon::createFromFormat('F d, Y', $date);
+                    $isToday = $dateFormatted->isToday();
+                @endphp
                 <h4 class="text-sm  xl:tracking-widest uppercase mb-2">
+                    @if (!$isToday)
+                    This Day Activity
+                    @else    
                     Today Activity
+                    @endif
                 </h3>
                 @if ($todayActivityPer >= 51)
                 <span class="text-lg text-green-500">
@@ -335,6 +348,7 @@ $account = Account::where('id', $account_id)
     @push('modals')
     @livewire('accounts.tasks.tasks-form')
     @livewire('accounts.activities.edit-activity-modal')
+    @livewire('accounts.activities.activity-definition-modal')
     @livewire('accounts.activities.edit-time-modal')
     @endpush
 

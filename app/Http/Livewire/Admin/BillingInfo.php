@@ -24,7 +24,7 @@ class BillingInfo extends Component
         $lastTransactionRecord = DB::table('transaction_log')
         ->orderBy('created_at', 'desc')
         ->first();
-        $lastTransaction=date('Y-m-d', strtotime($lastTransactionRecord->created_at));
+        $lastTransaction=date('Y-m-d', strtotime($lastTransactionRecord ? $lastTransactionRecord->created_at:''));
 
         $currentDayAmount = $this->currentDayBilledAmount();
         $currentMonthAmount = $this->currentMonthBilledAmount();

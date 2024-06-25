@@ -27,14 +27,14 @@ class LoginController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return api_response_errors($validator->errors(), 422);
+            return api_response(['message'=>$validator->errors()->first()], 422);
         }
 
         $user = User::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return api_response_errors([
-                'email' => ['The provided credentials are incorrect.'],
+            return api_response([
+                'message' => 'The provided credentials are incorrect.',
             ], 401);
         }
         $user_subscriptions = $user->subscriptions()->active()->get();
@@ -88,8 +88,8 @@ class LoginController extends Controller
         
                 }
             } 
-            return api_response_errors([
-                'subscription' => ['User has no active subscriptions.'],
+            return api_response([
+                'message' => 'User has no active subscriptions.',
             ], 404);
         }
 

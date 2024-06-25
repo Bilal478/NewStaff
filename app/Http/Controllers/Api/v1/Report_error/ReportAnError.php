@@ -11,7 +11,7 @@ class ReportAnError extends Controller {
 	public function index(Request $request){
 		
 		
-		$UserID = $request->UserID;
+		$UserID = $request->UserID?$request->UserID:0;
 		$Description = $request->Description;
 		$Ip = $request->Ip;
 		

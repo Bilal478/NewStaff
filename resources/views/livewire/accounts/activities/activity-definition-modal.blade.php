@@ -40,10 +40,10 @@
                             <span class="text-sm" style="width:360px;">Idle You weren't touching the mouse or keyboard at all. Idle settings can be customized for each team member</span>
                         </div>
                     </div>
-                    <h2 class="text-lg font-semibold mt-2">Welcome to activity video</h2>
+                    {{-- <h2 class="text-lg font-semibold mt-2">Welcome to activity video</h2>
                     <div>
                         <img src="https://via.placeholder.com/150" alt="Activity Video Thumbnail" class="rounded-lg">
-                    </div>
+                    </div> --}}
                 </div>
                 <!-- The Apps Content -->
                 <div x-show="selectedTab === 'the-apps'">

@@ -77,14 +77,14 @@ $account = Account::where('id', $account_id)
         @endif
 
     </div>
-<div class="flex cursor-pointer" wire:click="$emit('activityDefinition')">
+<div class="flex cursor-pointer w-56 mb-3" wire:click="$emit('activityDefinition')">
     <x-svgs.benchmark class="mb-5"/>
-    <h4 class="text-md xl:tracking-widest font-bold text-blue-600 ml-3 mt-1">
+    <h4 class="text-md xl:tracking-widest text-blue-600 ml-3 mt-1">
         Activity Definitions
     </h3>
 </div>
 <!-- activities -->
-    <div class="mx-4 my-3">
+    <div class="mx-4">
     <div class="md:flex bg-white rounded-md border mx-4 mb-8">
         <div class="  p-6">
             <h4 class="text-sm  xl:tracking-widest uppercase mb-2">
@@ -251,6 +251,12 @@ $account = Account::where('id', $account_id)
                     if ($timeActivities->isNotEmpty()) {
                         // Check if screenshots exist and are not empty
                         $screenshots = $timeActivities->first()['screenshots'];
+                        if (count($screenshots) == 4) {
+                            $countActivity = $countActivity + 4;
+                        } 
+                        if (count($screenshots) == 3) {
+                            $countActivity = $countActivity + 3;
+                        } 
                         if (count($screenshots) == 2) {
                             $countActivity = $countActivity + 2;
                         } 

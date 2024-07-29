@@ -54,6 +54,8 @@ use App\Http\Livewire\SelectPlan;
 use App\Jobs\DailyWorkSummaryJob;
 use App\Http\Livewire\ManagerSection;
 use App\Http\Controllers\StripeWebhookController;
+use App\Http\Livewire\Accounts\ManageEmails\ManageCustomEmails;
+use App\Http\Livewire\Accounts\ManageEmails\ManageManagerEmails;
 use App\Http\Livewire\Auth\CodeVerification;
 
 //Route::view('/', 'welcome')->name('home');
@@ -148,6 +150,8 @@ Route::post('/billing_page',[BillingPage::class, 'payandcontinue']);
         Route::get('departments', DepartmentsIndex::class)->name('accounts.departments');
         Route::get('companies', CompaniesIndex::class)->name('accounts.companies');
         Route::get('members', MembersIndex::class)->name('accounts.members');
+        Route::get('manage_emails', ManageManagerEmails::class)->name('accounts.manage_emails');
+        Route::get('manage_cutom_emails', ManageCustomEmails::class)->name('accounts.manage_cutom_emails');
         Route::get('settings', AccountEdit::class)->name('accounts.settings');
         // Route::get('summary_logs', SummaryLogs::class)->name('accounts.summary_logs');
 		Route::get('billing', BillingInfo::class)->name('accounts.billing');

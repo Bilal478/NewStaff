@@ -80,7 +80,7 @@ class Home extends Component
                 if ($activeSubscription) {
                     $this->sendVerificationCode($user);
                     Session::put('2fa_user', $user); // Store user ID in session for verification
-                    $this->redirect('/verify-2fa'); // Redirect to 2FA verification page
+                    return redirect('/verify-2fa');
                     // $user->last_login_at = now();
                     // $user->last_login_ip = request()->ip();
                     // $user->save();
@@ -100,7 +100,7 @@ class Home extends Component
         }else {
                 $this->sendVerificationCode($user);
                 Session::put('2fa_user', $user); // Store user ID in session for verification
-                $this->redirect('/verify-2fa'); // Redirect to 2FA verification page
+                return redirect('/verify-2fa');
                 // $user->last_login_at = now();
                 // $user->last_login_ip = request()->ip();
                 // $user->save();

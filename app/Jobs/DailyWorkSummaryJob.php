@@ -147,8 +147,20 @@ class DailyWorkSummaryJob implements ShouldQueue
                     $accountName= $account->name;
                     $user=User::where('id',$managerId)->first();
                     $userName=$user->firstname.' '.$user->lastname;
-                    Mail::to('huzaifach508@gmail.com')->send(new ManagerDailyWorkSummaryEmail($top5Members,$accountName,$userName,$totalTime,$totalUsers,$averageActivity,$bottom5Members));
-                    $total_emails_sent++;
+                    $accountUserManager=DB::table('account_user')->where('account_id',$accountId)->where('user_id',$user->id)->first();
+                    if($accountUserManager->email_status==1){
+                        Mail::to('mianwaqas870@gmail.com')->send(new ManagerDailyWorkSummaryEmail($top5Members,$accountName,$userName,$totalTime,$totalUsers,$averageActivity,$bottom5Members));
+                        $total_emails_sent++;
+                    }
+                    $customEmails = DB::table('manage_custom_emails')
+                    ->where('account_id', $accountId)
+                    ->where('email_status', 1)
+                    ->get();
+
+                    foreach ($customEmails as $customEmail) {
+                        Mail::to($customEmail->email)->send(new ManagerDailyWorkSummaryEmail($top5Members, $accountName, $userName, $totalTime, $totalUsers, $averageActivity, $bottom5Members));
+                        $total_emails_sent++;
+                    }
                 }
               }
             }

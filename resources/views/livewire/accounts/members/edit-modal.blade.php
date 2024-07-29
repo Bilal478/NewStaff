@@ -44,11 +44,11 @@
                 @endforeach
             </x-inputs.multiselect>
             @if ($show_permission)
-            <input wire:model="permissions" type="checkbox" name="permissions[]" value="departments" {{ in_array('departments', $permissions) ? 'checked' : '' }}> Departments
-            {{-- <input wire:model="permissions" type="checkbox" name="permissions[]" value="teams" {{ in_array('teams', $permissions) ? 'checked' : '' }}> Teams --}}
-            <input wire:model="permissions" type="checkbox" name="permissions[]" value="members" {{ in_array('members', $permissions) ? 'checked' : '' }}> Members
-            <input wire:model="permissions" type="checkbox" name="permissions[]" value="settings" {{ in_array('settings', $permissions) ? 'checked' : '' }}> Settings 
-            <input wire:model="permissions" type="checkbox" name="permissions[]" value="billing" {{ in_array('billing', $permissions) ? 'checked' : '' }}>  Memberships 
+            <input wire:model="permissions" type="checkbox" name="permissions[]" value="departments" {{ in_array('departments', $permissions) ? 'checked' : '' }}> <span class="permissions_heading">Departments</span>
+            <input wire:model="permissions" type="checkbox" name="permissions[]" value="manage_emails" {{ in_array('manage_emails', $permissions) ? 'checked' : '' }}> <span class="permissions_heading">Manage Emails</span>
+            <input wire:model="permissions" type="checkbox" name="permissions[]" value="members" {{ in_array('members', $permissions) ? 'checked' : '' }}> <span class="permissions_heading">Members</span>
+            <input wire:model="permissions" type="checkbox" name="permissions[]" value="settings" {{ in_array('settings', $permissions) ? 'checked' : '' }}> <span class="permissions_heading">Settings</span> 
+            <input wire:model="permissions" type="checkbox" name="permissions[]" value="billing" {{ in_array('billing', $permissions) ? 'checked' : '' }}> <span class="permissions_heading"> Memberships</span> 
             
             @endif
             
@@ -101,6 +101,10 @@ label{
 }
 span{
     font-size: 11px;
+}
+.permissions_heading{
+    font-size: 14px;
+    font-weight: 500;
 }
 </style>
 <script>

@@ -207,9 +207,9 @@ $account = Account::find(session()->get('account_id'));
 					
 				</form>
 
-				<button  class="text-center w-full  mt-2 sm:mt-0 h-10  rounded-md bg-blue-600 
+				{{-- <button  class="text-center w-full  mt-2 sm:mt-0 h-10  rounded-md bg-blue-600 
 					text-white pl-4 pr-6 hover:bg-blue-500 focus:outline-none active:bg-blue-700 transition duration-150 ease-in-out"	
-					onclick="event.preventDefault(); document.getElementById('logout2-form').submit();">BACK</button>
+					onclick="event.preventDefault(); document.getElementById('logout2-form').submit();">BACK</button> --}}
 				
                 <form id="logout2-form" action="{{route('logout2')}}" method="POST" style="display: none;">
 				@csrf
@@ -218,12 +218,12 @@ $account = Account::find(session()->get('account_id'));
 				</form>
 
 				
-				<a href="https://media.neostaff.app/logout" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="px-3 py-1 rounded-md leading-6 flex items-center hover:bg-gray-100 hover:text-blue-600">
+				{{-- <a href="https://media.neostaff.app/logout" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="px-3 py-1 rounded-md leading-6 flex items-center hover:bg-gray-100 hover:text-blue-600">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
 					</svg>
                     <span class="text-gray-700">Logout</span>
-                </a>
+                </a> --}}
 
                 <form id="logout-form" action="https://media.neostaff.app/logout" method="POST" style="display: none;">
 				@csrf

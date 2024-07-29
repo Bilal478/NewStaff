@@ -58,6 +58,9 @@
                     <x-navigation.sidebar-item route="accounts.departments" img="svgs.departments">
                         Departments
                     </x-navigation.sidebar-item>
+                    <x-navigation.sidebar-item route="accounts.manage_emails" img="svgs.email">
+                        Manage Emails
+                    </x-navigation.sidebar-item>
                     
                     {{-- <x-navigation.sidebar-item route="accounts.teams" img="svgs.team">
                         Teams
@@ -114,6 +117,13 @@
                 @php
                 }
               
+                if(in_array('manage_emails', $permissions)){
+                @endphp
+                <x-navigation.sidebar-item route="accounts.manage_emails" img="svgs.email">
+                    Manage Emails
+                </x-navigation.sidebar-item>
+                @php
+                }
                 if(in_array('members', $permissions)){
                 @endphp
                 <x-navigation.sidebar-item route="accounts.members" img="svgs.users">

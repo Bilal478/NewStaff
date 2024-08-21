@@ -13,17 +13,12 @@ class ManageManagerEmails extends Component
     public $account_id;
 
     protected $listeners = [
-        'addCustomEmails' => 'show',
         'tasksUpdate' => '$refresh',
     ];
 
     public function mount()
     {
         $this->account_id = session()->get('account_id');
-    }
-    public function show()
-    {
-        $this->dispatchBrowserEvent('open-add-custom-email');
     }
     public function getAccountProperty()
     {

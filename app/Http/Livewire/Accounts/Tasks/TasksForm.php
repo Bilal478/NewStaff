@@ -204,12 +204,29 @@ class TasksForm extends Component
 
         list($hours_two, $minutes_two, $seconds_two) = explode(':', $temp_two);
         $hour_in_seconds_two = ($hours_two * 3600) + ($minutes_two * 60) + $seconds_two;
-
-        $start_datetime = $this->datetimerange . ' ' . $this->seconds;
-        $end_datetime = $this->datetimerange . ' ' . $this->seconds_two;
+         // Adjust start time to nearest lower 10-minute interval
+         $start_minutes_adjustment = $minutes % 10;
+         if ($start_minutes_adjustment != 0) {
+            //  $hour_in_seconds -= $start_minutes_adjustment * 60;
+             $start_datetime = $this->datetimerange . ' ' . date('H:i:s', strtotime("-$start_minutes_adjustment minutes", strtotime($temp)));
+         } else {
+             $start_datetime = $this->datetimerange . ' ' . $this->seconds;
+         }
+     
+         // Adjust end time to nearest higher 10-minute interval
+         $end_minutes_adjustment = $minutes_two % 10;
+         if ($minutes_two % 10 != 0) {
+            //  $hour_in_seconds_two += $end_minutes_adjustment * 60;
+             $end_datetime = $this->datetimerange . ' ' . date('H:i:s', strtotime("+$end_minutes_adjustment minutes", strtotime($temp_two)));
+         } else {
+             $end_datetime = $this->datetimerange . ' ' . $this->seconds_two;
+         }
+        // $start_datetime = $this->datetimerange . ' ' . $this->seconds;
+        // $end_datetime = $this->datetimerange . ' ' . $this->seconds_two;
         $time =  ($hour_in_seconds_two - $hour_in_seconds) / 600;
         
-
+        $fullIntervals = floor($time); // Number of full 10-minute intervals
+        $fractionalPart = $time - $fullIntervals; // Fractional part
         $temp_activities = Activity::where('user_id', $this->task->user_id)->where('date', $this->datetimerange)->get();
         if($hour_in_seconds > $hour_in_seconds_two){
             if($hour_in_seconds_two==0){
@@ -233,7 +250,6 @@ class TasksForm extends Component
         $new_end_time = date('Y-m-d H:i:s', $temp_two);
         $temp_two_final = strtotime('+10 minutes ', strtotime($new_end_time));
         $end_time = date('Y-m-d H:i:s', $temp_two_final);
-
         //Find if there is a activity in the period of time
         $data = DB::table('activities')
             ->where('start_datetime', '>=', $new_start_time)
@@ -302,7 +318,6 @@ else{
             $new_end_time = date('Y-m-d H:i:s', $temp_two);
             $temp_two_final = strtotime('+10 minutes ', strtotime($new_end_time));
             $end_time = date('Y-m-d H:i:s', $temp_two_final);
-
             //Find if there is a activity in the period of time
             $data = DB::table('activities')
                 ->where('start_datetime', '>=', $new_start_time)
@@ -325,25 +340,71 @@ else{
             }
 
             if ($rows == 0) {
-                DB::table('activities')->insert([
-                    'from' => 621,
-                    'to' => 1200,
-                    'seconds' => 600, //$hour_in_seconds_two - $hour_in_seconds,
-                    'start_datetime' => $new_start_time, // substr($start_datetime,0,19),
-                    'date' => $this->datetimerange,
-                    'keyboard_count' => 100,
-                    'mouse_count' => 40,
-                    'total_activity' => 100,
-                    'total_activity_percentage' => 100,
-                    'task_id' => $this->task_id,
-                    'end_datetime' => $end_time, //substr($end_datetime,0,19),
-                    'user_id' => $this->task->user_id,
-                    'project_id' => $this->task->project_id,
-                    'account_id' => $this->task->account_id,
-                    'created_at' =>  $new_start_time, //substr($start_datetime,0,19), 
-                    'updated_at' =>  $new_start_time, //substr($start_datetime,0,19)
-                    'is_manual_time' =>  1,
-                ]);
+                if ($i == 0 && $start_minutes_adjustment != 0) {
+                    $fractional_start_time = date('Y-m-d H:i:s', strtotime("+$start_minutes_adjustment minutes", strtotime($new_start_time)));
+                    DB::table('activities')->insert([
+                        'from' => 600,
+                        'to' => 1200,
+                        'seconds' => 600 - ($start_minutes_adjustment * 60),
+                        'start_datetime' => $start_datetime,
+                        'date' => $this->datetimerange,
+                        'keyboard_count' => 100,
+                        'mouse_count' => 40,
+                        'total_activity' => 100,
+                        'total_activity_percentage' => 100,
+                        'task_id' => $this->task_id,
+                        'end_datetime' => $end_time,
+                        'user_id' => $this->task->user_id,
+                        'project_id' => $this->task->project_id,
+                        'account_id' => $this->task->account_id,
+                        'created_at' => $fractional_start_time,
+                        'updated_at' => $fractional_start_time,
+                        'is_manual_time' => 1,
+                    ]);
+                }
+                else if ($i == $fullIntervals - 1 && $end_minutes_adjustment != 0) {
+                    $fractional_end_time = date('Y-m-d H:i:s', strtotime("-$end_minutes_adjustment minutes", strtotime($end_time)));
+                    DB::table('activities')->insert([
+                        'from' => 600,
+                        'to' => 1200,
+                        'seconds' =>($end_minutes_adjustment * 60),
+                        'start_datetime' => $new_start_time,
+                        'date' => $this->datetimerange,
+                        'keyboard_count' => 100,
+                        'mouse_count' => 40,
+                        'total_activity' => 100,
+                        'total_activity_percentage' => 100,
+                        'task_id' => $this->task_id,
+                        'end_datetime' => $end_time,
+                        'user_id' => $this->task->user_id,
+                        'project_id' => $this->task->project_id,
+                        'account_id' => $this->task->account_id,
+                        'created_at' => $new_start_time,
+                        'updated_at' => $new_start_time,
+                        'is_manual_time' => 1,
+                    ]);
+                } else {
+                    // Insert full 10-minute intervals
+                    DB::table('activities')->insert([
+                        'from' => 600,
+                        'to' => 1200,
+                        'seconds' => 600,
+                        'start_datetime' => $new_start_time,
+                        'date' => $this->datetimerange,
+                        'keyboard_count' => 100,
+                        'mouse_count' => 40,
+                        'total_activity' => 100,
+                        'total_activity_percentage' => 100,
+                        'task_id' => $this->task_id,
+                        'end_datetime' => $end_time,
+                        'user_id' => $this->task->user_id,
+                        'project_id' => $this->task->project_id,
+                        'account_id' => $this->task->account_id,
+                        'created_at' => $new_start_time,
+                        'updated_at' => $new_start_time,
+                        'is_manual_time' => 1,
+                    ]);
+                }
 
                 $temp = DB::table('activities')->select('id')
                     ->orderBy('id', 'DESC')

@@ -91,7 +91,7 @@ $account_user = DB::table('account_user')
             <span>Total Hours = {{$totalDurationFormatted}}</span>
             <span style="margin-left: 15px">Total Activity = {{$averageProductivityFormatted}}%</span>
         </div>
-        <div style="flex: 1; text-align: right;">
+        <div style="flex: 2; text-align: right;">
             <span>Previous Week Total Hours = {{$preWeekTotalDurationFormatted}}</span>
             <span style="margin-left: 15px">Previous Week Total Activity = {{$preWeekaverageProductivityFormatted}}%</span>
         </div>
@@ -271,7 +271,9 @@ $account_user = DB::table('account_user')
         @livewire('accounts.activities.edit-time-modal')
     @endpush
 </div>
-
+@php
+     session()->forget(['selected_date1']);
+@endphp
 @push('style')
 <style>
     .bg-gray-200 {

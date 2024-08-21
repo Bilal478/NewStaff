@@ -217,6 +217,9 @@ $totalDigitalTime = sprintf('%02d.%02d', $wholeHours, $fractional);
         @livewire('accounts.activities.edit-time-modal')
     @endpush
 </div>
+@php
+     session()->forget(['selected_date']);
+@endphp
 
 @push('style')
 <style>

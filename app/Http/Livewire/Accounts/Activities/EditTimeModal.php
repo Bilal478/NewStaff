@@ -92,19 +92,20 @@ class EditTimeModal extends Component
     
         $newEndTimeValueTemp = $carbonEndTime->timestamp;
         }
-    if($newStartTimeValueTemp<$oldStartTimeValueTemp){
-        $minutes = date('i', strtotime($newStartTimeValue));
-          if ($minutes % 10 != 0) {
-              // Calculate the adjustment in minutes to the nearest lower 10-minute interval
-              $adjustment = $minutes % 10;
-              // Adjust $newEndTimeValue to the nearest lower 10-minute interval
-              $newStartTimeValue = date('Y-m-d H:i:00', strtotime($newStartTimeValue) - $adjustment * 60);
-              
-              // Calculate the seconds between the original time and the nearest lower 10-minute interval
-              $secondsDifference = $adjustment * 60;
-          }
+    if($newStartTimeValueTemp<$oldStartTimeValueTemp){ 
         $time=($oldStartTimeValueTemp-$newStartTimeValueTemp)/600;
             for($i=0 ; $i<$time ; $i++){
+                $minutes = date('i', strtotime($newStartTimeValue));
+                $secondsDifference=600;
+                  if ($minutes % 10 != 0) {
+                      // Calculate the adjustment in minutes to the nearest lower 10-minute interval
+                      $adjustment = $minutes % 10;
+                      // Adjust $newEndTimeValue to the nearest lower 10-minute interval
+                      $newStartTimeValue = date('Y-m-d H:i:00', strtotime($newStartTimeValue) - $adjustment * 60);
+                      
+                      // Calculate the seconds between the original time and the nearest lower 10-minute interval
+                      $secondsDifference = 600-($adjustment * 60);
+                  }
             $temp = strtotime ( '+'.$i.'0 minutes ' , strtotime (substr($newStartTimeValue,0,19) ) ) ;
             $new_start_time = date('Y-m-d H:i:s', $temp);
             $temp_two = strtotime ( '+'.$i.'0 minutes ' , strtotime (substr($newStartTimeValue,0,19)) ) ;
@@ -133,9 +134,9 @@ class EditTimeModal extends Component
             }
             if($rows == 0){
             DB::table('activities')->insert([
-                'from' => 621,
+                'from' => 600,
                 'to' => 1200,
-                'seconds' => 600, 
+                'seconds' => $secondsDifference, 
                 'start_datetime' => $new_start_time,
                 'date' => $this->simpleDate,
                 'keyboard_count' => 100,
@@ -155,18 +156,20 @@ class EditTimeModal extends Component
         }
     }
     if($newEndTimeValueTemp>$oldEndTimeValueTemp){
-        $minutes = date('i', strtotime($newEndTimeValue));
-        if ($minutes % 10 != 0) {
-            // Calculate the adjustment in minutes to the nearest lower 10-minute interval
-            $adjustment = $minutes % 10;
-            // Adjust $newEndTimeValue to the nearest lower 10-minute interval
-            $newEndTimeValue = date('Y-m-d H:i:00', strtotime($newEndTimeValue) - $adjustment * 60);
-            
-            // Calculate the seconds between the original time and the nearest lower 10-minute interval
-            $secondsDifference = $adjustment * 60;
-        }
         $time=($newEndTimeValueTemp-$oldEndTimeValueTemp)/600;
         for($i=0 ; $i<$time ; $i++){
+            $minutes = date('i', strtotime($newEndTimeValue));
+            $secondsDifference=600;
+            if ($minutes % 10 != 0) {
+                // Calculate the adjustment in minutes to the nearest lower 10-minute interval
+                $adjustment = $minutes % 10;
+                // Adjust $newEndTimeValue to the nearest lower 10-minute interval
+                $newEndTimeValue = date('Y-m-d H:i:00', strtotime($newEndTimeValue) - $adjustment * 60);
+                
+                // Calculate the seconds between the original time and the nearest lower 10-minute interval
+                $secondsDifference = $adjustment * 60;
+                // dd($secondsDifference);
+            }
             $temp = strtotime ( '+'.$i.'0 minutes ' , strtotime (substr($oldEndTimeValue,0,19) ) ) ;
 			$new_start_time = date('Y-m-d H:i:s', $temp);
             $temp_two = strtotime ( '+'.$i.'0 minutes ' , strtotime (substr($oldEndTimeValue,0,19)) ) ;
@@ -195,9 +198,9 @@ class EditTimeModal extends Component
         }
         if($rows == 0){
             DB::table('activities')->insert([
-                'from' => 621,
+                'from' => 600,
                 'to' => 1200,
-                'seconds' => 600, 
+                'seconds' => $secondsDifference, 
                 'start_datetime' => $new_start_time, 
                 'date' => $this->simpleDate,
                 'keyboard_count' => 100,
@@ -216,71 +219,122 @@ class EditTimeModal extends Component
         }    
         }
     }
-    if($newStartTimeValueTemp>$oldStartTimeValueTemp && $newStartTimeValueTemp<$oldEndTimeValueTemp ){
+    if ($newStartTimeValueTemp > $oldStartTimeValueTemp && $newStartTimeValueTemp < $oldEndTimeValueTemp) {
+        $time = ($newStartTimeValueTemp - $oldStartTimeValueTemp) / 600;
+        $fullIntervals = floor($time); // Number of full 10-minute intervals
+        $fractionalPart = $time - $fullIntervals; // Fractional part
+        // dd($time,$fullIntervals,$fractionalPart);
         $minutes = date('i', strtotime($newStartTimeValue));
-        if ($minutes % 10 != 0) {
-            // Calculate the adjustment in minutes to the nearest lower 10-minute interval
-            $adjustment = $minutes % 10;
-            // Adjust $newEndTimeValue to the nearest lower 10-minute interval
-            $newStartTimeValue = date('Y-m-d H:i:00', strtotime($newStartTimeValue) - $adjustment * 60);
+        $secondsDifference=600;
             
-            // Calculate the seconds between the original time and the nearest lower 10-minute interval
-            $secondsDifference = $adjustment * 60;
-        }
-        $time=($newStartTimeValueTemp-$oldStartTimeValueTemp)/600;
-        for($i=0 ; $i<$time ; $i++){
-            $temp = strtotime ( '+'.$i.'0 minutes ' , strtotime (substr($oldStartTimeValue,0,19) ) ) ;
-			$new_start_time = date('Y-m-d H:i:s', $temp);
-            $temp_two = strtotime ( '+'.$i.'0 minutes ' , strtotime (substr($oldStartTimeValue,0,19)) ) ;
-			$new_end_time = date('Y-m-d H:i:s', $temp_two);
-            $temp_two_final = strtotime ( '+10 minutes ' , strtotime ($new_end_time) ) ;
-			$end_time = date('Y-m-d H:i:s', $temp_two_final);
-            DB::table('activities')
-            ->where('start_datetime', $new_start_time)
-            ->where('end_datetime', $end_time)
-            ->where('date', $this->simpleDate)
-            ->where('task_id', $this->taskId)
-            ->where('user_id', $this->userId)
-            ->where('project_id', $this->projectId)
-            ->where('account_id', $this->accountId)
-            ->delete();    
-        }
-    }
-    if($newEndTimeValueTemp<$oldEndTimeValueTemp && $newEndTimeValueTemp>$oldStartTimeValueTemp ){
-          // Check if $newEndTimeValue falls within a 10-minute interval
-          $minutes = date('i', strtotime($newEndTimeValue));
-          if ($minutes % 10 != 0) {
-              // Calculate the adjustment in minutes to the nearest lower 10-minute interval
-              $adjustment = $minutes % 10;
-              // Adjust $newEndTimeValue to the nearest lower 10-minute interval
-              $newEndTimeValue = date('Y-m-d H:i:00', strtotime($newEndTimeValue) - $adjustment * 60);
-              
-              // Calculate the seconds between the original time and the nearest lower 10-minute interval
-              $secondsDifference = $adjustment * 60;
-          }
-        $time=($oldEndTimeValueTemp-$newEndTimeValueTemp)/600;
-        for($i=0 ; $i<$time ; $i++){
-            $temp = strtotime ( '+'.$i.'0 minutes ' , strtotime (substr($newEndTimeValue,0,19) ) ) ;
-			$new_start_time = date('Y-m-d H:i:s', $temp);
-            $temp_two = strtotime ( '+'.$i.'0 minutes ' , strtotime (substr($newEndTimeValue,0,19)) ) ;
-			$new_end_time = date('Y-m-d H:i:s', $temp_two);
-            $temp_two_final = strtotime ( '+10 minutes ' , strtotime ($new_end_time) ) ;
-			$end_time = date('Y-m-d H:i:s', $temp_two_final);
-            DB::table('activities')
-            ->where('start_datetime', $new_start_time)
-            ->where('end_datetime', $end_time)
-            ->where('date', $this->simpleDate)
-            ->where('task_id', $this->taskId)
-            ->where('user_id', $this->userId)
-            ->where('project_id', $this->projectId)
-            ->where('account_id', $this->accountId)
-            ->delete();   
+            if ($minutes % 10 != 0) {
+                // dd('eee');
+                // Calculate the adjustment in minutes to the nearest lower 10-minute interval
+                $adjustment = $minutes % 10;
+                // Adjust $newStartTimeValue to the nearest lower 10-minute interval
+                $newStartTimeValue = date('Y-m-d H:i:00', strtotime($newStartTimeValue) - $adjustment * 60);
+                // Calculate the seconds between the original time and the nearest lower 10-minute interval
+                $secondsDifference = 600-($adjustment * 60);
+            }
+        for ($i = 0; $i < $time; $i++) {
+            $temp = strtotime('+' . $i . '0 minutes', strtotime(substr($oldStartTimeValue, 0, 19)));
+            $new_start_time = date('Y-m-d H:i:s', $temp);
+            $temp_two = strtotime('+' . $i . '0 minutes', strtotime(substr($oldStartTimeValue, 0, 19)));
+            $new_end_time = date('Y-m-d H:i:s', $temp_two);
+            $temp_two_final = strtotime('+10 minutes', strtotime($new_end_time));
+            $end_time = date('Y-m-d H:i:s', $temp_two_final);
+            if ($i == $fullIntervals && $fractionalPart > 0) {
+                // This is the last interval with fractional time
+                $fractional_seconds = $fractionalPart * 10*60; // Convert fractional part to minutes
+                $fractional_end_time = date('Y-m-d H:i:s', strtotime('+' . $fractional_seconds . ' minutes', strtotime($new_start_time)));
+                // Update the interval instead of deleting it
+                DB::table('activities')
+                    ->where('start_datetime', $new_start_time)
+                    ->where('end_datetime', $end_time)
+                    ->where('date', $this->simpleDate)
+                    ->where('task_id', $this->taskId)
+                    ->where('user_id', $this->userId)
+                    ->where('project_id', $this->projectId)
+                    ->where('account_id', $this->accountId)
+                    ->update([
+                        'seconds' => $secondsDifference,
+                        // Add any other fields that need updating here
+                    ]);
+            } else {
+                // Delete the full 10-minute intervals
+                DB::table('activities')
+                    ->where('start_datetime', $new_start_time)
+                    ->where('end_datetime', $end_time)
+                    ->where('date', $this->simpleDate)
+                    ->where('task_id', $this->taskId)
+                    ->where('user_id', $this->userId)
+                    ->where('project_id', $this->projectId)
+                    ->where('account_id', $this->accountId)
+                    ->delete();
+            }
+            
         }
     }
+    
+    if ($newEndTimeValueTemp < $oldEndTimeValueTemp && $newEndTimeValueTemp > $oldStartTimeValueTemp) {
+        // Check if $newEndTimeValue falls within a 10-minute interval
+        $time = ($oldEndTimeValueTemp - $newEndTimeValueTemp) / 600;
+        $fullIntervals = floor($time); // Number of full 10-minute intervals
+        $fractionalPart = $time - $fullIntervals; // Fractional part
+    
+        for ($i = 0; $i < $time; $i++) {
+            $minutes = date('i', strtotime($newEndTimeValue));
+            $secondsDifference=600;
+            if ($minutes % 10 != 0) {
+                // Calculate the adjustment in minutes to the nearest lower 10-minute interval
+                $adjustment = $minutes % 10;
+                // Adjust $newEndTimeValue to the nearest lower 10-minute interval
+                $newEndTimeValue = date('Y-m-d H:i:00', strtotime($newEndTimeValue) - $adjustment * 60);
+                // Calculate the seconds between the original time and the nearest lower 10-minute interval
+                $secondsDifference = $adjustment * 60;
+            }
+            $temp = strtotime('+' . $i . '0 minutes', strtotime(substr($newEndTimeValue, 0, 19)));
+            $new_start_time = date('Y-m-d H:i:s', $temp);
+            $temp_two = strtotime('+' . $i . '0 minutes', strtotime(substr($newEndTimeValue, 0, 19)));
+            $new_end_time = date('Y-m-d H:i:s', $temp_two);
+            $temp_two_final = strtotime('+10 minutes', strtotime($new_end_time));
+            $end_time = date('Y-m-d H:i:s', $temp_two_final);
+            if ($i == 0 && $fractionalPart > 0) {
+                // This is the last interval with fractional time
+                $fractional_minutes = $fractionalPart * 10; // Convert fractional part to minutes
+                $fractional_start_time = date('Y-m-d H:i:s', strtotime('-' . (10 - $fractional_minutes) . ' minutes', strtotime($end_time)));
+                // Update the interval instead of deleting it
+                DB::table('activities')
+                    ->where('start_datetime', $new_start_time)
+                    ->where('end_datetime', $end_time)
+                    ->where('date', $this->simpleDate)
+                    ->where('task_id', $this->taskId)
+                    ->where('user_id', $this->userId)
+                    ->where('project_id', $this->projectId)
+                    ->where('account_id', $this->accountId)
+                    ->update([
+                        'seconds' => $secondsDifference,
+                        // Add any other fields that need updating here
+                    ]);
+            } else {
+                // Delete the full 10-minute intervals
+                DB::table('activities')
+                    ->where('start_datetime', $new_start_time)
+                    ->where('end_datetime', $end_time)
+                    ->where('date', $this->simpleDate)
+                    ->where('task_id', $this->taskId)
+                    ->where('user_id', $this->userId)
+                    ->where('project_id', $this->projectId)
+                    ->where('account_id', $this->accountId)
+                    ->delete();
+            }
+        }
+    }
+    
         $this->dispatchBrowserEvent('close-activity-modal');
         $this->dispatchBrowserEvent('close-task-show-modal');
         $this->dispatchBrowserEvent('close-activities-edit-time-modal');
-        if(!($newStartTimeValue==$oldStartTimeValue && $newEndTimeValue==$oldEndTimeValue)){
+        if(!($newStartTimeValueTemp==$oldStartTimeValueTemp && $newEndTimeValueTemp==$oldEndTimeValueTemp)){
             $this->emit('activityUpdate');
             $this->emit('tasksUpdate');
 		$this->toast('Time Updated', "The Time has been updated successfully ");

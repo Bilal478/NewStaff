@@ -124,11 +124,11 @@ class ActivitesModal extends Component
 
         // / Code to handle the last index
         $lastIndex = count($results) - 1;
-        if ($seconds_sum > 0 && isset($results[$lastIndex])) {
+        if (isset($results[$lastIndex])) {
             $lastResult = $results[$lastIndex];
             $arrayData[] = [
                 'user_id' => $lastResult->user_id,
-                'start_time' => $results[$start_time_index]->start_datetime->format('h:i A'),
+                'start_time' => $lastResult->start_datetime->format('h:i A'),
                 'end_time' => $lastResult->end_datetime->format('h:i A'),
                 'date' => $lastResult->date->format('Y-m-d'),
                 'duration' => CarbonInterval::seconds($seconds_sum+$lastResult->seconds)->cascade()->format('%H:%I:%S'),

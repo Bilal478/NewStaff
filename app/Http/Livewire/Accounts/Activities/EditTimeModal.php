@@ -157,10 +157,11 @@ class EditTimeModal extends Component
     }
     if($newEndTimeValueTemp>$oldEndTimeValueTemp){
         $time=($newEndTimeValueTemp-$oldEndTimeValueTemp)/600;
+        $fullIntervals = floor($time); // Number of full 10-minute intervals
         for($i=0 ; $i<$time ; $i++){
             $minutes = date('i', strtotime($newEndTimeValue));
             $secondsDifference=600;
-            if ($minutes % 10 != 0) {
+            if ($minutes % 10 != 0 && $i==$fullIntervals) {
                 // Calculate the adjustment in minutes to the nearest lower 10-minute interval
                 $adjustment = $minutes % 10;
                 // Adjust $newEndTimeValue to the nearest lower 10-minute interval

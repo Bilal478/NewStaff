@@ -207,7 +207,7 @@ class TasksForm extends Component
          // Adjust start time to nearest lower 10-minute interval
          $start_minutes_adjustment = $minutes % 10;
          if ($start_minutes_adjustment != 0) {
-            //  $hour_in_seconds -= $start_minutes_adjustment * 60;
+             $hour_in_seconds -= $start_minutes_adjustment * 60;
              $start_datetime = $this->datetimerange . ' ' . date('H:i:s', strtotime("-$start_minutes_adjustment minutes", strtotime($temp)));
          } else {
              $start_datetime = $this->datetimerange . ' ' . $this->seconds;
@@ -216,7 +216,7 @@ class TasksForm extends Component
          // Adjust end time to nearest higher 10-minute interval
          $end_minutes_adjustment = $minutes_two % 10;
          if ($minutes_two % 10 != 0) {
-            //  $hour_in_seconds_two += $end_minutes_adjustment * 60;
+             $hour_in_seconds_two += $end_minutes_adjustment * 60;
              $end_datetime = $this->datetimerange . ' ' . date('H:i:s', strtotime("+$end_minutes_adjustment minutes", strtotime($temp_two)));
          } else {
              $end_datetime = $this->datetimerange . ' ' . $this->seconds_two;

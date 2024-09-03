@@ -29,6 +29,42 @@ class Dashboard extends Component
 
     public function mount()
     {
+        if (!$token = request()->cookie('auth_token')) {
+            Auth::logout();
+            // header('Location:  https://media.neostaff.app/');
+            return redirect('http://127.0.0.1:8000/');
+        }
+        $user = Auth::user();
+        $count=0;
+        $userAccounts = $user->accounts;
+        $ownerIds = $userAccounts
+        ->filter(function ($account) {
+        return !empty($account->owner_id);
+        })
+        ->pluck('owner_id');
+
+        foreach ($ownerIds as $ownerId) {
+
+            $owner =DB::table('users')
+            ->where('id', $ownerId)
+            ->first();	
+
+            if ($owner) {
+                $activeSubscription = DB::table('subscriptions')
+                ->where('user_id', $owner->id)
+                ->where('stripe_status','!=','canceled')
+                ->first();
+            }
+
+            if ($activeSubscription) {
+                $count++;
+            }
+        }
+        if($count == '0'){
+            Auth::logout();
+            // header('Location:  https://media.neostaff.app/');
+            return redirect('http://127.0.0.1:8000/');
+        }
         Auth::guard('web')->user()->isOwnerOrManager()
             ? $this->dashboardForAccount()
             : $this->dashboardForUser();

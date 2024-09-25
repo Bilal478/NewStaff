@@ -184,7 +184,9 @@ class DailyReportsIndex extends Component
             $this->user_id = Auth::user()->id;
         }
         $name = User::where('id', $this->user_id)->first();
-        $this->userName = $name->firstname.' '.$name->lastname;
+        if($name){
+            $this->userName = $name->firstname.' '.$name->lastname;
+        }
         $results = Activity::whereBetween('activities.date', [$this->startDate(true), $this->endDate(true)])
         ->where('activities.user_id', $this->user_id)
         ->leftJoin('tasks', 'activities.task_id', '=', 'tasks.id')
@@ -367,7 +369,9 @@ class DailyReportsIndex extends Component
             $this->user_id = Auth::user()->id;
         }
         $name = User::where('id', $this->user_id)->first();
-        $this->userName = $name->firstname.' '.$name->lastname;
+        if($name){
+            $this->userName = $name->firstname.' '.$name->lastname;
+        }
         $startDate = Carbon::createFromFormat('M d, Y', $this->date)->subWeek()->startOfWeek(Carbon::MONDAY);
         $endDate = Carbon::createFromFormat('M d, Y', $this->date)->subWeek()->endOfWeek(Carbon::SUNDAY);
         $results = Activity::whereBetween('activities.date', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')])

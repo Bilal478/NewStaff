@@ -174,7 +174,9 @@ class ReportsIndex extends Component
             $this->user_id = Auth::user()->id;
         }
         $name = User::where('id', $this->user_id)->first();
-       $this->userName = $name->firstname.' '.$name->lastname;
+        if($name){
+            $this->userName = $name->firstname.' '.$name->lastname;
+        } 
     return Activity::join('users', 'activities.user_id', '=', 'users.id')
         ->leftjoin('projects', 'activities.project_id', '=', 'projects.id')
         ->leftJoin('tasks', function ($join) {

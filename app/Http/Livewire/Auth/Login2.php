@@ -72,6 +72,15 @@ class Login2 extends Component
         DB::table('verify_invitations')->where('verification_id', $this->randomid)->delete();
     }
       Auth::login($user, true);
+      $user->last_login_at = now();
+      $user->last_login_ip = request()->ip();
+      $user->save();
+      
+      $token = encrypt($user->id);
+      $expiry = now()->addDays(30);
+      // $expiry = now()->addMinutes(2);
+      $minutesUntilExpiry = now()->diffInMinutes($expiry); 
+      cookie()->queue('auth_token', $token, $minutesUntilExpiry, null, null, false, true);    
       return redirect('/dashboard');
     }
     public function mount($randomID)
@@ -124,6 +133,16 @@ class Login2 extends Component
             if ($invitationRecord) {
               DB::table('verify_invitations')->where('verification_id', $this->randomid)->delete();
           }
+           $user->last_login_at = now();
+           $user->last_login_ip = request()->ip();
+           $user->save();
+          
+           $token = encrypt($user->id);
+           $expiry = now()->addDays(30);
+           // $expiry = now()->addMinutes(2);
+           $minutesUntilExpiry = now()->diffInMinutes($expiry); 
+           cookie()->queue('auth_token', $token, $minutesUntilExpiry, null, null, false, true);    
+
            return redirect()->route('accounts.dashboard');
 
         }

@@ -11,7 +11,7 @@
     </div>
     <div class="mt-4 sm:mx-auto sm:w-full sm:max-w-md">
         <div class="px-4 py-3 bg-white shadow sm:rounded-lg sm:px-10">
-            <div class="mb-3 text-gray-600 font-bold">A 6-digit code has been sent to your email adrees. Check your inbox or spam folder.</div>
+            <div class="mb-3 text-gray-600 font-bold">A 6-digit code has been sent to your email address. Check your inbox or spam folder.</div>
             <div>
                 <form wire:submit.prevent="verify" id="verificationForm">
                     <div>

@@ -86,12 +86,16 @@ class DeletedCompanies extends Component
     public function permanent_delete_company()
     {
 
-        $account = Account::onlyTrashed()->with([ 'projects', 'tasks', 'activities','screenshots'])->where('id',$this->accountId)->first();
-        
+        $account = Account::onlyTrashed()->with([ 'projects', 'tasks', 'activities','screenshots','users'])->where('id',$this->accountId)->first();
+       
         $account->projects->each->forceDelete();
         $account->tasks->each->forceDelete();
         $account->activities->each->forceDelete();
-        
+        $users = $account->users;
+        foreach ($users as $user) {
+            $account->removeMember($user);
+        }
+        $account->users->each->forceDelete();
         foreach($account->screenshots as $screenshot){
             if(File::isFile(storage_path("app/screenshots/".$screenshot->path))){
                     (unlink(storage_path("app/screenshots/").$screenshot->path));

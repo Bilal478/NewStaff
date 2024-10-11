@@ -17,6 +17,7 @@ class LogoutController extends Controller
             Session::forget('user_id');
             Auth::guard('admin')->logout();
         } else {
+            cookie()->queue(cookie()->forget('auth_token'));
             Session::forget('user_id');
             Auth::guard('web')->logout();
         }

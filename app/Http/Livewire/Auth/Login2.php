@@ -52,7 +52,13 @@ class Login2 extends Component
             $invitation= DB::table('account_invitations')->where('email',$inviteUser->email)
             ->where('account_id',$getUser->account_id)->first();
             $ownerUser=User::where('id',$invitation->user_id)->first();
-            Mail::to($ownerUser->email)->send(new AcceptedNotification($inviteUser->email));
+            
+            try {
+                    Mail::to($ownerUser->email)->send(new AcceptedNotification($inviteUser->email));
+            } catch (\Exception $e) {
+                    // Log the error or handle it silently
+                    Log::error("Failed to send email: " . $e->getMessage());
+            }
       }
       $account_invitation = DB::table('account_invitations')->where('email',$user->email)
       ->where('account_id',$getUser->account_id)->first();
@@ -84,16 +90,7 @@ class Login2 extends Component
       $user->last_login_at = now();
       $user->last_login_ip = request()->ip();
       $user->save();
-      $inviteUser=User::where('id',$getUser->user_id)->first();
-      $invitation= DB::table('account_invitations')->where('email',$inviteUser->email)
-      ->where('account_id',$getUser->account_id)->first();
-      $ownerUser=User::where('id',$invitation->user_id)->first();
-      try {
-        Mail::to($ownerUser->email)->send(new AcceptedNotification($inviteUser->email));
-    } catch (\Exception $e) {
-        // Log the error or handle it silently
-        Log::error("Failed to send email: " . $e->getMessage());
-    }
+      
       $token = encrypt($user->id);
       $expiry = now()->addDays(30);
       // $expiry = now()->addMinutes(2);
@@ -111,8 +108,13 @@ class Login2 extends Component
             // dd($getUser->user_id, $inviteUser);
             $invitation= DB::table('account_invitations')->where('email',$inviteUser->email)
             ->where('account_id',$getUser->account_id)->first();
-            // $ownerUser=DB::table('users')->where('id',$invitation->user_id)->first();
-            // Mail::to('478bilal@gmail.com')->send(new AcceptedNotification($inviteUser->email)); 
+            $ownerUser=DB::table('users')->where('id',$invitation->user_id)->first();
+            try {
+                Mail::to($ownerUser->email)->send(new AcceptedNotification($inviteUser->email));
+            } catch (\Exception $e) {
+                // Log the error or handle it silently
+                Log::error("Failed to send email: " . $e->getMessage());
+            }
            if(!$invitation){
            $deleteInvitation=DB::table('verify_invitations')->where('verification_id', $this->randomid)->first();
                if ($deleteInvitation) {
@@ -158,12 +160,7 @@ class Login2 extends Component
            $user->last_login_at = now();
            $user->last_login_ip = request()->ip();
            $user->save();
-           try {
-            Mail::to($ownerUser->email)->send(new AcceptedNotification($inviteUser->email));
-        } catch (\Exception $e) {
-            // Log the error or handle it silently
-            Log::error("Failed to send email: " . $e->getMessage());
-        }
+          
            $token = encrypt($user->id);
            $expiry = now()->addDays(30);
            // $expiry = now()->addMinutes(2);

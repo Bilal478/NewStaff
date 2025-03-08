@@ -22,10 +22,9 @@ class Login2 extends Component
     public $firstname = '';
     public $lastname = '';
     public $password = '';
-    public $password_confirmation;
+    public $password_confirmation = '';
     public $randomid = '';
     public $email = '';
-    // public $userexist;
    
     public function update()
     {
@@ -33,19 +32,27 @@ class Login2 extends Component
         if (!$getUser) {
             abort(404);
         }
-       $this->validate([
+        $this->validate([
             'firstname' => ['required', 'max:50'],
             'lastname' => ['required', 'max:50'],
             'password' => ['required', 'min:8', 'confirmed'],
         ]);
-
-        $user = User::where('email', $this->email)->first();
+        
+        $user = DB::table('users')->where('email', $this->email)->first();
         if ($user) {
-            $user->update([
-            'firstname' => $this->firstname,
-            'lastname' => $this->lastname,
-            'password' => Hash::make($this->password),
-        ]);
+            DB::table('users')
+            ->where('email', $this->email)
+            ->update([
+                'firstname' => $this->firstname,
+                'lastname' => $this->lastname,
+                'password' => Hash::make($this->password),
+            ]);
+
+            $inviteUser=User::where('id',$getUser->user_id)->first();
+            $invitation= DB::table('account_invitations')->where('email',$inviteUser->email)
+            ->where('account_id',$getUser->account_id)->first();
+            $ownerUser=User::where('id',$invitation->user_id)->first();
+            Mail::to($ownerUser->email)->send(new AcceptedNotification($inviteUser->email));
       }
       $account_invitation = DB::table('account_invitations')->where('email',$user->email)
       ->where('account_id',$getUser->account_id)->first();
@@ -72,6 +79,7 @@ class Login2 extends Component
       if ($invitationRecord) {
         DB::table('verify_invitations')->where('verification_id', $this->randomid)->delete();
     }
+    $user = User::find($user->id);
       Auth::login($user, true);
       $user->last_login_at = now();
       $user->last_login_ip = request()->ip();
@@ -95,24 +103,27 @@ class Login2 extends Component
     }
     public function mount($randomID)
     {
+
         $this->randomid = $randomID;
-         $getUser= DB::table('verify_invitations')->where('verification_id', $this->randomid)->first();
+        $getUser= DB::table('verify_invitations')->where('verification_id', $this->randomid)->first();
         if($getUser){
-         $inviteUser=User::where('id',$getUser->user_id)->first();
-         $invitation= DB::table('account_invitations')->where('email',$inviteUser->email)
-         ->where('account_id',$getUser->account_id)->first();
-         $ownerUser=User::where('id',$invitation->user_id)->first();
-        if(!$invitation){
-        $deleteInvitation=DB::table('verify_invitations')->where('verification_id', $this->randomid)->first();
-            if ($deleteInvitation) {
-              DB::table('verify_invitations')->where('verification_id', $this->randomid)->delete();
-          }
-        }
-        }
+            $inviteUser=DB::table('users')->where('id',$getUser->user_id)->first();
+            // dd($getUser->user_id, $inviteUser);
+            $invitation= DB::table('account_invitations')->where('email',$inviteUser->email)
+            ->where('account_id',$getUser->account_id)->first();
+            // $ownerUser=DB::table('users')->where('id',$invitation->user_id)->first();
+            // Mail::to('478bilal@gmail.com')->send(new AcceptedNotification($inviteUser->email)); 
+           if(!$invitation){
+           $deleteInvitation=DB::table('verify_invitations')->where('verification_id', $this->randomid)->first();
+               if ($deleteInvitation) {
+                 DB::table('verify_invitations')->where('verification_id', $this->randomid)->delete();
+             }
+           }
+           }
         if (!$getUser || !$invitation) {
             abort(404);
         }
-        $user=User::where('id',$getUser->user_id)->first();
+        $user=DB::table('users')->where('id',$getUser->user_id)->first();
         if($user){
         $userExist=$user->multiple_company;
           if ($userExist==true) {
@@ -137,6 +148,8 @@ class Login2 extends Component
                     'invitation_accept' => 'false',
                 ]);
             }
+
+            $user = User::find($user->id);
             Auth::login($user);
             $invitationRecord=DB::table('verify_invitations')->where('verification_id', $this->randomid)->first();
             if ($invitationRecord) {
@@ -167,7 +180,6 @@ class Login2 extends Component
 
     public function render()
     {
-
         $getUserId= DB::table('verify_invitations')->where('verification_id', $this->randomid)->first();
         if (!$getUserId) {
             abort(404);
@@ -178,5 +190,4 @@ class Login2 extends Component
         ->layout('layouts.auth', ['title' => 'Accept Invitation']);
 
     }
-  
 }

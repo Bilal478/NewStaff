@@ -78,6 +78,11 @@ $totalDigitalTime = sprintf('%02d.%02d', $wholeHours, $fractional);
             <x-svgs.plus class="w-5 h-5 mr-1" />
             Download PDF
         </button>
+        <button wire:click="downloadCsv" type="button"
+            class="w-full sm:w-auto mt-4 ml-2 sm:mt-0 h-10 text-sm flex items-center rounded-md bg-blue-600 text-white pl-4 pr-6 hover:bg-blue-500 focus:outline-none active:bg-blue-700 transition duration-150 ease-in-out">
+            <x-svgs.plus class="w-5 h-5 mr-1" />
+            Download CSV
+        </button>
         {{-- @endif --}}
         
     </div>

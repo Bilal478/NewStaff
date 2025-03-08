@@ -80,6 +80,11 @@ class Login extends Component
     
                 if ($activeSubscription) {
                     $this->sendVerificationCode($user);
+                    $isSent = $this->sendVerificationCode($user);
+                    if (!$isSent) {
+                        $this->completeLogin($user);
+                        return;
+                    }
                     Session::put('2fa_user', $user); // Store user ID in session for verification
                     $this->redirect('/verify-2fa'); // Redirect to 2FA verification page
                     // $user->last_login_at = now();
@@ -99,6 +104,11 @@ class Login extends Component
                 }       
         }else {
             $this->sendVerificationCode($user);
+            $isSent = $this->sendVerificationCode($user);
+            if (!$isSent) {
+                $this->completeLogin($user);
+                return;
+            }
             Session::put('2fa_user', $user); // Store user ID in session for verification
             $this->redirect('/verify-2fa'); // Redirect to 2FA verification page
                 // // The user has an active subscription
@@ -108,6 +118,21 @@ class Login extends Component
 
                 // return redirect()->intended(route(RouteServiceProvider::HOME));
         }
+    }
+    
+    public function completeLogin($user)
+    {
+        Auth::login($user,true);
+        $user->last_login_at = now();
+        $user->last_login_ip = request()->ip();
+        $user->save();
+        
+        $token = encrypt($user->id);
+        $expiry = now()->addDays(30);
+        // $expiry = now()->addMinutes(2);
+        $minutesUntilExpiry = now()->diffInMinutes($expiry); 
+        cookie()->queue('auth_token', $token, $minutesUntilExpiry, null, null, false, true);    
+        return redirect()->intended(route(RouteServiceProvider::HOME));
     }
     
     public function render()
@@ -132,10 +157,16 @@ class Login extends Component
     public function sendVerificationCode($user)
     {
         $verificationCode = mt_rand(100000, 999999);
-        Mail::to($user->email)->send(new TwoFactorVerification($verificationCode));
-
-        $user->verification_code = $verificationCode;
-        $user->verification_code_expiry = now()->addMinutes(1);
-        $user->save();
-    }
+        try {
+            Mail::to($user->email)->send(new TwoFactorVerification($verificationCode));
+            
+            $user->verification_code = $verificationCode;
+            $user->verification_code_expiry = now()->addMinutes(1);
+            $user->save();
+            return true;
+        } catch (\Exception $e) {
+            $this->addError('email', 'Something wrong with email server. Please try again later.');
+            return false;
+        }
+    }   
 }

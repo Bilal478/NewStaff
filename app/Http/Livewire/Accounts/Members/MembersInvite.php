@@ -44,39 +44,36 @@ class MembersInvite extends Component
     }
 	
     public function create()
-    {
+{
+    try {
         $validated = $this->validate([
             'role' => ['required', 'string', Rule::in(['owner', 'manager', 'member'])],
             'email' => ['required', 'email', 'max:100', new AccountInvitationUnique, new IsNotMemberOfAccount],
-        ]); 
+        ]);
 
         $departmentId = $this->selectedDepartment;
         $projectId = $this->selectedProject;
         $randomID = substr(md5(uniqid(mt_rand(), true)), 0, 16);
-        // $prefix = 'sub_1';
-        // $length = 28 - strlen($prefix);
-        // $randomString = Str::random($length);
-        // $stripe_id = $prefix . $randomString;   
         $userExist = DB::table('users')
-        ->where('email', $this->email)
-        ->first();    
-        if(!$userExist){
-        $user = User::create([
-            'firstname' => 'new',
-            'lastname' => 'user',
-            'email' => $this->email,
-            'password' => Hash::make(12345678),
-        ]);
-    }
-    else{
-      DB::table('users')
-            ->where('id', $userExist->id)
-            ->update(['multiple_company' => 1]);
-            $userExist = DB::table('users')
             ->where('email', $this->email)
             ->first();
-        $user= $userExist;
-    }
+        if(!$userExist){
+            $user = User::create([
+                'firstname' => 'new',
+                'lastname' => 'user',
+                'email' => $this->email,
+                'password' => Hash::make(12345678),
+            ]);
+        } 
+        else{
+            DB::table('users')
+                ->where('id', $userExist->id)
+                ->update(['multiple_company' => 1]);
+            $userExist = DB::table('users')
+                ->where('email', $this->email)
+                ->first();
+            $user= $userExist;
+        }
         DB::table('project_user')->insert([
             'project_id' => $projectId,
             'user_id' => $user->id,
@@ -85,13 +82,6 @@ class MembersInvite extends Component
             'department_id' => $departmentId,
             'user_id' => $user->id,
         ]);
-        // DB::table('subscriptions')->insert([
-        //     'user_id' => $user->id,
-        //     'name' => 'Annual',
-        //     'stripe_id' =>  $stripe_id,
-        //     'stripe_status' => 'active',
-        //     'created_at' => now(),
-        // ]);
         DB::table('account_user')->insert([
             'role' => $this->role,
             'account_id' => $this->account->id,
@@ -108,9 +98,9 @@ class MembersInvite extends Component
         $validated['user_id'] = Auth::user()->id;
 
         $accountInvitation = $this->account->invitations()->create($validated);
-    
-    
 
+
+        
         Mail::to($accountInvitation->email)
             ->send(new AccountInvite($this->account, $accountInvitation,$randomID,$this->user_exist,$userExist));
 
@@ -118,7 +108,11 @@ class MembersInvite extends Component
         $this->dispatchBrowserEvent('close-invite-modal');
         $this->toast('Invitation Send', "The invitation to {$this->email} has been sent.");
         $this->reset(['email', 'role']);
+    } catch (\Exception $e) {
+        $this->dispatchBrowserEvent('close-invite-modal');
+        $this->toast('Invitation sent successfully, but the email was not sent due to an email server issue.');
     }
+}
 
 	 public function create2()
     {

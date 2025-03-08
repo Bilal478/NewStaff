@@ -168,6 +168,79 @@ class DailyReportsIndex extends Component
         return response()->download(storage_path() .'/'.$this->userName.'_timesheet_report_' . $this->week .'.pdf')->deleteFileAfterSend(true);
     }
 
+    public function downloadCsv()
+{
+    $fileName = $this->userName . '_timesheet_report_' . $this->week . '.csv';
+    $filePath = storage_path($fileName);
+
+    // Open a file handle
+    $file = fopen($filePath, 'w');
+
+    // Add the header row
+    fputcsv($file, [
+        'Member', 'Organization', 'Time Zone', 'Project', 'Start Time', 'Stop Time', 'Duration', 
+        'Productivity', 'Idle', 'Manual', 'Type',
+    ]);
+
+    // Process each date in the week
+    foreach ($this->getWeekDates() as $date) {
+        // Filter users' activities by the current date
+        $activities = collect($this->getUsersReport())->filter(function ($item) use ($date) {
+            return $item['date'] === $date->format('Y-m-d');
+        });
+
+        // Remove activities with zero duration
+        $nonZeroActivities = $activities->filter(function ($item) {
+            $durationInSeconds = strtotime($item['duration']) - strtotime('00:00:00');
+            return $durationInSeconds > 0;
+        });
+
+        // Skip the date if all activities have zero duration
+        if ($nonZeroActivities->isEmpty()) {
+            continue;
+        }
+
+        // Calculate the total duration for the date
+        $totalDurationInSeconds = $nonZeroActivities->sum(function ($item) {
+            return strtotime($item['duration']) - strtotime('00:00:00');
+        });
+
+        $totalDurationFormatted = gmdate('H:i:s', $totalDurationInSeconds);
+
+        // Add a summary row for the date
+        // fputcsv($file, [
+        //     $date->format('D, M d, Y'), '', '', '', '', '', $totalDurationFormatted, '', '', '', ''
+        // ]);
+
+        // Add detailed rows for each activity with non-zero duration
+        foreach ($nonZeroActivities as $activity) {
+            // dd($activity['start_time']);
+            fputcsv($file, [
+                $this->userName, // Leave the date column empty for detailed rows
+                $activity['account_name'],
+                'America/Chicago',
+                $activity['project_title'],
+                Carbon::createFromFormat('Y-m-d H:i A', $activity['date'] . ' ' . $activity['start_time'])
+                ->format('D, M d, Y g:i A'), // Combine date and time for start time
+                Carbon::createFromFormat('Y-m-d H:i A', $activity['date'] . ' ' . $activity['end_time'])
+                ->format('D, M d, Y g:i A'), // Combine date and time for end time
+                $activity['duration'],
+                $activity['productivity'] . '%',
+                $activity['idle_percentage'] . '%',
+                $activity['manual_percentage'] . '%',
+                $activity['manual_percentage'] == 100 ? 'Manual' : 
+                    ($activity['manual_percentage'] == 0 ? 'Tracked' : 
+                    $activity['manual_percentage'] . '% Manual / ' . (100 - $activity['manual_percentage']) . '% Tracked'),
+            ]);
+        }
+    }
+
+    // Close the file handle
+    fclose($file);
+
+    return response()->download($filePath)->deleteFileAfterSend(true);
+}
+
     public function render()
     {		
         // dd($this->getUsersReport());

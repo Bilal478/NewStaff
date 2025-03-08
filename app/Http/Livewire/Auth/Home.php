@@ -79,6 +79,14 @@ class Home extends Component
     
                 if ($activeSubscription) {
                     $this->sendVerificationCode($user);
+                    $isSent = $this->sendVerificationCode($user);
+                    if (!$isSent) {
+                        // return;
+                        $this->completeLogin($user);
+                        return;
+
+                // return redirect()->intended(route(RouteServiceProvider::HOME));
+                    }
                     Session::put('2fa_user', $user); // Store user ID in session for verification
                     return redirect('/verify-2fa');
                     // $user->last_login_at = now();
@@ -99,6 +107,15 @@ class Home extends Component
                 }              
         }else {
                 $this->sendVerificationCode($user);
+                $isSent = $this->sendVerificationCode($user);
+                if (!$isSent) {
+                    // return;
+            $this->completeLogin($user);
+                    return;
+
+                // return redirect()->intended(route(RouteServiceProvider::HOME));
+
+                }
                 Session::put('2fa_user', $user); // Store user ID in session for verification
                 return redirect('/verify-2fa');
                 // $user->last_login_at = now();
@@ -109,6 +126,22 @@ class Home extends Component
         }
     }
 
+    public function completeLogin($user)
+    {
+        // dd($user);
+        Auth::login($user,true);
+        $user->last_login_at = now();
+        $user->last_login_ip = request()->ip();
+        $user->save();
+        
+        $token = encrypt($user->id);
+        $expiry = now()->addDays(30);
+        // $expiry = now()->addMinutes(2);
+        $minutesUntilExpiry = now()->diffInMinutes($expiry); 
+        cookie()->queue('auth_token', $token, $minutesUntilExpiry, null, null, false, true);    
+        return redirect()->intended(route(RouteServiceProvider::HOME));
+    }
+
     public function render()
     {
         return view('livewire.auth.home') ->layout('layouts.auth', ['title' => 'NeoStaff - Home']);
@@ -116,10 +149,16 @@ class Home extends Component
     public function sendVerificationCode($user)
     {
         $verificationCode = mt_rand(100000, 999999);
-        Mail::to($user->email)->send(new TwoFactorVerification($verificationCode));
-
-        $user->verification_code = $verificationCode;
-        $user->verification_code_expiry = now()->addMinutes(1);
-        $user->save();
-    }
+        try {
+            Mail::to($user->email)->send(new TwoFactorVerification($verificationCode));
+            
+            $user->verification_code = $verificationCode;
+            $user->verification_code_expiry = now()->addMinutes(1);
+            $user->save();
+            return true;
+        } catch (\Exception $e) {
+            $this->addError('email', 'Something wrong with email server. Please try again later.');
+            return false;
+        }
+    }   
 }

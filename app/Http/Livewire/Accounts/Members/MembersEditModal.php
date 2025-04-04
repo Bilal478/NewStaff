@@ -30,6 +30,7 @@ class MembersEditModal extends Component
     public $punchin_pin_code='';
     public $is_owner;
     public $show_permission;
+    public $pay_rate;
 
     protected $listeners = [
         'memberEdit' => 'edit',
@@ -53,6 +54,7 @@ class MembersEditModal extends Component
         $this->role = $this->currentRole;
         $this->handlePermissions();
         $this->punchin_pin_code = $user->punchin_pin_code;
+        $this->pay_rate = $user->pay_rate;
         // dd(auth()->user());
         // $this->team_id = $user->teams;
         // $this->department_id = $user->departments;
@@ -122,6 +124,7 @@ class MembersEditModal extends Component
         $user->punchin_pin_code = $this->punchin_pin_code;
         $string_of_permissions=implode(',',$this->permissions);
         $user->permissions=$string_of_permissions;
+        $user->pay_rate=$this->pay_rate;
         $user->save();
         $user->teams()->sync($this->team_id);
         $user->departments()->sync($this->department_id);

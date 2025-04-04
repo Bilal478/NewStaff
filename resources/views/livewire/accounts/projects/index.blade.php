@@ -16,12 +16,13 @@
 
     @if ($projects->count())
         <div class="flex flex-wrap -mx-4">
-            @foreach ($projects as $project)
+            @foreach ($projects as $key => $project)
             <x-projects.card
                 :project="$project"
                 :users="$project->users"
                 :tasks-count="$project->tasks_count"
                 :users-count="$project->users_count"
+                :index="($projects->currentPage() - 1) * $projects->perPage() + $key + 1"
             />
             @endforeach
         </div>

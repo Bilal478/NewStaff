@@ -177,7 +177,8 @@ $account_user = DB::table('account_user')
                 </tr>
                 @endif
                 <?php $inner_count = 1; ?>
-                <tr class="text-left text-xs text-gray-700 font-medium border-b-2">
+               <tr wire:click="$emit('activityModal','{{ \Carbon\Carbon::parse($day['date'])->format('M d, Y') }}','{{ $day['user_id'] }}','{{ $day['account_id'] }}','{{ $day['project_id'] }}','{{ $day['task_id'] }}')"        
+                   class="text-left text-xs text-gray-700 font-medium border-b-2 cursor-pointer">
                    
                     <td class="min-w-32 left-4 top-auto bg-white z-10 px-2 py-5">
                     
@@ -271,6 +272,7 @@ $account_user = DB::table('account_user')
     
    
     @push('modals')
+        @livewire('accounts.tasks.tasks-form')
         @livewire('activites-modal')
         @livewire('time-modal')
         @livewire('accounts.activities.edit-time-modal')
@@ -358,11 +360,11 @@ $account_user = DB::table('account_user')
 
 </style>
 @endpush
-@push('scripts')
+ @push('scripts')
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 
-<script>
+<!-- <script>
      
     window.addEventListener('show-delete-confirmation', event => {
         swal({
@@ -387,5 +389,5 @@ $account_user = DB::table('account_user')
     {
         Livewire.emit('refreshPagination');
     }
-</script>
-@endpush
+</script> -->
+@endpush -->

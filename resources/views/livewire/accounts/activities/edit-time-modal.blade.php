@@ -34,37 +34,52 @@
 		</form>
 	</x-modals.small>
 
-<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.6/dist/flatpickr.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-   const startTimePicker = flatpickr("#startTimePicker", {
-       enableTime: true,
-       noCalendar: true,
-       dateFormat: "H:i",
-       defaultDate: "{{$startTime}}",
-       minuteIncrement: 10,
-       onClose: function (selectedDates, dateStr) {
-           const startTimeDisplay = document.getElementById("startTimeDisplay");
-           if (startTimeDisplay) {
-               startTimeDisplay.textContent = dateStr;
-           }
-       }
-   });
+      const startTimePicker = flatpickr("#startTimePicker", {
+          enableTime: true,
+          noCalendar: true,
+          dateFormat: "H:i",
+          minuteIncrement: 10,
+          onClose: function (selectedDates, dateStr) {
+              document.getElementById("startTimePicker").value = dateStr;
+          }
+      });
 
-   const endTimePicker = flatpickr("#endTimePicker", {
-       enableTime: true,
-       noCalendar: true,
-       dateFormat: "H:i",
-       defaultDate: "{{$endTime}}",
-       minuteIncrement: 10,
-       onClose: function (selectedDates, dateStr) {
-           const endTimeDisplay = document.getElementById("endTimeDisplay");
-           if (endTimeDisplay) {
-               endTimeDisplay.textContent = dateStr;
-           }
-       }
-   });
-});
+      const endTimePicker = flatpickr("#endTimePicker", {
+          enableTime: true,
+          noCalendar: true,
+          dateFormat: "H:i",
+          minuteIncrement: 10,
+          onClose: function (selectedDates, dateStr) {
+              document.getElementById("endTimePicker").value = dateStr;
+          }
+      });
+
+      // Close Flatpickr when clicking outside
+      document.addEventListener("click", function (event) {
+          const startInput = document.getElementById("startTimePicker");
+          const endInput = document.getElementById("endTimePicker");
+
+          // Check if the click is outside both Flatpickr inputs and their calendars
+          if (
+              !startInput.contains(event.target) &&
+              startTimePicker.calendarContainer &&
+              !startTimePicker.calendarContainer.contains(event.target)
+          ) {
+              startTimePicker.close();
+          }
+
+          if (
+              !endInput.contains(event.target) &&
+              endTimePicker.calendarContainer &&
+              !endTimePicker.calendarContainer.contains(event.target)
+          ) {
+              endTimePicker.close();
+          }
+      });
+  });
 </script>
 
 <style>

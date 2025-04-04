@@ -15,12 +15,16 @@
         <div class="w-56 px-3 text-xs text-gray-500">
             {{ $user->email }}
         </div>
-        <div class="w-44 px-3 text-xs text-gray-500">
+        <div class="w-28 px-3 text-xs text-gray-500">
 
             {{ ucfirst($user->pivot->role) }}
         </div>
-        
-        <div class="w-44 px-3 text-xs text-gray-500">
+        <div class="w-28 px-3 text-xs text-gray-500" style="padding-left: 32px;">
+            @if (!is_null($user->pay_rate))
+                {{ $user->pay_rate }} USD/hr
+            @endif
+        </div>
+        <div class="w-28 px-3 text-xs text-gray-500" style="padding-left: 50px;">
         <div class="flex items-center  w-full ">
         
         <label 
@@ -46,7 +50,7 @@
         </div>
         </div>
         
-        <div class="w-44 px-3 text-xs text-gray-500">
+        <div class="w-44 px-3 text-xs text-gray-500" style="padding-left: 65px;">
         <div class="flex items-center  w-full ">
   
         <label 

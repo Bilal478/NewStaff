@@ -30,6 +30,7 @@ class MembersInvite extends Component
     public $selectedDepartment = null;
     public $selectedProject = null;
     public $user_exist;
+    public $pay_rate;
 
 
     protected $listeners = [
@@ -63,12 +64,16 @@ class MembersInvite extends Component
                 'lastname' => 'user',
                 'email' => $this->email,
                 'password' => Hash::make(12345678),
+                'pay_rate' => $this->pay_rate,
             ]);
         } 
         else{
             DB::table('users')
                 ->where('id', $userExist->id)
-                ->update(['multiple_company' => 1]);
+                ->update([
+                    'multiple_company' => 1,
+                    'pay_rate' => $this->pay_rate,
+            ]);
             $userExist = DB::table('users')
                 ->where('email', $this->email)
                 ->first();

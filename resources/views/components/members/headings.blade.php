@@ -6,13 +6,16 @@
         <div class="w-56 px-3">
             Email
         </div>
-        <div class="w-44 px-3">
+        <div class="w-32 px-3">
             Role
         </div>
-        <div class="w-44 px-3">
+        <div class="w-32 px-3">
+            Pay Rate
+        </div>
+        <div class="w-32 px-3">
             Edit Time
         </div>
-        <div class="w-44 px-3">
+        <div class="w-32 px-3">
             Delete Screenshot
         </div>
         <div class="w-20 px-3">

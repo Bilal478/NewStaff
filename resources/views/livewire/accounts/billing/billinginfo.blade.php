@@ -5,25 +5,43 @@ use App\Models\Subscription;
 
 use App\Models\Account;
 use App\Models\AccountInvitation;
+use Stripe\Stripe;
+use Stripe\Invoice;
+use Stripe\PaymentMethod;
+use Illuminate\Support\Facades\DB;
+use Stripe\Customer;
 
 $account = Account::find(session()->get('account_id'));
 $userId = $account->owner_id;
 $user = User::find($userId)->first();
 $user_mail = $user->email;
+$testUserId = 2; // Change this to the specific user's ID
+
+if ($user->id == $testUserId) {
+    Stripe::setApiKey(config('services.stripe.test_secret'));
+	$invoices = Invoice::all([
+		'customer' => $user->stripe_id,
+		'limit' => 10, // Get last 10 invoices
+	]);
+	$paymentMethods = PaymentMethod::all([
+		'customer' => $user->stripe_id,
+		'type' => 'card' // Fetch only card payment methods
+	]);
+	$customer = Customer::retrieve($user->stripe_id);
+} else {
+    // Use Live Mode for all other users
+    Stripe::setApiKey(config('services.stripe.secret'));
+}
 
 try {
-$paymentMethods = $user->paymentMethods();
-$invoices = $user->invoices();
+    $CC = $paymentMethods->data[0]->card->last4;
+    $fech = $customer->created; 
+    $date_at = date('M/d/Y', $fech);
 
-$CC = $paymentMethods[0]->card->last4;
-$fech = $paymentMethods[0]->created;
-$date_at = date('M/d/Y', $fech);
+    $fech_update = $customer->created; // No direct `updated` field, using `created` as reference
+    $update_at = date('M/d/Y', $fech_update);
 
-$fech_update = $paymentMethods[0]->created;
-$update_at = date('M/d/Y', $fech_update);
-
-
-$user_id = $user->id;
+    $user_id = $user->id;
 	
 	$plan = DB::select('SELECT name FROM subscriptions WHERE user_id = "'.$user_id.'"AND stripe_status != "canceled"');
 	

@@ -9,11 +9,28 @@
         <x-inputs.text wire:model.lazy="lastname" label="Lastname" name="lastname" type="text" disabled />
 
         <x-inputs.text wire:model.lazy="email" label="Email Address" name="email" type="text" disabled />
-
+        <div class="flex justify-between space-x-4">
+        <div class="w-1/2">
         @if(Auth::user()->isOwnerOrManager())
         <x-inputs.text wire:model.lazy="punchin_pin_code"  label="Punch In Pin Code" name="punchin_pin_code" type="text"/>
         @endif
-       
+        </div>
+        <div class="w-1/2">
+            <label>Pay Rate</label>
+            <div class="flex rounded-md shadow-sm border border-gray-300">
+                <input wire:model.lazy="pay_rate" 
+                type="number" 
+                name="pay_rate" 
+				step="0.01" 
+				min="0"
+                class="w-3/5 px-3 py-2 focus:outline-none text-gray-600 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out text-sm leading-5 rounded-l-md" 
+                />
+                <span class="w-2/5 bg-gray-200 text-gray-500 flex items-center justify-center text-sm font-semibold rounded-r-md border-l border-gray-300">
+                    USD/hr
+                </span>
+            </div>
+        </div>
+        </div>
         <label for="role">Role <span>*</span></label><br>
         <select  wire:model.lazy="role" label="Role" name="role" wire:change=handlePermissions() type="text" required>
             @if($is_owner)

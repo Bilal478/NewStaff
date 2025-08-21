@@ -39,14 +39,15 @@ class PlansandPayment extends Component
 	if($temp > 0){
 		$request->user()->newSubscription($request->plan, $plan->stripe_id)
 			->quantity($request->selectseats)
-			->create($request->token, ['email' => $user->email]);
+			->create($request->token, ['email' => $user->email,'name' => "$user->firstname $user->lastname",]);
 	}else{
 		$request->user()->newSubscription($request->plan, $plan->stripe_id)
 			->trialDays(30)
 			->quantity($request->selectseats)
 			->create($request->token, 
 			[
-				'email' => $user->email
+				'email' => $user->email,
+				'name' => "$user->firstname $user->lastname",
 			]);	
 	}
 		

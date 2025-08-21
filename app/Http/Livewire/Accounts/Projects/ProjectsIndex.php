@@ -74,9 +74,14 @@ class ProjectsIndex extends Component
 
     public function projectsForUser()
     {
-        $departmentsArray = Auth::guard('web')->user()->departments->pluck('id')->toArray();
+        // $departmentsArray = Auth::guard('web')->user()->departments->pluck('id')->toArray();
         
-        return  Project::WhereIn('department_id',$departmentsArray)
+        // return  Project::WhereIn('department_id',$departmentsArray)
+        $userId = Auth::guard('web')->id();
+
+        return Project::whereHas('users', function ($query) use ($userId) {
+                $query->where('user_id', $userId);
+            })
             ->with('users:id,firstname,lastname')
             ->titleSearch($this->search)
             ->withCount(['users', 'tasks'])

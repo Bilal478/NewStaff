@@ -186,6 +186,20 @@ $totalDigitalTime = sprintf('%02d.%02d', $wholeHours, $fractional);
                     </td>
                 </tr>
                 @endforeach
+                <tr class="text-sm text-gray-600 tracking-wider border-t hover:bg-gray-50" style="font-weight: 500;">
+                    <td class="min-w-52 sticky left-0 top-auto bg-white z-10 px-4 py-5">
+                        Daily Total
+                        <div class="border-r-2 bg-red-500 absolute right-0 inset-y-0"></div>
+                    </td>
+                    @foreach ($dailyTotalsFormatted as $total)
+                    <td class="min-w-36 px-4 py-5">
+                        {{ $total }}
+                    </td>
+                    @endforeach
+                    <td class="min-w-36 px-4 py-5">
+                        <!-- {{ $totalTimeFormatted }} -->
+                    </td>
+                </tr>
                 @else
                 <tr class="text-sm text-gray-600 hover:bg-gray-50">
                     <td class="min-w-52 sticky left-0 top-auto bg-white z-10 px-4 py-5">

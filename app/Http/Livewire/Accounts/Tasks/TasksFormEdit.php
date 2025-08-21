@@ -11,6 +11,7 @@ use App\Models\Team;
 use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class TasksFormEdit extends Component
@@ -151,6 +152,20 @@ class TasksFormEdit extends Component
     {
         return Task::find($this->task_id);
     }
+    public function getUsersInProjectProperty()
+{
+    if (!$this->project_id) {
+        return collect(); // Return empty collection if no project selected
+    }
+
+    return DB::table('users')
+        ->join('project_user', 'users.id', '=', 'project_user.user_id')
+        ->where('project_user.project_id', $this->project_id)
+        ->whereNull('project_user.deleted_at')
+        ->select('users.*')
+        ->orderByRaw("LOWER(CONCAT(users.firstname, ' ', users.lastname))")
+        ->get();
+}
     public function showFormModal()
     {
         $this->dispatchBrowserEvent('open-task-form-edit-modal');
@@ -158,7 +173,8 @@ class TasksFormEdit extends Component
 
     public function render()
     {
-
-        return view('livewire.accounts.tasks.form-edit');
+        return view('livewire.accounts.tasks.form-edit', [
+            'usersInProject' => $this->usersInProject,
+        ]);
     }
 }

@@ -154,6 +154,7 @@ class ReportsIndex extends Component
             'userName' => $this->userName,
             'dates' => $this->getWeekDates(),
             'week' => $this->getWeekFormatted(),
+            'dailyTotalsFormatted' => $this->dailyTotal()
         ])
             ->setPaper('a4', 'landscape')
             ->save(storage_path() .'/'.$this->userName.'_timesheet_report_' . $this->week . '.pdf');
@@ -163,13 +164,40 @@ class ReportsIndex extends Component
 
     public function downloadCsv()
     {
-        // dd($this->getUsersReportForCsv());
+        $totalTimeInSeconds = 0;
+
+        foreach ($this->getUsersReport() as $userName => $activity) {
+            $time = $activity['total'];
+            $timeParts = explode(':', $time);
+            $hours = (int) $timeParts[0];
+            $minutes = (int) $timeParts[1];
+            $seconds = (int) $timeParts[2];
+            $totalTimeInSeconds += $hours * 3600 + $minutes * 60 + $seconds;
+        }
+
+        $hours = floor($totalTimeInSeconds / 3600);
+        $minutes = floor(($totalTimeInSeconds % 3600) / 60);
+        $seconds = $totalTimeInSeconds % 60;
+        $totalTimeFormatted = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
+
+        $totalHours = $hours + ($minutes / 60) + ($seconds / 3600);
+        $finalFormattedTime = number_format($totalHours, 2);
+        list($wholeHours, $fractional) = explode('.', $finalFormattedTime);
+        $totalDigitalTime = sprintf('%02d.%02d', $wholeHours, $fractional);
+        
         $fileName = $this->userName . '_timesheet_report_' . $this->week . '.csv';
         $filePath = storage_path($fileName);
     
         // Open a file handle
         $file = fopen($filePath, 'w');
-    
+
+        $nbsp = "\xC2\xA0"; // UTF-8 non-breaking space
+
+        fputcsv($file, [
+            '', '', '', '', '', '', '', '', '', '',
+            str_repeat($nbsp, 30) . 'Total Time: ' . ($totalTimeFormatted ?? 'N/A') . ' ' . str_repeat($nbsp, 30) . 'Digital Time: ' . ($totalDigitalTime ?? 'N/A')
+        ]);
+
         // Add the header row
         fputcsv($file, [
             'Member', 'Organization', 'Time Zone', 'Project', 'Start Time', 'Stop Time', 'Duration', 
@@ -177,7 +205,7 @@ class ReportsIndex extends Component
         ]);
     
         // Process each date in the week
-        foreach ($this->getWeekDatesForNinty() as $date) {
+        foreach ($this->getWeekDates() as $date) {
             // Filter users' activities by the current date
             $activities = collect($this->getUsersReportForCsv())->filter(function ($item) use ($date) {
                 return $item['date'] === $date->format('Y-m-d');
@@ -234,16 +262,30 @@ class ReportsIndex extends Component
         return response()->download($filePath)->deleteFileAfterSend(true);
     }
 
-
     public function render()
     {		
         // dd($this->getUsersReport());
 			return view('livewire.accounts.reports.index', [
 				'users' => $this->getUsersReport(),
 				'dates' => $this->getWeekDates(),
+                'dailyTotalsFormatted' => $this->dailyTotal()
 			])->layout('layouts.app', ['title' => 'Reports']);
     }
-
+    public function dailyTotal()
+    {
+        $dailyTotals = array_fill(0, count($this->getWeekDates()), 0);
+            foreach ($this->getUsersReport() as $activity) {
+                foreach ($activity['days'] as $dayIndex => $day) {
+                    $dailyTotals[$dayIndex] += $day['seconds2'] ?? 0;
+                }
+            }
+        return array_map(function ($seconds) {
+            $hours = floor($seconds / 3600);
+            $minutes = floor(($seconds % 3600) / 60);
+            $secs = $seconds % 60;
+         return sprintf('%02d:%02d:%02d', $hours, $minutes, $secs);
+        }, $dailyTotals);
+    }
     public function getUsersReport()
     { 
          if(!$this->user_id){
@@ -285,7 +327,7 @@ class ReportsIndex extends Component
         if($name){
             $this->userName = $name->firstname.' '.$name->lastname;
         }
-        $results = Activity::whereBetween('activities.date', [$this->startDate(true), $this->endDateForNinty(true)])
+        $results = Activity::whereBetween('activities.date', [$this->startDate(true), $this->endDate(true)])
         ->where('activities.user_id', $this->user_id)
         ->leftJoin('tasks', 'activities.task_id', '=', 'tasks.id')
         ->leftJoin('projects', 'activities.project_id', '=', 'projects.id')

@@ -15,6 +15,11 @@ $minutes = floor(($totalTimeInSeconds % 3600) / 60);
 $seconds = $totalTimeInSeconds % 60;
 
 $totalTimeFormatted = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
+$totalHours = $hours + ($minutes / 60) + ($seconds / 3600);
+$finalFormattedTime = number_format($totalHours, 2);
+list($wholeHours, $fractional) = explode('.', $finalFormattedTime);
+// Format the final time with two-digit hours
+$totalDigitalTime = sprintf('%02d.%02d', $wholeHours, $fractional);
 @endphp
 <!DOCTYPE html>
 <html>
@@ -86,6 +91,8 @@ $totalTimeFormatted = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
                 </div>
                 <div style="float: right">
                 <b>Total Hours = {{$totalTimeFormatted}}</b>
+                 &nbsp;|&nbsp;
+                <b>Digital Time = {{$totalDigitalTime}}</b>
                 </div>
                 <div cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="width: 100%; margin-top:30px;">
                     <table style="width: 100%;">
@@ -107,7 +114,7 @@ $totalTimeFormatted = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
                             @foreach ($users as $userName => $activity)
                                 <tr style="color: #374151; font-size: 12px; text-align: left; border-bottom: 1px solid #E5E7EB;">
                                     <td style="padding: 15px 10px; text-align: left;">
-                                        {{ $userName }}
+                                        {{ explode('|', $userName)[0] }}
                                         <p><span class="taskTitle">{{$activity['task_title']}}</span></p>
                                         <div class="border-r-2 bg-red-500 absolute right-0 inset-y-0"></div>
                                     </td>
@@ -121,6 +128,20 @@ $totalTimeFormatted = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
                                     </td>
                                 </tr>
                             @endforeach
+                            <tr style="color: #374151; font-size: 12px; text-align: left; border-bottom: 1px solid #E5E7EB;">
+                                <td style="padding: 15px 10px; text-align: left;">
+                                    Daily Total
+                                    <div class="border-r-2 bg-red-500 absolute right-0 inset-y-0"></div>
+                                </td>
+                                @foreach ($dailyTotalsFormatted as $total)
+                                <td style="padding: 15px 10px; text-align: left;">
+                                    {{ $total }}
+                                </td>
+                                @endforeach
+                                <td class="min-w-36 px-4 py-5">
+                                    <!-- {{ $totalTimeFormatted }} -->
+                                </td>
+                            </tr>
                             @else
                             <tr style="color: #374151; font-size: 12px; text-align: left; border-bottom: 1px solid #E5E7EB;">
                                 <td style="padding: 15px 10px; text-align: left;">

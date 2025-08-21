@@ -25,14 +25,27 @@
         <x-inputs.textarea wire:model.lazy="description" label="Description" name="edit_description" type="text"
             placeholder="Description" required />
 
-        <x-inputs.select wire:model.lazy="user_id" label="Assignee" name="user_id">
-            <option value="">Select a Assignee</option>
-             @foreach (App\Models\User::get() as $user)
-            <option value="{{ $user->id }}">
-                {{ $user->firstname }} {{ $user->lastname }}
-            </option>
-            @endforeach
-        </x-inputs.select>
+            <div class="pb-6">
+    <label for="user_id" class="block text-sm  text-gray-500">
+        Assignee
+    </label>
+
+    <select
+        wire:model.lazy="user_id"
+        name="user_id"
+        id="user_id"
+        class="mt-1 block w-full pl-1 pr-10 py-1 text-md text-gray-700 bg-white border border-gray-400 rounded-md shadow-sm focus:outline-none"
+    >
+        <option value="">Select an Assignee</option>
+        @foreach ($usersInProject as $user)
+            <option value="{{ $user->id }}">{{ $user->firstname }} {{ $user->lastname }}</option>
+        @endforeach
+    </select>
+
+    @error('user_id')
+        <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+    @enderror
+</div>
         <div >
 		{{--
             <div class="pb-6">

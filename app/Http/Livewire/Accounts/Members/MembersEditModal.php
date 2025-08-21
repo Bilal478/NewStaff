@@ -38,10 +38,10 @@ class MembersEditModal extends Component
 
 
     public function edit(User $user)
-    {     
+    {   
         $this->userId = $user->id;
         $check_owner=Subscription::where('user_id',$this->userId)->first();
-        
+        $accountUser=DB::table('account_user')->where('account_id', $this->account->id)->where('user_id',$user->id)->first();
         if($check_owner){
             $this->is_owner=true;
         }
@@ -54,7 +54,7 @@ class MembersEditModal extends Component
         $this->role = $this->currentRole;
         $this->handlePermissions();
         $this->punchin_pin_code = $user->punchin_pin_code;
-        $this->pay_rate = $user->pay_rate;
+        $this->pay_rate = $accountUser->pay_rate;
         // dd(auth()->user());
         // $this->team_id = $user->teams;
         // $this->department_id = $user->departments;
@@ -121,11 +121,14 @@ class MembersEditModal extends Component
         $this->toast('Error', "Punch in pin code is being used.",'error',4000);
        }else{
         $user = User::find($this->userId);
+        $accountUser=DB::table('account_user')->where('account_id', $this->account->id)->where('user_id',$user->id)->first();
         $user->punchin_pin_code = $this->punchin_pin_code;
         $string_of_permissions=implode(',',$this->permissions);
         $user->permissions=$string_of_permissions;
-        $user->pay_rate=$this->pay_rate;
         $user->save();
+        $this->account->usersWithRole()->updateExistingPivot($user->id, [
+            'pay_rate' => $this->pay_rate,
+        ]);
         $user->teams()->sync($this->team_id);
         $user->departments()->sync($this->department_id);
         // $team = Team::find($validatedDate['team_id']);

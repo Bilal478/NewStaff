@@ -64,7 +64,6 @@ class MembersInvite extends Component
                 'lastname' => 'user',
                 'email' => $this->email,
                 'password' => Hash::make(12345678),
-                'pay_rate' => $this->pay_rate,
             ]);
         } 
         else{
@@ -72,7 +71,6 @@ class MembersInvite extends Component
                 ->where('id', $userExist->id)
                 ->update([
                     'multiple_company' => 1,
-                    'pay_rate' => $this->pay_rate,
             ]);
             $userExist = DB::table('users')
                 ->where('email', $this->email)
@@ -94,6 +92,7 @@ class MembersInvite extends Component
             'allow_edit_time' => 1,
             'allow_delete_screenshot' => 1,
             'invitation_accept' => 'true',
+            'pay_rate' => $this->pay_rate,
         ]);
         DB::table('verify_invitations')->insert([
             'user_id' => $user->id,

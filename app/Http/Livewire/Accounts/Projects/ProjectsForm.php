@@ -21,6 +21,8 @@ class ProjectsForm extends Component
     ];
 
     protected $rules = [
+        'project.project_number' => 'nullable|numeric|max:250',
+        'project.client_name' => 'nullable|string|max:250',
         'project.title' => 'required|string|max:250',
         'project.description' => 'required|string|max:500',
         'project.department_id' => 'required|string|max:30',
@@ -74,7 +76,7 @@ class ProjectsForm extends Component
         $this->isEditing
         ? $this->toast('Project Updated', "Project has been updated.")
         : $this->toast('Project Created', "Project has been created.");
-        return redirect(request()->header('Referer'));
+        // return redirect(request()->header('Referer'));
     }
 
     public function render()

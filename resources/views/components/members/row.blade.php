@@ -20,8 +20,8 @@
             {{ ucfirst($user->pivot->role) }}
         </div>
         <div class="w-28 px-3 text-xs text-gray-500" style="padding-left: 32px;">
-            @if (!is_null($user->pay_rate))
-                {{ $user->pay_rate }} USD/hr
+            @if (!is_null($user->pivot->pay_rate))
+                {{ $user->pivot->pay_rate }} USD/hr
             @endif
         </div>
         <div class="w-28 px-3 text-xs text-gray-500" style="padding-left: 50px;">

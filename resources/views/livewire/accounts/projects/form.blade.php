@@ -17,9 +17,13 @@ else{
 <x-modals.small x-on:open-create-modal.window="open = true" x-on:close-create-modal.window="open = false">
     <form wire:submit.prevent="save">
         <h5 class="font-montserrat font-semibold text-lg text-gray-700 mb-6">
-            {{ $isEditing ? 'Edit Project' : 'New Projects' }}
+            {{ $isEditing ? 'Edit Project' : 'New Project' }}
         </h5>
 
+        <x-inputs.number wire:model.lazy="project.project_number" label="Project No" name="project_number" type="number" placeholder="Project no" />
+        
+        <x-inputs.text wire:model.lazy="project.client_name" label="Client Name" name="client_name" type="text" placeholder="Client name"/>
+        
         <x-inputs.text wire:model.lazy="project.title" label="Title" name="title" type="text" placeholder="Title" required/>
 
         <x-inputs.textarea wire:model.lazy="project.description" label="Description" name="description" type="text" placeholder="Description" required />
@@ -28,9 +32,8 @@ else{
                     <option value="">Select Department</option>
                     @foreach ($departments as $department)
 					<option value="{{ $department->id }}">{{ $department->title }}</option>
-					@endforeach
-                   
-                </x-inputs.select-without-label>
+					@endforeach           
+        </x-inputs.select-without-label>
 
         <div class="flex justify-end mt-2">
             <x-buttons.blue-inline type="submit">

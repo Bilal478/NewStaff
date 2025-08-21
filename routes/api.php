@@ -12,6 +12,11 @@ Route::prefix('v1')->group(function () {
     Route::post('screen_shot_rename', 'v1\Auth\LoginController@screenShotRename');
     Route::post('png_to_webp', 'v1\Auth\LoginController@PngToWebp');
     Route::post('login', 'v1\Auth\LoginController');
+               
+    Route::post('accounts/{account}/projects/{project}/tasks/create', 'v1\Accounts\Projects\TasksController@store');
+    Route::delete('accounts/{account}/projects/{project}/tasks/{task}/delete', 'v1\Accounts\Projects\TasksController@destroy');
+    Route::put('accounts/{account}/projects/{project}/tasks/{task}/update', 'v1\Accounts\Projects\TasksController@update');
+    
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('logout', 'v1\Auth\LogoutController');
@@ -29,7 +34,12 @@ Route::prefix('v1')->group(function () {
       
         Route::middleware('api.account')->group(function () {
            
+            Route::get('accounts/{account}/departments', 'v1\Accounts\DepartmentsController@index');
+
             Route::get('accounts/{account}/projects', 'v1\Accounts\ProjectsController@index');
+            Route::post('accounts/{account}/projects/create', 'v1\Accounts\ProjectsController@store');
+            Route::put('accounts/{account}/projects/{project}/update', 'v1\Accounts\ProjectsController@update');
+            Route::delete('accounts/{account}/projects/{project}/delete', 'v1\Accounts\ProjectsController@destroy');
            
             Route::get('accounts/{account}/projects/{project}/tasks', 'v1\Accounts\Projects\TasksController@index');
             Route::get('accounts/{account}/tasks', 'v1\Accounts\TasksController@index');
@@ -39,7 +49,7 @@ Route::prefix('v1')->group(function () {
             Route::post('accounts/{account}/tasks/{task}/short_activities', 'v1\Accounts\Tasks\ActivitiesController@store1');
            
 			Route::post('accounts/{account}/projects/{project}/activities', 'v1\Accounts\Projects\ActivitiesController@store');
-			Route::post('accounts/{account}/projects/{project}/short_activities', 'v1\Accounts\Projects\ActivitiesController@store1');
+			Route::post('accounts/{account}/projects/{project}/short_activities', 'v1\Accounts\Projects\ActivitiesController@store1');    
         });
     });
 	

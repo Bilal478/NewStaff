@@ -23,7 +23,9 @@ class Project extends Model
         'company_id',
         'user_id',
         'account_id',
-        'department_id'
+        'department_id',
+        'client_name',
+        'project_number'
     ];
 
     protected $casts = [

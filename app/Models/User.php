@@ -31,7 +31,6 @@ class User extends Authenticatable
         'punchin_pin_code_active',
         'ipaddress',
         'password_reset_by',
-        'pay_rate',
     ];
 
     protected $hidden = [
@@ -186,5 +185,13 @@ class User extends Authenticatable
             $role = "member";
 
         return $role;
+    }
+    public function getAccountRole($accountId)
+    {
+       $account = $this->accountsWithRole()->where('accounts.id', $accountId)->first();
+        if ($account) {
+            return $account->pivot->role; 
+        }
+        return null;
     }
 }

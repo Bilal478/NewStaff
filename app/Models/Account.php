@@ -42,7 +42,7 @@ class Account extends Model
 
     public function usersWithRole()
     {
-        return $this->belongsToMany(User::class)->withPivot(['id','role','allow_edit_time','allow_delete_screenshot']);
+        return $this->belongsToMany(User::class)->withPivot(['id','role','allow_edit_time','allow_delete_screenshot','pay_rate']);
     }
 
     public function projects()

@@ -66,6 +66,12 @@ class EditTimeModal extends Component
     }
     public function update(){
 
+if ($this->newStartTime === '' || $this->newEndTime === '') {
+     
+           $this->toast('Time Not Selected', 'Please set both time slots before updating.', 'error');
+            return;
+    }
+
         if($this->newStartTime==''){
             $this->newStartTime=$this->startTime;
             // dd( $this->newStartTime,$this->newEndTime);
@@ -92,7 +98,15 @@ class EditTimeModal extends Component
     
         $newEndTimeValueTemp = $carbonEndTime->timestamp;
         }
+
+                $actualStartTime = $this->newStartTime !== '' ? $this->newStartTime : $this->startTime;
+$actualEndTime   = $this->newEndTime   !== '' ? $this->newEndTime   : $this->endTime;
+
+$boundaryAdjusted = $this->reconcileBoundarySeconds($actualStartTime, $actualEndTime);
+        // dd($newStartTimeValueTemp,$oldStartTimeValueTemp,$newEndTimeValueTemp,$oldEndTimeValueTemp,$newEndTimeValue,$oldEndTimeValue);
     if($newStartTimeValueTemp<$oldStartTimeValueTemp){ 
+        // dd('1');
+
         $time=($oldStartTimeValueTemp-$newStartTimeValueTemp)/600;
             for($i=0 ; $i<$time ; $i++){
                 $minutes = date('i', strtotime($newStartTimeValue));
@@ -102,10 +116,11 @@ class EditTimeModal extends Component
                       $adjustment = $minutes % 10;
                       // Adjust $newEndTimeValue to the nearest lower 10-minute interval
                       $newStartTimeValue = date('Y-m-d H:i:00', strtotime($newStartTimeValue) - $adjustment * 60);
-                      
+
                       // Calculate the seconds between the original time and the nearest lower 10-minute interval
                       $secondsDifference = 600-($adjustment * 60);
                   }
+                //   dd($minutes,$time);
             $temp = strtotime ( '+'.$i.'0 minutes ' , strtotime (substr($newStartTimeValue,0,19) ) ) ;
             $new_start_time = date('Y-m-d H:i:s', $temp);
             $temp_two = strtotime ( '+'.$i.'0 minutes ' , strtotime (substr($newStartTimeValue,0,19)) ) ;
@@ -156,6 +171,8 @@ class EditTimeModal extends Component
         }
     }
     if($newEndTimeValueTemp>$oldEndTimeValueTemp){
+        // dd('2');
+
         $time=($newEndTimeValueTemp-$oldEndTimeValueTemp)/600;
         $fullIntervals = floor($time); // Number of full 10-minute intervals
         for($i=0 ; $i<$time ; $i++){
@@ -169,7 +186,6 @@ class EditTimeModal extends Component
                 
                 // Calculate the seconds between the original time and the nearest lower 10-minute interval
                 $secondsDifference = $adjustment * 60;
-                // dd($secondsDifference);
             }
             $temp = strtotime ( '+'.$i.'0 minutes ' , strtotime (substr($oldEndTimeValue,0,19) ) ) ;
 			$new_start_time = date('Y-m-d H:i:s', $temp);
@@ -222,6 +238,8 @@ class EditTimeModal extends Component
     }
     if ($newStartTimeValueTemp > $oldStartTimeValueTemp && $newStartTimeValueTemp < $oldEndTimeValueTemp) {
         $time = ($newStartTimeValueTemp - $oldStartTimeValueTemp) / 600;
+        // dd('3');
+
         $fullIntervals = floor($time); // Number of full 10-minute intervals
         $fractionalPart = $time - $fullIntervals; // Fractional part
         // dd($time,$fullIntervals,$fractionalPart);
@@ -278,6 +296,8 @@ class EditTimeModal extends Component
     }
     
     if ($newEndTimeValueTemp < $oldEndTimeValueTemp && $newEndTimeValueTemp > $oldStartTimeValueTemp) {
+        // dd('4');
+
         // Check if $newEndTimeValue falls within a 10-minute interval
         $time = ($oldEndTimeValueTemp - $newEndTimeValueTemp) / 600;
         $fullIntervals = floor($time); // Number of full 10-minute intervals
@@ -331,19 +351,93 @@ class EditTimeModal extends Component
             }
         }
     }
-    
         $this->dispatchBrowserEvent('close-activity-modal');
         $this->dispatchBrowserEvent('close-task-show-modal');
         $this->dispatchBrowserEvent('close-activities-edit-time-modal');
-        if(!($newStartTimeValueTemp==$oldStartTimeValueTemp && $newEndTimeValueTemp==$oldEndTimeValueTemp)){
-            $this->emit('activityUpdate');
-            $this->emit('tasksUpdate');
-		$this->toast('Time Updated', "The Time has been updated successfully ");
-        }
+        if ($boundaryAdjusted || !($newStartTimeValueTemp == $oldStartTimeValueTemp && $newEndTimeValueTemp == $oldEndTimeValueTemp)) {
+    $this->emit('activityUpdate');
+    $this->emit('tasksUpdate');
+    $this->toast('Time Updated', "The Time has been updated successfully ");
+}
         $this->newStartTime = '';
         $this->newEndTime = '';
     
     }
+    // Put these as private helpers inside the class
+
+private function toTs(string $time): int
+{
+    return \Carbon\Carbon::parse($this->simpleDate . ' ' . $time)->timestamp;
+}
+
+private function floor10(int $ts): int
+{
+    return $ts - ($ts % 600); // 600 = 10 minutes
+}
+
+private function ceil10(int $ts): int
+{
+    $r = $ts % 600;
+    return $r === 0 ? $ts : ($ts + (600 - $r));
+}
+
+private function updateBlockSeconds(int $startTs, int $endTs, int $seconds): bool
+{
+    $start = date('Y-m-d H:i:s', $startTs);
+    $end   = date('Y-m-d H:i:s', $endTs);
+
+    $row = DB::table('activities')
+        ->where('start_datetime', $start)
+        ->where('end_datetime', $end)
+        ->where('date', $this->simpleDate)
+        ->where('task_id', $this->taskId)
+        ->where('user_id', $this->userId)
+        ->where('project_id', $this->projectId)
+        ->where('account_id', $this->accountId)
+        ->first();
+
+    if (!$row) return false;
+
+    if ((int)$row->seconds !== (int)$seconds) {
+        DB::table('activities')->where('id', $row->id)->update(['seconds' => $seconds]);
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Reconcile only boundary (first/last) intervals' seconds based on actual start/end,
+ * even if the rounded 10-min timestamps are unchanged.
+ */
+private function reconcileBoundarySeconds(string $actualStartTime, string $actualEndTime): bool
+{
+    $S = $this->toTs($actualStartTime);
+    $E = $this->toTs($actualEndTime);
+
+    if ($E <= $S) return false;
+
+    $firstBlockStart = $this->floor10($S);
+    $lastBlockEnd    = $this->ceil10($E);
+
+    // Same 10-min block (rare, but handle): seconds = full duration
+    if (intdiv($S, 600) == intdiv($E - 1, 600)) {
+        $desired = $E - $S; // < 600
+        return $this->updateBlockSeconds($firstBlockStart, $firstBlockStart + 600, $desired);
+    }
+
+    // Different blocks: compute first and last block seconds
+    $startMod = $S % 600;                 // seconds into first block
+    $endMod   = $E % 600;                 // seconds into last block
+    $firstSeconds = $startMod === 0 ? 600 : (600 - $startMod);
+    $lastSeconds  = $endMod   === 0 ? 600 : $endMod;
+
+    $changed = false;
+    $changed = $this->updateBlockSeconds($firstBlockStart, $firstBlockStart + 600, $firstSeconds) || $changed;
+    $changed = $this->updateBlockSeconds($lastBlockEnd - 600, $lastBlockEnd, $lastSeconds) || $changed;
+
+    return $changed;
+}
+
   
-    
+
 }

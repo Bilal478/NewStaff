@@ -124,7 +124,8 @@ class ActivitesModal extends Component
 
         // / Code to handle the last index
         $lastIndex = count($results) - 1;
-        if ($seconds_sum > 0 && isset($results[$lastIndex])) {
+        if (($seconds_sum > 0 || count($results) === 1) && isset($results[$lastIndex])) {
+
             $lastResult = $results[$lastIndex];
             $arrayData[] = [
                 'user_id' => $lastResult->user_id,
@@ -142,7 +143,6 @@ class ActivitesModal extends Component
             ];
     }
      
-    
         return $arrayData;
     }
     public function showFormModal()

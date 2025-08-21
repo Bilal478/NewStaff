@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 
 use App\Http\Livewire\Traits\Notifications;
+use App\Models\Account;
 use App\Models\Activity;
 use App\Models\Department;
 use App\Models\Project;
@@ -54,6 +55,7 @@ class TasksForm extends Component
     public $var = [];
     public $datetimerange;
     public $tasksDropdownOptions = [];
+    public $projectsDropdownOptions = [];
     public $flag;
 
 
@@ -68,7 +70,7 @@ class TasksForm extends Component
 
     protected $rules = [
         'title' => 'required|string|max:250',
-        'description' => 'required|string|max:500',
+        'description' => 'required|string',
         'due_date' => 'date_format:"M d, Y"|nullable',
         'project_id' => 'required',
         'user_id' => 'required',
@@ -85,15 +87,7 @@ class TasksForm extends Component
     public function updatedUserId($value)
     {
         $this->user_id = $value;
-        if (!empty($value)) {
-          
-            $this->tasksDropdownOptions = Task::where('user_id', $value)->get();
-        } else {
-            $this->tasksDropdownOptions = []; // Reset the options when no user is selected
-        }
-        $this->emit('tasksUpdated',json_encode($this->tasksDropdownOptions));
-        
-        
+        $this->loadTasksAndProjects();
     }
 
     public function mount($project = null, $team = null, $department = null)
@@ -133,7 +127,7 @@ class TasksForm extends Component
     public function updatedProjectId()
     {
         $this->users = User::inProject($this->project_id)->get();
-        $this->reset(['user_id']);
+        // $this->reset(['user_id']);
     }
 
     public function create()
@@ -189,8 +183,8 @@ class TasksForm extends Component
     }
     public function create_activity(Task $task)
     {
-        if (empty($this->task_id)) {
-            $this->toast('Task Not Selected', 'Please select a task before creating an activity.', 'error');
+        if (empty($this->project_id)) {
+            $this->toast('Project Not Selected', 'Please select a project before creating an activity.', 'error');
             return;
         }
         if($this->next_day_seconds){
@@ -227,7 +221,7 @@ class TasksForm extends Component
         
         $fullIntervals = floor($time); // Number of full 10-minute intervals
         $fractionalPart = $time - $fullIntervals; // Fractional part
-        $temp_activities = Activity::where('user_id', $this->task->user_id)->where('date', $this->datetimerange)->get();
+        // $temp_activities = Activity::where('user_id', $this->task->user_id)->where('date', $this->datetimerange)->get();
         if($hour_in_seconds > $hour_in_seconds_two){
             if($hour_in_seconds_two==0){
                 $time =  (86400 - $hour_in_seconds) / 600;
@@ -254,9 +248,9 @@ class TasksForm extends Component
         $data = DB::table('activities')
             ->where('start_datetime', '>=', $new_start_time)
             ->where('end_datetime', '<=', $end_time)
-            ->where('user_id', '=', $this->task->user_id)
+            ->where('user_id', '=', $this->user_id)
             // ->where('project_id', '=', $this->task->project_id)
-            ->where('account_id', '=', $this->task->account_id)
+            ->where('account_id', '=', $this->account->id)
             // ->where('task_id', '=', $this->task->id)
             ->whereNull('deleted_at')
             ->get();
@@ -282,11 +276,11 @@ class TasksForm extends Component
                 'mouse_count' => 40,
                 'total_activity' => 100,
                 'total_activity_percentage' => 100,
-                'task_id' => $this->task_id,
+                'task_id' => $this->task_id ?: null,
                 'end_datetime' => $end_time, //substr($end_datetime,0,19),
-                'user_id' => $this->task->user_id,
-                'project_id' => $this->task->project_id,
-                'account_id' => $this->task->account_id,
+                'user_id' => $this->user_id,
+                'project_id' => $this->project_id,
+                'account_id' => $this->account->id,
                 'created_at' =>  $new_start_time, //substr($start_datetime,0,19), 
                 'updated_at' =>  $new_start_time, //substr($start_datetime,0,19)
                 'is_manual_time' =>  1,
@@ -302,7 +296,7 @@ class TasksForm extends Component
             DB::table('screenshots')->insert([
                 'path' => '00/1234567890.png',
                 'activity_id' => $id_activity,
-                'account_id' => $this->task->account_id,
+                'account_id' => $this->account->id,
                 'created_at' => $this->datetimerange,
                 'updated_at' => $this->datetimerange
             ]);
@@ -322,9 +316,9 @@ else{
             $data = DB::table('activities')
                 ->where('start_datetime', '>=', $new_start_time)
                 ->where('end_datetime', '<=', $end_time)
-                ->where('user_id', '=', $this->task->user_id)
+                ->where('user_id', '=', $this->user_id)
                 // ->where('project_id', '=', $this->task->project_id)
-                ->where('account_id', '=', $this->task->account_id)
+                ->where('account_id', '=', $this->account->id)
                 // ->where('task_id', '=', $this->task->id)
                 ->whereNull('deleted_at')
                 ->get();
@@ -352,11 +346,11 @@ else{
                         'mouse_count' => 40,
                         'total_activity' => 100,
                         'total_activity_percentage' => 100,
-                        'task_id' => $this->task_id,
+                        'task_id' => $this->task_id ?: null,
                         'end_datetime' => $end_time,
-                        'user_id' => $this->task->user_id,
-                        'project_id' => $this->task->project_id,
-                        'account_id' => $this->task->account_id,
+                        'user_id' => $this->user_id,
+                        'project_id' => $this->project_id,
+                        'account_id' => $this->account->id,
                         'created_at' => $fractional_start_time,
                         'updated_at' => $fractional_start_time,
                         'is_manual_time' => 1,
@@ -374,11 +368,11 @@ else{
                         'mouse_count' => 40,
                         'total_activity' => 100,
                         'total_activity_percentage' => 100,
-                        'task_id' => $this->task_id,
+                        'task_id' => $this->task_id ?: null,
                         'end_datetime' => $end_time,
-                        'user_id' => $this->task->user_id,
-                        'project_id' => $this->task->project_id,
-                        'account_id' => $this->task->account_id,
+                        'user_id' => $this->user_id,
+                        'project_id' => $this->project_id,
+                        'account_id' => $this->account->id,
                         'created_at' => $new_start_time,
                         'updated_at' => $new_start_time,
                         'is_manual_time' => 1,
@@ -395,11 +389,11 @@ else{
                         'mouse_count' => 40,
                         'total_activity' => 100,
                         'total_activity_percentage' => 100,
-                        'task_id' => $this->task_id,
+                        'task_id' => $this->task_id ?: null,
                         'end_datetime' => $end_time,
-                        'user_id' => $this->task->user_id,
-                        'project_id' => $this->task->project_id,
-                        'account_id' => $this->task->account_id,
+                        'user_id' => $this->user_id,
+                        'project_id' => $this->project_id,
+                        'account_id' => $this->account->id,
                         'created_at' => $new_start_time,
                         'updated_at' => $new_start_time,
                         'is_manual_time' => 1,
@@ -416,7 +410,7 @@ else{
                 DB::table('screenshots')->insert([
                     'path' => '00/1234567890.png',
                     'activity_id' => $id_activity,
-                    'account_id' => $this->task->account_id,
+                    'account_id' => $this->account->id,
                     'created_at' => $this->datetimerange,
                     'updated_at' => $this->datetimerange
                 ]);
@@ -432,6 +426,7 @@ else{
             $this->seconds='';
             $this->seconds_two='';
             $this->task_id = null;
+            $this->project_id = null;
             $this->emit('activityUpdate');
             $this->emit('tasksUpdate');
     }
@@ -445,6 +440,10 @@ else{
     {
         return Project::find($this->project_id);
     }
+    public function getAccountProperty()
+    {
+        return Account::find(session()->get('account_id'));
+    }
     public function showFormModal()
     {
         $this->dispatchBrowserEvent('open-task-form-modal');
@@ -457,11 +456,28 @@ else{
     public function create2($date,$userId,$flag)
     { 
         $this->datetimerange = date('Y-m-d', strtotime($date));
-        $this->tasksDropdownOptions = Task::where('user_id', $userId)->get();
-        $this->emit('tasksUpdated',json_encode($this->tasksDropdownOptions));
-        $this->user_id=$userId;
-        $this->flag=$flag;
+        $this->user_id = $userId;
+        $this->flag = $flag;
+        $this->loadTasksAndProjects();
         $this->dispatchBrowserEvent('open-activities-form-modal');
+    }
+    protected function loadTasksAndProjects()
+    {
+        $tasks = Task::where('user_id', $this->user_id)
+            ->orderBy('title')
+            ->get();
+        $this->tasksDropdownOptions = $tasks;
+
+        $user = User::find($this->user_id);
+        $projects = $user
+            ? $user->projects()->orderBy('title')->get()
+            : collect();
+        $this->projectsDropdownOptions = $projects;
+
+        $this->emit('userDataUpdated', json_encode([
+            'tasks'    => $tasks,
+            'projects' => $projects,
+        ]));
     }
 
 }

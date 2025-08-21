@@ -33,12 +33,13 @@
 			<?php   
 			
 			$users_in_project = DB::table('users')
-				->join('project_user', 'users.id', '=', 'project_user.user_id')
-				->where('project_user.project_id', $project_id)
-				->whereNull('project_user.deleted_at')
-				->select('users.*')
-				->get();
-			
+            ->join('project_user', 'users.id', '=', 'project_user.user_id')
+            ->where('project_user.project_id', $project_id)
+            ->whereNull('project_user.deleted_at')
+            ->select('users.*')
+            ->orderByRaw("LOWER(CONCAT(users.firstname, ' ', users.lastname))")
+            ->get();
+
 			foreach($users_in_project as $item){
 				
 			}
@@ -52,7 +53,7 @@
 				{{-- @foreach (App\Models\User::get() as $user)--}}
 				
 				
-				@foreach ($users_in_project->sortBy('firstname') as $user)
+				@foreach ($users_in_project as $user)
 				
                 <option value="{{ $user->id }}">
                 
@@ -158,21 +159,39 @@
                 @endforeach
             </x-inputs.select_two>
 			@endif
-			<?php
-
-			if($user_id != ''){
-				
-				if( count($tasksDropdownOptions) > 0 ){
-			?> 
-				<x-inputs.select_two wire:model.lazy="task_id" label="Task" name="task_id" id="task_id" required>
+           <div class="pb-6 w-full">
+                <label for="project_id_activity" class="block text-sm text-gray-500 leading-5">
+                    Project <span class="text-red-500 text-xs">*</span>
+                </label>
+                    <div>
+                        <select id="project_id_activity" wire:model="project_id"
+                            class="block w-full bg-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 " 
+                            style="border: 1px solid #e5e5e5; border-radius:3px; width:100%; margin-bottom:15px; padding: 3px 0px;">
+                                <option value="">Select a project</option>
+                                    @foreach ($projectsDropdownOptions as $project)
+                                <option value="{{ $project->id }}">{{ $project->title }}</option>
+                                    @endforeach
+                        </select>
+                    </div>
+                     @if(count($projectsDropdownOptions) === 0)
+                <p class=" text-xs text-red-500">There aren't projects assigned to this user</p>
+            @endif
+            @error('project_id') 
+                <p class=" text-xs text-red-500">{{ $message }}</p> 
+            @enderror  
+            </div>
+           
+            <!-- @if($user_id != '')           -->
+				<x-inputs.select_two wire:model.lazy="task_id" label="Task" name="task_id" id="task_id">
 					<option value="">Select a task</option>
 				</x-inputs.select_two>
-			<?php
-				}else{
-					echo "<h4 style='color:red; margin-top: -20px; padding-bottom: 10px;' >There aren't tasks assigned to this user</h4>";
-				}
-			}	
-			?>
+                    <!-- @if(count($tasksDropdownOptions) === 0)
+                        <p class=" text-xs text-red-500">There aren't tasks assigned to this user</p>
+                    @endif
+                @error('task_id') 
+                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p> 
+                @enderror
+            @endif -->
 			 
 			<label for="start_time" class="block text-sm text-gray-500 my-4 leading-5">
 					Date 
@@ -220,25 +239,21 @@
                            @if($addTimeNextDay) required @endif
                            class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 text-gray-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out text-sm leading-5 timepicker_next">
                         </div>
-			<?php if( count(App\Models\Task::where('user_id', $user_id)->get()) > 0 ){ ?>
+			@if(count($projectsDropdownOptions) > 0)
             <div class="flex justify-end mt-2">
                 <x-buttons.blue-inline type="submit">
                   Create Activity
                 </x-buttons.blue-inline>
             </div>
-			
-			<?php } else{ ?>
-			
+			@else
 			<div class="flex justify-end mt-2">
                 <x-buttons.blue-inline style="background-color: #7DD3FC !important;" disabled  type="submit">
                   Create Activity
                 </x-buttons.blue-inline>
             </div>
-
+            @endif
           
-			<?php 
-             
-            } ?>
+			
         </form>
 		</x-modals.date>
 	</div>	
@@ -347,15 +362,16 @@
             var data = $(".timepicker_two").val();
             @this.set(elementName, data);
         }
-        Livewire.on('tasksUpdated', (taskDropdownoptions) => {
-            let dropdown = $('#task_id');
-            data = JSON.parse(taskDropdownoptions);
-            dropdown.empty();
-            dropdown.append('<option value="" >Select a task</option>');
-            
-            $.each(data, function (key, entry) {
-            dropdown.append($("<option value="+entry.id+">"+entry.title+ "</option>"));
-  })
+      Livewire.on('userDataUpdated', (userData) => {
+
+    let data = JSON.parse(userData);
+    let taskDropdown = $('#task_id');
+    taskDropdown.empty().append('<option value="">Select a task</option>');
+    $.each(data.tasks, function (key, entry) {
+        taskDropdown.append($("<option>").val(entry.id).text(entry.title));
+    });
+    taskDropdown.trigger('change.select2');
+
 });
 </script>
 @endpush

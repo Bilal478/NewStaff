@@ -20,6 +20,10 @@ $date_at = date('M/d/Y', $fech);
 $user_subscriptions = $user->subscriptions()->active()->get();
 $price = $user_subscriptions[0]->quantity;
 
+$stripeSubscription = $user->subscription($user_subscriptions[0]->name)->asStripeSubscription();
+$chargeDate = date('M/d/Y', $stripeSubscription->trial_end);
+
+
 if($user_subscriptions[0]->name =='Annual'){
 	
 	$total_price = $price*36;
@@ -33,58 +37,57 @@ elseif($user_subscriptions[0]->name =='Monthly'){
 	$subscription_price = $total_price.' USD / Monthly';
 }
 ?>
-<html>
-<body style="background-color:#E2E1E0;font-family: Open Sans, sans-serif;font-size:100%;font-weight:400;line-height:1.4;color:#000;">
-	
-	<div style="padding:30px 30px 0px 30px;text-align:center;font-size:24px;font-weight:bold;">
-		<a href="{{ route('home') }}" class="inline-block"><x-logo/></a>
-	</div>
-	<table style="max-width:670px;margin:50px auto 10px;background-color:#fff;padding:50px;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;-webkit-box-shadow:0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.24);-moz-box-shadow:0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.24);box-shadow:0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.24); border: solid 1px grey;">
-		<thead>
-		  <tr>
-			<th style="text-align:center;"><h2>Welcome to NeoStaff&nbsp;<?php echo $user_firstname;?></h2></th>
-		  </tr>
-		</thead>
-		<tbody>
-		  <tr>
-			<td colspan="2" style="font-size:20px;padding:30px 15px 0 0px;font-weight:bold; color:#436D9E;">Invoice</td>
-		  </tr>
-		  <tr>
-			<td colspan="2" style="padding:15px 15px 15px 0px;border-bottom: 1px solid #ddd;">
-				<p style="font-size:14px;margin:0 0 6px 0;"><span style="color:#436D9E;font-weight:bold;display:inline-block;min-width:100px;">Your account: </span><?php echo $user_email;?></p>
-				<p style="font-size:14px;margin:0 0 6px 0;"><span style="color:#436D9E;font-weight:bold;display:inline-block;min-width:100px;">IP Address: </span>{{$ipAddress}}</p>
-				<p style="font-size:14px;margin:0 0 0 0;"><span style="color:#436D9E;font-weight:bold;display:inline-block; min-width:85px;">Billing date: </span><?php echo $date_at; ?></p>  
-			</td>
-		  </tr>
-		  <tr>
-			<td colspan="2" style="padding:20px 15px 15px 0px;font-weight:bold; border-bottom: 1px solid #ddd;">
-				<strong style="font-size:20px;color:#436D9E;display:block;" >Thank you for your business.</strong><br>
-				<p style="font-size:14px;font-weight:normal; line-height: 150%;">The credit card ending in&nbsp;<?php echo $CC;?>&nbsp;has been successfully charged $<?php echo $total; ?><br>
-				A copy of the receipt is also in your Billing Statements.<br><br>Click here to <a href="{{ route('login') }}">Login</a><br><br>If you have any questions, please let us know. We'll get back to you soon<br>
-				as we can.<br><br>
-				Your friends,<br>
-				<a style="color: #0EA5E9;" href="#">support@neostaff.app</a>
-				</p>
-			</td>
-		</tr>
-		<tr>
-			<td colspan="2" style="font-size:14px;padding:20px 15px 0 0px;border-bottom: 1px solid #ddd; line-height: 150%;">
-			  <strong style="display:inline-block;margin:0 0 10px 0; min-width:420px;">Subscription</strong><strong>$<?php echo $subscription_price; ?></strong>
-			  <br><br>
-			  For the upcoming year, beginning&nbsp;<?php echo $date_at; ?><br>
-			  <!-- 40 Plan (Annual) - $XXXX<br>
-			  20% annual discount (Annual) - $XXXX<br><br> -->
-			</td>
-		</tr>
-		</tbody>
-		<tfooter>
-		  <tr>
-			<td colspan="2" style="font-size:14px;padding:20px 15px 0 0px;">
-			  <strong style="display:inline-block;margin:0 0 10px 0; min-width:420px;">Total</strong><strong>$<?php echo $total; ?></strong>
-			  <br>
-			</td>
-		  </tr>
-		</tfooter>
-	</table>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome Email</title>
+</head>
+<body style="background-color: #f4f4f4; font-family: 'Segoe UI', 'Open Sans', sans-serif; font-size: 16px; line-height: 1.6; color: #333; margin: 0; padding: 0;">
+
+    <div style="max-width: 700px; margin: 30px auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow: hidden;">
+
+        <div style="padding: 30px; text-align: center; border-bottom: 1px solid #e0e0e0;">
+            <a href="{{ route('home') }}" style="text-decoration: none;">
+                <x-logo />
+            </a>
+        </div>
+
+        <div style="padding: 40px 30px;">
+            <h2 style="text-align: center; color: #2c3e50; font-size: 26px; margin-top: 0;">Welcome to NeoStaff Manuel</h2>
+
+            <h3 style="color: #436D9E; margin-bottom: 10px; font-size: 20px;">Invoice</h3>
+
+			<div style="border-top: 1px solid #ddd; padding-top: 10px; margin-top: 10px; line-height: 1.5; text-align: left;">
+                <p style="margin: 5px 0;"><strong style="color: #436D9E;">Your account:</strong> {{ $user_email }}</p>
+                <p style="margin: 5px 0;"><strong style="color: #436D9E;">IP Address:</strong> {{ $ipAddress }}</p>
+                <p style="margin: 5px 0;"><strong style="color: #436D9E;">Start date:</strong> {{ $date_at }}</p>
+            </div>
+
+            <div style="border-top: 1px solid #ddd; padding-top: 10px; margin-top: 10px;">
+                <p style="font-size: 18px; color: #2d3748;"><strong>Thank you for your business.</strong></p>
+                <p>Your 30 days trial has just started.</p>
+
+                <p>The credit card ending in <strong>{{ $CC }}</strong> will be charged <strong>${{ $total }}</strong> on <strong>{{ $chargeDate }}</strong>.</p>
+
+                <p>If you use Windows, Mac or Linux, you can download the time tracker desktop app from here:</p>
+
+                <p style="margin: 20px 0 10px 0; text-align: center; font-weight: bold;">
+                    <a href="//media.neostaff.app/downloads/windows" style="color: #1d4ed8; text-decoration: none;">Windows</a> |
+                    <a href="//media.neostaff.app/downloads/mac" style="color: #1d4ed8; text-decoration: none;">Mac</a> |
+                    <a href="//media.neostaff.app/downloads/ubutnu" style="color: #1d4ed8; text-decoration: none;">Linux</a>
+                </p>
+
+                <p style="margin-top: 20px;">Click here to <a href="{{ route('login') }}" style="color: #0ea5e9; text-decoration: underline;">Login</a></p>
+
+                <p style="margin-top: 30px; font-size: 16px;">
+                    <strong>If you have any questions, please let us know. We'll get back to you as soon as we can.</strong>
+                </p>
+
+                <p style="margin-top: 20px;">Your friends,<br>
+                    <a href="mailto:support@neostaff.app" style="color: #0EA5E9; text-decoration: none;">support@neostaff.app</a>
+                </p>
+            </div>
+        </div>
+    </div>
 </body>
-</html>           
+</html>    

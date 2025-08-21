@@ -19,6 +19,11 @@ $testUserId = 2; // Change this to the specific user's ID
 
 if ($user->id == $testUserId) {
     Stripe::setApiKey(config('services.stripe.test_secret'));
+} else {
+    Stripe::setApiKey(config('services.stripe.secret'));
+}
+
+try {
 	$invoices = Invoice::all([
 		'customer' => $user->stripe_id,
 		'limit' => 10, // Get last 10 invoices
@@ -27,13 +32,9 @@ if ($user->id == $testUserId) {
 		'customer' => $user->stripe_id,
 		'type' => 'card' // Fetch only card payment methods
 	]);
+	
 	$customer = Customer::retrieve($user->stripe_id);
-} else {
-    // Use Live Mode for all other users
-    Stripe::setApiKey(config('services.stripe.secret'));
-}
-
-try {
+	
     $CC = $paymentMethods->data[0]->card->last4;
     $fech = $customer->created; 
     $date_at = date('M/d/Y', $fech);
@@ -50,12 +51,22 @@ try {
 	$plan_status = DB::select('SELECT stripe_status FROM subscriptions WHERE user_id = "'.$user_id.'"AND stripe_status != "canceled"');
 
 	$status = $plan_status[0]->stripe_status;
-	if(count($invoices) != 0){
-		$fech_start = $invoices[0]->lines['data'][0]->period->start;
-		$date_start = date('M/d/Y', $fech_start);
-	}
-	else{
+	// dd($invoices);
+	
+	if (!empty($invoices->data)) {
+		$firstInvoice = $invoices->data[0];
 		
+		// Check if there are any line items
+		if (!empty($firstInvoice->lines->data)) {
+			$fech_start = $firstInvoice->lines->data[0]->period->start;
+			$date_start = date('M/d/Y', $fech_start);
+		} else {
+			// Fallback if no line items
+			$fech_start = $fech_update;
+			$date_start = date('M/d/Y', $fech_update);
+		}
+	} else {
+		// Fallback if no invoices
 		$fech_start = $fech_update;
 		$date_start = date('M/d/Y', $fech_update);
 	}

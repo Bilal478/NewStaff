@@ -15,7 +15,7 @@
                         Dashboard
                     </x-navigation.sidebar-item>
                     <x-navigation.sidebar-item route="accounts.activities" img="svgs.computer">
-                        Activities
+                        Time Tracker
                     </x-navigation.sidebar-item>
                     <x-navigation.sidebar-item route="accounts.tasks" img="svgs.task">
                         Tasks
@@ -67,7 +67,7 @@
                     </x-navigation.sidebar-item> --}}
 
                     <x-navigation.sidebar-item route="accounts.members" img="svgs.users">
-                        Members
+                        Staff
                     </x-navigation.sidebar-item>
 					
                     <x-navigation.sidebar-item route="accounts.settings" img="svgs.settings">

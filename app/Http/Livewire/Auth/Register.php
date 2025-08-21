@@ -25,6 +25,7 @@ class Register extends Component
     public $accountFound = false;
     public $account ;
     public $user;
+    public $state='';
 
     public function register()
     {
@@ -36,10 +37,12 @@ class Register extends Component
                 'lastName' => ['required', 'max:50'],
                 'email' => ['required', 'email'],
                 'password' => ['required', 'min:8'],
+                'state' => ['required', 'max:50'],
             ]);
 
             $currentAccount = Account::where('id',$this->account->id)->first();
             $currentAccount->name = $this->accountName;
+            $currentAccount->state = $this->state;
             $currentAccount->update();
 
             $currentUser = User::where('id',$this->user->id)->first();
@@ -62,6 +65,7 @@ class Register extends Component
                 'lastName' => ['required', 'max:50'],
                 'email' => ['required', 'email', 'unique:users'],
                 'password' => ['required', 'min:8'],
+                'state' => ['required', 'max:50'],
                 // 'g-recaptcha-response' => ['required'],
             ]);
     
@@ -76,6 +80,7 @@ class Register extends Component
 
             $account = Account::create([
                 'name' => $this->accountName,
+                'state' => $this->state,
                 'owner_id' => $user->id,
             ]);
 

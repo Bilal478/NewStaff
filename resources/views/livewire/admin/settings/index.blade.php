@@ -23,9 +23,15 @@
                 <article class="bg-white mx-4 mb-8 rounded-md border shadow-sm px-6 py-4">
                     <form wire:submit.prevent="save">
                         @foreach($settingsData as $index=>$setting)
+                            @if($index==3)
+                            <div wire:key="user-field-{{ $index }}">
+                                <x-inputs.settings-textarea  wire:model.lazy="settingsData.{{ $index }}.settings_value" label="{{$labels[$index]}}"  name="CurrentVersion" type="text" placeholder="Dickinson and Barton" />
+                            </div>
+                            @else 
                             <div wire:key="user-field-{{ $index }}">
                                 <x-inputs.text   wire:model.lazy="settingsData.{{ $index }}.settings_value" label="{{$labels[$index]}}"  name="CurrentVersion" type="text" placeholder="Dickinson and Barton" />
-                            </div>     
+                            </div>  
+                            @endif
                         @endforeach
                         <div class="flex justify-end mt-2">
                             <x-buttons.blue-inline type="submit">

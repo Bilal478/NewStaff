@@ -22,10 +22,11 @@
     <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-2xl">
         <div class="px-4 py-8 bg-white shadow sm:rounded-lg sm:px-10">
             <form wire:submit.prevent="register">
-                <div class="pb-10">
+            <div class="flex items-center flex-wrap border-b mb-3">
+                <div class=" w-full md:w-1/2">
                     <x-inputs.text
 					
-                        class="pb-10 border-b"
+                        class=" "
                         wire:model.lazy="accountName"
                         label="Company Name"
                         name="accountName"
@@ -33,7 +34,17 @@
                         autofocus required
                     />
                 </div>
-
+                <div class="w-full md:w-1/2">
+                        <x-inputs.text
+                            class="md:pl-5"
+                            wire:model.lazy="state"
+                            label="State"
+                            name="state"
+                            placeholder="Florida"
+							required
+                        />
+                    </div>
+            </div>
                 <div class="flex items-center flex-wrap">
                     <div class="w-full md:w-1/2">
                         <x-inputs.text

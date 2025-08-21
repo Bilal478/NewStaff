@@ -109,12 +109,12 @@ class Login2 extends Component
             $invitation= DB::table('account_invitations')->where('email',$inviteUser->email)
             ->where('account_id',$getUser->account_id)->first();
             $ownerUser=DB::table('users')->where('id',$invitation->user_id)->first();
-            try {
-                Mail::to($ownerUser->email)->send(new AcceptedNotification($inviteUser->email));
-            } catch (\Exception $e) {
-                // Log the error or handle it silently
-                Log::error("Failed to send email: " . $e->getMessage());
-            }
+            // try {
+            //     Mail::to('huzaifach508@gmail.com')->send(new AcceptedNotification($inviteUser->email));
+            // } catch (\Exception $e) {
+            //     // Log the error or handle it silently
+            //     Log::error("Failed to send email: " . $e->getMessage());
+            // }
            if(!$invitation){
            $deleteInvitation=DB::table('verify_invitations')->where('verification_id', $this->randomid)->first();
                if ($deleteInvitation) {

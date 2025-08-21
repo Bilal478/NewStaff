@@ -78,7 +78,6 @@ class Home extends Component
                 }
     
                 if ($activeSubscription) {
-                    $this->sendVerificationCode($user);
                     $isSent = $this->sendVerificationCode($user);
                     if (!$isSent) {
                         // return;
@@ -106,7 +105,6 @@ class Home extends Component
                     $this->addError('email', trans('Subscription has been canceled'));
                 }              
         }else {
-                $this->sendVerificationCode($user);
                 $isSent = $this->sendVerificationCode($user);
                 if (!$isSent) {
                     // return;

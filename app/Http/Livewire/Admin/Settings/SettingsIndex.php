@@ -42,7 +42,9 @@ class SettingsIndex extends Component
     {
         $this->settingsData =  DB::table('neostaff_settings')->get();
         $emailsRecord =  DB::table('registration_email_receivers')->first();
-        $this->emails = $emailsRecord->email;
+        if ($emailsRecord){
+            $this->emails = $emailsRecord->email;
+        }
        
         foreach($this->settingsData as $index=>$setting){
             $this->labels[$index] = $setting->settings;

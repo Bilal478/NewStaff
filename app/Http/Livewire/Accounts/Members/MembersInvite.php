@@ -103,7 +103,12 @@ class MembersInvite extends Component
 
         $accountInvitation = $this->account->invitations()->create($validated);
 
-
+        DB::table('access_logs')->insert([
+        'user_id'        => Auth::user()->id,
+        'target_user_id' => $user->id,
+        'action'     => 'invite_send',  
+        'created_at'     => now(),  
+        ]);
         
         Mail::to($accountInvitation->email)
             ->send(new AccountInvite($this->account, $accountInvitation,$randomID,$this->user_exist,$userExist));

@@ -58,6 +58,7 @@
                     <x-navigation.sidebar-item route="accounts.departments" img="svgs.departments">
                         Departments
                     </x-navigation.sidebar-item>
+                    
                     <x-navigation.sidebar-item route="accounts.manage_emails" img="svgs.email">
                         Manage Emails
                     </x-navigation.sidebar-item>
@@ -68,6 +69,10 @@
 
                     <x-navigation.sidebar-item route="accounts.members" img="svgs.users">
                         Staff
+                    </x-navigation.sidebar-item>
+
+                    <x-navigation.sidebar-item route="accounts.access_logs" img="svgs.logs-error">
+                        Access Logs
                     </x-navigation.sidebar-item>
 					
                     <x-navigation.sidebar-item route="accounts.settings" img="svgs.settings">

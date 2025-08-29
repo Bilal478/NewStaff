@@ -131,7 +131,13 @@ class Home extends Component
         $user->last_login_at = now();
         $user->last_login_ip = request()->ip();
         $user->save();
-        
+
+        DB::table('access_logs')->insert([
+        'user_id'        => $user->id,  
+        'action'     => 'user_login',  
+        'created_at'     => now(),  
+        ]);
+
         $token = encrypt($user->id);
         $expiry = now()->addDays(30);
         // $expiry = now()->addMinutes(2);

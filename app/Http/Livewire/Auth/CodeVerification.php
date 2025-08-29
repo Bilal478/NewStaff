@@ -6,6 +6,7 @@ use App\Mail\TwoFactorVerification;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use App\Providers\RouteServiceProvider;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 
@@ -58,6 +59,12 @@ class CodeVerification extends Component
         $user->last_login_at = now();
         $user->last_login_ip = request()->ip();
         $user->save();
+
+        DB::table('access_logs')->insert([
+        'user_id'        => $user->id,  
+        'action'     => 'user_login',  
+        'created_at'     => now(),  
+        ]);
         
         $token = encrypt($user->id);
         $expiry = now()->addDays(30);

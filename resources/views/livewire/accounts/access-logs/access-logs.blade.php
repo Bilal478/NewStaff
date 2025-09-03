@@ -13,6 +13,9 @@
             <div class="flex-1 px-3">
                Invited User
             </div>
+            <div class="flex-1 px-3">
+               Invited User Email
+            </div>
             <div class="flex-1 px-3 text-center">
                Date/Time
             </div>
@@ -30,6 +33,9 @@
             </div>
             <div class="flex-1 px-3 text-xs text-gray-500">
                 {{ $logs->target_user_name }}
+            </div>
+            <div class="flex-1 px-3 text-xs text-gray-500">
+                {{ $logs->target_user_email }}
             </div>
             <div class="flex-1 px-3 text-xs text-gray-500 text-center">
                 {{ $logs->created_at }}

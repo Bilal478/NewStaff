@@ -106,6 +106,7 @@ class MembersInvite extends Component
         DB::table('access_logs')->insert([
         'user_id'        => Auth::user()->id,
         'target_user_id' => $user->id,
+        'target_user_email' => $user->email,
         'action'     => 'invite_send',  
         'created_at'     => now(),  
         ]);

@@ -1,109 +1,123 @@
-<x-modals.small x-on:open-activities-edit-time-modal.window="open = true" x-on:close-activities-edit-time-modal.window="open = false">
-		<form wire:submit.prevent="update"  autocomplete="off">	 
-			
-			<h5 class="font-montserrat font-semibold text-lg text-gray-700 mb-6">
-				Edit Time		
-			</h5>
-            <div class="border border-dark rounded p-3">
-                <div class="flex justify-around">
-                  <div>
-                    <h3>Member</h3>
-                    <span>{{$firstName}} {{$lastName}}</span>
-                  </div>
-                  <div>
-                    <h3>Project</h3>
-                    <span>{{$projectTitle}}</span>
-                  </div>
+<x-modals.small 
+    x-on:open-activities-edit-time-modal.window="open = true" 
+    x-on:close-activities-edit-time-modal.window="open = false"
+>
+    <form wire:submit.prevent="update" autocomplete="off" class="space-y-6"> 
+        <h5 class="font-montserrat font-semibold text-lg text-gray-700">
+            Edit Time
+        </h5>
+
+        <div class="flex items-center justify-between mt-5">
+            <div class="flex items-center">
+                <div class="avatar">
+                    <x-user.avatar />
                 </div>
-                <div class="flex flex-col" id="timespan-div">
-                    <span id="timespan">TIME SPAN</span>
-                    <span>{{$date}} from {{$startTime}} to {{$endTime}}</span>
+                <div class="fullname">
+                    <span class="ml-3 block text-left font-montserrat text-md font-semibold text-gray-500 cursor-default">
+                        {{ $firstName }} {{$lastName}}
+                    </span>
                 </div>
             </div>
-            <h3 class="mb-3 mt-3">Old Time :</h3>
-            <span class="mr-2">From</span><input type="text" class="border border-dark custom-input-small" value="{{$startTime}}" readonly><br><br>
-            <span class="mr-7">To</span><input type="text" class="border border-dark custom-input-small" value="{{$endTime}}" readonly>
-            <h3 class="mb-3 mt-3">New Time :</h3>
-            <span class="mr-2">From</span><input wire:model="newStartTime" id="startTimePicker" type="text" class="border border-dark custom-input"><br><br>
-            <span class="mr-7">To</span><input wire:model="newEndTime" id="endTimePicker" type="text" class="border border-dark custom-input">
-			<div class="flex justify-end mt-6">
-				<x-buttons.blue-inline type="submit">
-				  Update Time
-				</x-buttons.blue-inline>
-			</div>
-		</form>
-	</x-modals.small>
 
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-      const startTimePicker = flatpickr("#startTimePicker", {
-          enableTime: true,
-          noCalendar: true,
-          dateFormat: "H:i",
-          minuteIncrement: 10,
-          onClose: function (selectedDates, dateStr) {
-              document.getElementById("startTimePicker").value = dateStr;
-          }
-      });
+            <div>
+                <input 
+                    type="text" 
+                    id="datePicker" 
+                    wire:model="date" 
+                    class="w-full border rounded-md px-3 py-2 text-center focus:outline-none cursor-default"
+                    readonly
+                >
+            </div>
+        </div>
 
-      const endTimePicker = flatpickr("#endTimePicker", {
-          enableTime: true,
-          noCalendar: true,
-          dateFormat: "H:i",
-          minuteIncrement: 10,
-          onClose: function (selectedDates, dateStr) {
-              document.getElementById("endTimePicker").value = dateStr;
-          }
-      });
+        <div class="flex items-center justify-between mt-5">
+            {{-- Project --}}
+            <div class="flex flex-col w-1/2 mr-3">
+                <label class="text-gray-600 font-medium mb-1" style="font-size: small;">PROJECT</label>
+                <div class="w-full border rounded-md px-3 py-2 cursor-default">
+                    {{ $projectTitle ?? 'Select Project' }}
+                </div>
+            </div>
 
-      // Close Flatpickr when clicking outside
-      document.addEventListener("click", function (event) {
-          const startInput = document.getElementById("startTimePicker");
-          const endInput = document.getElementById("endTimePicker");
+            {{-- Task --}}
+            <div class="flex flex-col w-1/2">
+                <label class="text-gray-600 font-medium mb-1" style="font-size: small;">TASK</label>
+                <div class="w-full border rounded-md px-3 py-2 cursor-default">
+                    {{ $taskTitle ?? 'Select Task' }}
+                </div>
+            </div>
+        </div>
 
-          // Check if the click is outside both Flatpickr inputs and their calendars
-          if (
-              !startInput.contains(event.target) &&
-              startTimePicker.calendarContainer &&
-              !startTimePicker.calendarContainer.contains(event.target)
-          ) {
-              startTimePicker.close();
-          }
+        {{-- Time span (read-only section) --}}
+        <div class="flex flex-col mt-5">
+            <label class="text-gray-600 font-medium mb-1" style="font-size: small;">TIME SPAN (MDT)*</label>
 
-          if (
-              !endInput.contains(event.target) &&
-              endTimePicker.calendarContainer &&
-              !endTimePicker.calendarContainer.contains(event.target)
-          ) {
-              endTimePicker.close();
-          }
-      });
-  });
-</script>
+            <div class="flex items-center gap-3">
+                {{-- Date --}}
+                <input 
+                    type="text" 
+                    value="{{ $duration }}" 
+                    class="border rounded-md text-center  py-2 w-1/3 focus:outline-none cursor-default mr-2"  
+                    readonly
+                >
 
-<style>
-    #timespan{
-        font-weight: 600;
-        margin-top: 5px;
-    }
-    #timespan-div{
-        margin-left: 56px;
-    }
-    h3{
-        font-weight: 600;
-    }
-    .custom-input {
-    height: 40px; 
-    width: 308px;
-    border-radius: 5px;
-  }
-  .custom-input-small{
-    height: 40px; 
-    width: 80px; 
-    border-radius: 5px;
-    text-align: center;
-    margin-left: 5px;
-  }
-</style>
-	
+                {{-- From --}}
+                <span class="text-gray-600 mr-2">FROM</span>
+                <input 
+                    type="text" 
+                    value="{{ $startTime }}"
+                    class="border rounded-md  py-2 w-28 text-center focus:outline-none cursor-default mr-2"
+                    readonly
+                >
+
+                {{-- To --}}
+                <span class="text-gray-600 mr-2">TO</span>
+                <input 
+                    type="text" 
+                    value="{{ $endTime }}"
+                    class="border rounded-md  py-2 w-28 text-center focus:outline-none cursor-default"
+                    readonly
+                >
+            </div>
+        </div>
+
+        {{-- Editable Time span --}}
+        <div class="flex flex-col mt-5">
+            <label class="text-gray-600 font-medium mb-1 text-sm">Set New Time</label>
+            
+            <!-- Date + From + To -->
+            <div class="flex items-center gap-3 mb-3">
+                <!-- Date -->
+                <input 
+        type="text"
+        readonly
+        class="mr-2 border rounded-md  py-2 w-1/3 text-center bg-gray-100 text-gray-600 focus:outline-none cursor-default"
+        value="{{ $this->getDurationText() }}"
+    >
+
+                <!-- From -->
+                <span class="mr-2 text-gray-600">FROM</span>
+                <input 
+                    type="time" 
+                    wire:model="newStartTime"
+                    class="mr-2 border rounded-md  py-2 w-28 text-center bg-gray-50 focus:ring focus:ring-blue-300"
+                >
+
+                <!-- To -->
+                <span class="mr-2 text-gray-600">TO</span>
+                <input 
+                    type="time" 
+                    wire:model="newEndTime"
+                    class="border rounded-md  py-2 w-28 text-center bg-gray-50 focus:ring focus:ring-blue-300"
+                >
+            </div>
+        </div>
+
+        {{-- Submit button --}}
+        <div class="flex justify-end mt-5">
+            <x-buttons.blue-inline type="submit">
+                Update Time
+            </x-buttons.blue-inline>
+        </div>
+    </form>
+</x-modals.small>

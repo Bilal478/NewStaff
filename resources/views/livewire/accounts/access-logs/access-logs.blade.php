@@ -11,10 +11,19 @@
                 Performed By 
             </div>
             <div class="flex-1 px-3">
-               Invited User
+               Target User
             </div>
             <div class="flex-1 px-3">
-               Invited User Email
+               Target User Email
+            </div>
+            <div class="flex-1 px-3">
+               Time Period
+            </div>
+            <div class="flex-1 px-3">
+               Original Time
+            </div>
+             <div class="flex-1 px-3">
+               New Time
             </div>
             <div class="flex-1 px-3 text-center">
                Date/Time
@@ -34,8 +43,18 @@
             <div class="flex-1 px-3 text-xs text-gray-500">
                 {{ $logs->target_user_name }}
             </div>
-            <div class="flex-1 px-3 text-xs text-gray-500">
+             <div class="flex-1 px-3 text-xs text-gray-500">
                 {{ $logs->target_user_email }}
+            </div>
+             <div class="flex-1 px-3 text-xs text-gray-500">
+                {{ $logs->start_datetime ? \Carbon\Carbon::parse($logs->start_datetime)->format('H:i:s') : '' }} - 
+                {{ $logs->end_datetime ? \Carbon\Carbon::parse($logs->end_datetime)->format('H:i:s') : '' }}
+            </div>
+             <div class="flex-1 px-3 text-xs text-gray-500">
+                {{ $logs->original_time ?? '-' }}
+            </div>
+             <div class="flex-1 px-3 text-xs text-gray-500">
+                {{ $logs->new_time ?? '-' }}
             </div>
             <div class="flex-1 px-3 text-xs text-gray-500 text-center">
                 {{ $logs->created_at }}

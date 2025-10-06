@@ -356,7 +356,7 @@ else{
                         'is_manual_time' => 1,
                     ]);
                 }
-                else if ($i == $fullIntervals - 1 && $end_minutes_adjustment != 0) {
+                else if ($i == $fullIntervals && $end_minutes_adjustment != 0) {
                     $fractional_end_time = date('Y-m-d H:i:s', strtotime("-$end_minutes_adjustment minutes", strtotime($end_time)));
                     DB::table('activities')->insert([
                         'from' => 600,

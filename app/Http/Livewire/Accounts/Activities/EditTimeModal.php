@@ -3,6 +3,8 @@
 namespace App\Http\Livewire\Accounts\Activities;
 
 use App\Http\Livewire\Traits\Notifications;
+use App\Models\Project;
+use App\Models\Task;
 use App\Models\User;
 use Livewire\Component;
 use SebastianBergmann\Environment\Console;
@@ -12,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 class EditTimeModal extends Component
 {
     use Notifications;
+
     public $userData=[];
     public $userId;
     public $accountId;
@@ -29,6 +32,9 @@ class EditTimeModal extends Component
     public $newStartTime;
     public $newEndTime;
     public $activityToRemoved = null;
+    public $projects = [];
+    public $tasks = [];
+
     protected $listeners = [
         'showEditTimeModal' => 'EditTimeModal',
         'deleteConfirmed' => 'deleteActivitySelected',
@@ -59,11 +65,48 @@ class EditTimeModal extends Component
             $this->newStartTime = '';
             $this->newEndTime = '';
         }
-        $this->dispatchBrowserEvent('open-activities-edit-time-modal');
-
+        $user = User::find($this->userId);
+        $projects = $user
+            ? $user->projects()->orderBy('title')->get()
+            : collect();
+        $this->projects = $projects;
+        $tasks = Task::where('user_id', $this->userId)
+            ->orderBy('title')
+            ->get();
+        $this->tasks = $tasks;
+         $this->emit('userDataUpdated', json_encode([
+            'tasks'    => $tasks,
+            'projects' => $projects,
+        ]));
         
-
+        $this->dispatchBrowserEvent('open-activities-edit-time-modal');
     }
+    public function getDurationText()
+    {
+        if (!$this->newStartTime || !$this->newEndTime) {
+            return 'Total Time';
+        }
+
+        try {
+                $start = \Carbon\Carbon::createFromFormat('H:i', $this->newStartTime);
+                $end   = \Carbon\Carbon::createFromFormat('H:i', $this->newEndTime);
+
+                if ($end->lessThan($start)) {
+                    $end->addDay(); // handle overnight times
+                }
+
+                $diffInMinutes = $end->diffInMinutes($start);
+                $hours = floor($diffInMinutes / 60);
+                $minutes = $diffInMinutes % 60;
+
+                $duration = sprintf('%02d:%02d', $hours, $minutes);
+
+                return " {$duration} hrs"; 
+            } catch (\Exception $e) {
+                return '';
+            }
+    }
+
     public function update(){
 
 if ($this->newStartTime === '' || $this->newEndTime === '') {
@@ -99,10 +142,10 @@ if ($this->newStartTime === '' || $this->newEndTime === '') {
         $newEndTimeValueTemp = $carbonEndTime->timestamp;
         }
 
-                $actualStartTime = $this->newStartTime !== '' ? $this->newStartTime : $this->startTime;
-$actualEndTime   = $this->newEndTime   !== '' ? $this->newEndTime   : $this->endTime;
+        $actualStartTime = $this->newStartTime !== '' ? $this->newStartTime : $this->startTime;
+        $actualEndTime   = $this->newEndTime   !== '' ? $this->newEndTime   : $this->endTime;
 
-$boundaryAdjusted = $this->reconcileBoundarySeconds($actualStartTime, $actualEndTime);
+        $boundaryAdjusted = $this->reconcileBoundarySeconds($actualStartTime, $actualEndTime);
         // dd($newStartTimeValueTemp,$oldStartTimeValueTemp,$newEndTimeValueTemp,$oldEndTimeValueTemp,$newEndTimeValue,$oldEndTimeValue);
     if($newStartTimeValueTemp<$oldStartTimeValueTemp){ 
         // dd('1');
@@ -355,10 +398,21 @@ $boundaryAdjusted = $this->reconcileBoundarySeconds($actualStartTime, $actualEnd
         $this->dispatchBrowserEvent('close-task-show-modal');
         $this->dispatchBrowserEvent('close-activities-edit-time-modal');
         if ($boundaryAdjusted || !($newStartTimeValueTemp == $oldStartTimeValueTemp && $newEndTimeValueTemp == $oldEndTimeValueTemp)) {
-    $this->emit('activityUpdate');
-    $this->emit('tasksUpdate');
-    $this->toast('Time Updated', "The Time has been updated successfully ");
-}
+            $newDuration = gmdate('H:i:s', $newEndTimeValueTemp - $newStartTimeValueTemp);
+            DB::table('access_logs')->insert([
+                    'user_id' => auth()->user()->id,  
+                    'target_user_id' => $this->userId,  
+                    'action' => 'time_change',
+                    'start_datetime' => $oldStartTimeValue,
+                    'end_datetime' => $oldEndTimeValue,
+                    'original_time' => $this->duration,
+                    'new_time' =>  $newDuration,
+                    'created_at' => now(),  
+                ]);
+                $this->emit('activityUpdate');
+                $this->emit('tasksUpdate');
+                $this->toast('Time Updated', "The Time has been updated successfully ");
+        }
         $this->newStartTime = '';
         $this->newEndTime = '';
     

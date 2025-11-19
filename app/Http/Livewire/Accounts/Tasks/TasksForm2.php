@@ -54,6 +54,8 @@ class TasksForm2 extends Component
 		 
 		$temp = substr($this->seconds_one_task, 0, 8);
 		$temp_two = substr($this->seconds_two_task, 0, 8);
+		$start = $this->datetimerange . ' ' . $temp;
+        $end   = $this->datetimerange . ' ' . $temp_two;
 		
 		list($hours, $minutes, $seconds) = explode(':', $temp);
 		$hour_in_seconds = ($hours * 3600 ) + ($minutes * 60 ) + $seconds;
@@ -109,6 +111,16 @@ class TasksForm2 extends Component
 				'updated_at' => $this->task_info->datetimerange
 			]);
 		}
+		DB::table('access_logs')->insert([
+                    'user_id' => auth()->user()->id,  
+                    'target_user_id' => $this->task_info->user_id,  
+                    'action' => 'add_time',
+                    'start_datetime' => $start,
+                    'end_datetime' => $end,
+                    // 'original_time' => $this->duration,
+                    // 'new_time' =>  $newDuration,
+                    'created_at' => now(),  
+                ]);
 		$this->dispatchBrowserEvent('close-activities-form-modal-2');
 		$this->toast('Activity Created', "The Activity has been created from ".
 		$this->seconds_one_task." to ".$this->seconds_two_task);
